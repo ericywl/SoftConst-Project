@@ -1,0 +1,43 @@
+/* COLORS */
+$brand-primary: #5d4681;
+$light-grey: #f9f9f9;
+$grey: #dddddd;
+$dark-grey: #777777;
+
+/* SPACING */
+$space: 1.4rem;
+$site-max-width: 50rem;
+
+/* FONT SIZES */
+$base-font-size: 1.6rem;
+$large-font-size: 2rem;
+
+/* FORM INPUTS */
+$input-border: $grey;
+$input-spacing: 1rem;
+
+/* HEADER */
+$header-bg: $brand-primary;
+$header-color: white;
+
+/* BUTTON */
+$button-bg: $brand-primary;
+$button-color: white;
+
+$button-pill-border-color: $brand-primary;
+$button-pill-color: $brand-primary;
+$button-pill-padding: 0.4rem 0.9rem;
+
+$button-greyed-bg: $light-grey;
+$button-greyed-border-color: $grey;
+$button-greyed-color: $dark-grey;
+
+/* ITEM */
+$item-bg: $light-grey;
+$item-border: darken($item-bg, 8%);
+
+$item-text-color: $dark-grey;
+
+/* BOXED VIEW */
+$boxed-view-overlay-bg: $grey;
+$boxed-view-bg: white;
