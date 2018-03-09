@@ -6,8 +6,6 @@ import { getRoutes } from "../imports/routes/routes";
 import "../imports/startup/simpl-schema-config";
 
 Meteor.startup(() => {
-    Session.set("showVisible", true);
-
     Tracker.autorun(() => {
         const isAuthenticated = !!Meteor.userId();
         const routes = getRoutes(isAuthenticated);

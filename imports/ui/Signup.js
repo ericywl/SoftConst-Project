@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Accounts } from "meteor/accounts-base";
+import { withTracker } from "meteor/react-meteor-data";
 
-import { validateUser } from "../api/users";
+import { validateNewUser } from "../api/users";
 
-export default class Signup extends React.Component {
+export class Signup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -17,12 +17,13 @@ export default class Signup extends React.Component {
 
         let email = this.refs.email.value.trim();
         let password = this.refs.password.value;
-        let message = validateUser(email, password);
-        if (message !== undefined) {
-            return this.setState({ error: message });
+        try {
+            validateNewUser(email, password);
+        } catch (e) {
+            return this.setState({ error: e.reason });
         }
 
-        Accounts.createUser({ email, password }, err => {
+        this.props.createUser({ email, password }, err => {
             if (err) {
                 this.setState({ error: err.reason });
             } else {
@@ -65,3 +66,9 @@ export default class Signup extends React.Component {
         );
     }
 }
+
+export default withTracker(() => {
+    return {
+        createUser: Accounts.createUser
+    };
+})(Signup);

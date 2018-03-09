@@ -1,8 +1,9 @@
 {
-    "name": "short-lnk",
+    "name": "sutd-chat",
     "private": true,
     "scripts": {
-        "start": "meteor run"
+        "start": "meteor run",
+        "test": "meteor test --driver-package=cultofcoders:mocha"
     },
     "dependencies": {
         "@babel/runtime": "^7.0.0-beta.36",
@@ -11,9 +12,15 @@
         "moment": "^2.21.0",
         "prop-types": "^15.6.1",
         "react": "^16.2.0",
+        "react-addons-pure-render-mixin": "^15.6.2",
         "react-dom": "^16.2.0",
         "react-router": "^4.2.0",
         "react-router-dom": "^4.2.2",
         "simpl-schema": "^1.4.2"
+    },
+    "devDependencies": {
+        "enzyme": "^3.3.0",
+        "enzyme-adapter-react-16": "^1.1.1",
+        "expect": "^1.20.2"
     }
 }
