@@ -46,8 +46,8 @@ if (Meteor.isClient) {
 
             wrapper.find("form").simulate("submit");
 
-            spy.calls[0].arguments[2]({});
-            expect(wrapper.state("error").length).toNotBe(0);
+            spy.calls[0].arguments[2]({ reason });
+            expect(wrapper.state("error")).toBe(reason);
 
             spy.calls[0].arguments[2]();
             expect(wrapper.state("error").length).toBe(0);
