@@ -2,12 +2,9 @@ import React from "react";
 import { Redirect, Route } from "react-router-dom";
 
 const PrivateRoute = ({ component: Component, isAuth, ...rest }) => {
-    const authPages = ["/dashboard"];
     const renderFunc = props => {
-        // check if user is trying to access page that requires auth
-        const onAuthPage = authPages.includes(props.location.pathname);
-
-        if (!isAuth && onAuthPage) {
+        // check if user is trying to access page that requires auth;
+        if (!isAuth) {
             return (
                 <Redirect
                     to={{ pathname: "/", state: { from: props.location } }}
@@ -15,6 +12,7 @@ const PrivateRoute = ({ component: Component, isAuth, ...rest }) => {
             );
         }
 
+        Session.set("selectedNoteId", props.match.params.id);
         return <Component {...props} />;
     };
 
