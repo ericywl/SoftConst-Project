@@ -1,17 +1,12 @@
 import React from "react";
 
-import PrivateHeader from "../auth/PrivateHeader";
-import NoteList from "./NoteList";
-import Editor from "./Editor";
+import PrivateHeader from "./PrivateHeader";
 
 const Links = () => {
     return (
         <div>
             <PrivateHeader title="Dashboard" />
-            <div className="page-content">
-                <NoteList />
-                <Editor />
-            </div>
+            <div className="page-content">This is dashboard.</div>
         </div>
     );
 };

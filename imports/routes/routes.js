@@ -6,9 +6,9 @@ import {
     Switch
 } from "react-router-dom";
 
-import Dashboard from "../ui/Dashboard";
-import Login from "../ui/Login";
-import Signup from "../ui/Signup";
+import Dashboard from "../ui/app/Dashboard";
+import Login from "../ui/auth/Login";
+import Signup from "../ui/auth/Signup";
 import NotFound from "../ui/NotFound";
 
 import PublicRoute from "./PublicRoute";
