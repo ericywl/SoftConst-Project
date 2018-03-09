@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 
@@ -66,6 +67,10 @@ export class Signup extends React.Component {
         );
     }
 }
+
+Signup.propTypes = {
+    createUser: PropTypes.func.isRequired
+};
 
 export default withTracker(() => {
     return {
