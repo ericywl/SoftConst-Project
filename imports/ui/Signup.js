@@ -39,7 +39,7 @@ export class Signup extends React.Component {
                 <div className="boxed-view__box">
                     <h1>Signup</h1>
 
-                    {this.state.error ? <p>{this.state.error}.</p> : undefined}
+                    {this.state.error ? <p>{this.state.error}</p> : undefined}
 
                     <form
                         onSubmit={this.onSubmit.bind(this)}
@@ -61,7 +61,11 @@ export class Signup extends React.Component {
                         <button className="button">Create Account</button>
                     </form>
 
-                    <Link to="/">Already have an account?</Link>
+                    {this.props.isTesting ? (
+                        undefined
+                    ) : (
+                        <Link to="/">Already have an account?</Link>
+                    )}
                 </div>
             </div>
         );
@@ -69,11 +73,13 @@ export class Signup extends React.Component {
 }
 
 Signup.propTypes = {
-    createUser: PropTypes.func.isRequired
+    createUser: PropTypes.func.isRequired,
+    isTesting: PropTypes.bool.isRequired
 };
 
 export default withTracker(() => {
     return {
-        createUser: Accounts.createUser
+        createUser: Accounts.createUser,
+        isTesting: false
     };
 })(Signup);

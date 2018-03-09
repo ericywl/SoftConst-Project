@@ -1,6 +1,7 @@
 import expect from "expect";
 
 import { validateNewUser } from "./users";
+import "../startup/simpl-schema-config";
 
 describe("users", function() {
     it("should allow valid user email and password", function() {

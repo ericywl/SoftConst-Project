@@ -19,9 +19,7 @@ export class Login extends React.Component {
         this.props.loginWithPassword({ email }, password, err => {
             if (err) {
                 this.setState({
-                    error:
-                        "Unable to login. " +
-                        "Please check your email and password."
+                    error: err.reason
                 });
             } else {
                 this.setState({ error: "" });
@@ -57,7 +55,11 @@ export class Login extends React.Component {
                         <button className="button">Login</button>
                     </form>
 
-                    <Link to="/signup">Don't have an account?</Link>
+                    {this.props.isTesting ? (
+                        undefined
+                    ) : (
+                        <Link to="/signup">Don't have an account?</Link>
+                    )}
                 </div>
             </div>
         );
@@ -65,9 +67,13 @@ export class Login extends React.Component {
 }
 
 Login.propTypes = {
-    loginWithPassword: PropTypes.func.isRequired
+    loginWithPassword: PropTypes.func.isRequired,
+    isTesting: PropTypes.bool.isRequired
 };
 
 export default withTracker(() => {
-    return { loginWithPassword: Meteor.loginWithPassword };
+    return {
+        loginWithPassword: Meteor.loginWithPassword,
+        isTesting: false
+    };
 })(Login);
