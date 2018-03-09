@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 
-import { validateNewUser } from "../api/users";
+import { validateNewUser } from "../../api/users";
 
 export class Signup extends React.Component {
     constructor(props) {

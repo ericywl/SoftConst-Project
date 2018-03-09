@@ -1,11 +1,8 @@
 import React from "react";
 import expect from "expect";
-import { mount, shallow } from "enzyme";
-import { MemoryRouter } from "react-router-dom";
+import { mount } from "enzyme";
 
 import { Login } from "./Login";
-import "../startup/test-setup";
-import "../startup/simpl-schema-config";
 
 if (Meteor.isClient) {
     describe("Login", function() {
@@ -39,6 +36,7 @@ if (Meteor.isClient) {
         });
 
         it("should set loginWithPassword callback errors", function() {
+            const reason = "Something went wrong.";
             const spy = expect.createSpy();
             const wrapper = mount(
                 <Login loginWithPassword={spy} isTesting={true} />
