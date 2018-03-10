@@ -1,0 +1,36 @@
+.editor {
+    background-color: white;
+    border: 2px solid $grey;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: $double-space;
+}
+
+.editor__title {
+    border: none;
+    border-bottom: 2px solid $grey;
+    font-size: $large-font-size;
+    outline: none;
+    padding: $space;
+    margin-bottom: $double-space;
+}
+
+.editor__body {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    flex-grow: 1;
+    font-weight: 300;
+    outline: none;
+    padding: $space;
+    resize: none;
+}
+
+.editor__message {
+    background-color: lighten($grey, 8%);
+    border-radius: 0.5rem;
+    font-style: italic;
+    text-align: center;
+    margin: $double-space;
+    padding: $double-space;
+}

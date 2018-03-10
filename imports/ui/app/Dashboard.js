@@ -1,12 +1,20 @@
 import React from "react";
 
-import PrivateHeader from "./PrivateHeader";
+import PrivateHeader from "../auth/PrivateHeader";
+import RoomList from "./RoomList";
 
-const Links = () => {
+export const Links = () => {
     return (
         <div>
-            <PrivateHeader title="Dashboard" />
-            <div className="page-content">This is dashboard.</div>
+            <PrivateHeader title="Notes" />
+            <div className="page-content">
+                <div className="page-content__sidebar">
+                    <RoomList />
+                </div>
+                <div className="page-content__main">
+                    <p>This is main</p>
+                </div>
+            </div>
         </div>
     );
 };

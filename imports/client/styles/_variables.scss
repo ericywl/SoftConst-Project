@@ -1,12 +1,20 @@
 /* COLORS */
-$brand-primary: #5d4681;
+$brand-primary: #397ab1;
 $light-grey: #f9f9f9;
 $grey: #dddddd;
 $dark-grey: #777777;
+$red: #f86569;
+$dark-red: #f74d4d;
+
+/* BODY */
+$body-bg-color: #f3f3f3;
+$body-default-color: #333333;
+$body-default-font: Helvetica, Arial, sans-serif;
 
 /* SPACING */
 $space: 1.4rem;
-$site-max-width: 50rem;
+$double-space: calc(#{$space} * 2);
+$site-max-width: 100rem;
 
 /* FONT SIZES */
 $base-font-size: 1.6rem;
@@ -19,6 +27,7 @@ $input-spacing: 1rem;
 /* HEADER */
 $header-bg: $brand-primary;
 $header-color: white;
+$header-height: 6rem;
 
 /* BUTTON */
 $button-bg: $brand-primary;
@@ -33,11 +42,16 @@ $button-greyed-border-color: $grey;
 $button-greyed-color: $dark-grey;
 
 /* ITEM */
-$item-bg: $light-grey;
-$item-border: darken($item-bg, 8%);
-
-$item-text-color: $dark-grey;
+$item-select-border-width: 4px;
 
 /* BOXED VIEW */
 $boxed-view-overlay-bg: $grey;
 $boxed-view-bg: white;
+$boxed-view-border-color: $grey;
+
+/* PAGE CONTENT */
+$page-content-sidebar-width: 30rem;
+$page-content-main-width: calc(
+    #{$site-max-width} - #{$page-content-sidebar-width}
+);
+$page-content-height: calc(100vh - #{$header-height});

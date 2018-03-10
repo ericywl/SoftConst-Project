@@ -12,7 +12,6 @@ const PrivateRoute = ({ component: Component, isAuth, ...rest }) => {
             );
         }
 
-        Session.set("selectedNoteId", props.match.params.id);
         return <Component {...props} />;
     };
 

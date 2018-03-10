@@ -1,15 +1,27 @@
 * {
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 html {
     font-size: 62.5%;
-    overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+    width: 2px;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: darken($grey, 10%);
 }
 
 body {
-    font-family: Helvetica, sans-serif;
+    color: $body-default-color;
+    background-color: $body-bg-color;
+    font-family: $body-default-font;
     font-size: $base-font-size;
 }
 
@@ -28,13 +40,17 @@ p {
 }
 
 a {
-    color: black;
+    color: $body-default-color;
 }
 
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="search"],
+textarea {
     border: 1px solid $input-border;
+    color: $body-default-color;
+    font-family: $body-default-font;
     font-size: $base-font-size;
     margin-bottom: $space;
     padding: $input-spacing;
