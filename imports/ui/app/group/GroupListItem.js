@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { withTracker } from "meteor/react-meteor-data";
 
-export class RoomListItem extends React.Component {
+export class GroupListItem extends React.Component {
     render() {
-        const className = this.props.room.selected
+        const className = this.props.group.selected
             ? "item item--selected"
             : "item";
 
@@ -14,22 +14,22 @@ export class RoomListItem extends React.Component {
                 className={className}
                 onClick={() => {
                     this.props.session.set(
-                        "selectedRoomId",
-                        this.props.room._id
+                        "selectedGroupId",
+                        this.props.group._id
                     );
                 }}
             >
-                <h5 className="item__title">{this.props.room.name}</h5>
+                <h5 className="item__title">{this.props.group.name}</h5>
                 <p className="item__subtitle">
-                    {moment(this.props.room.lastMessageAt).fromNow()}
+                    {moment(this.props.group.lastMessageAt).fromNow()}
                 </p>
             </div>
         );
     }
 }
 
-RoomListItem.propTypes = {
-    room: PropTypes.object.isRequired,
+GroupListItem.propTypes = {
+    group: PropTypes.object.isRequired,
     session: PropTypes.object.isRequired
 };
 
@@ -37,4 +37,4 @@ export default withTracker(() => {
     return {
         session: Session
     };
-})(RoomListItem);
+})(GroupListItem);

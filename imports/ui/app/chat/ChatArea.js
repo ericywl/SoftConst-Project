@@ -7,10 +7,10 @@ import ChatAreaFooter from "./ChatAreaFooter";
 
 export class ChatArea extends React.Component {
     render() {
-        if (!this.props.selectedRoomId) {
+        if (!this.props.selectedGroupId) {
             return (
                 <div>
-                    <p>Select a room.</p>
+                    <p>Select a group.</p>
                 </div>
             );
         }
@@ -18,12 +18,12 @@ export class ChatArea extends React.Component {
         return (
             <div>
                 <div>
-                    <MessageList selectedRoomId={this.props.selectedRoomId} />
+                    <MessageList selectedGroupId={this.props.selectedGroupId} />
                 </div>
 
                 <div>
                     <ChatAreaFooter
-                        selectedRoomId={this.props.selectedRoomId}
+                        selectedGroupId={this.props.selectedGroupId}
                     />
                 </div>
             </div>
@@ -32,7 +32,7 @@ export class ChatArea extends React.Component {
 }
 
 export default withTracker(() => {
-    const selectedRoomId = Session.get("selectedRoomId");
+    const selectedGroupId = Session.get("selectedGroupId");
 
-    return { selectedRoomId };
+    return { selectedGroupId };
 })(ChatArea);

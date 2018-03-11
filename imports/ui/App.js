@@ -9,7 +9,7 @@ import "../startup/simpl-schema-config";
 
 if (Meteor.isClient) {
     Meteor.startup(() => {
-        Session.set("selectedRoomId", undefined);
+        Session.set("selectedGroupId", undefined);
         Session.set("isNavOpen", false);
 
         Tracker.autorun(() => {

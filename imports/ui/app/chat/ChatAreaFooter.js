@@ -11,10 +11,10 @@ export class ChatAreaFooter extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, prevContext) {
-        const currentRoomId = this.props.selectedRoomId;
-        const prevRoomId = prevProps.selectedRoomId;
+        const currentGroupId = this.props.selectedGroupId;
+        const prevGroupId = prevProps.selectedGroupId;
 
-        if (currentRoomId && currentRoomId !== prevRoomId) {
+        if (currentGroupId && currentGroupId !== prevGroupId) {
             this.setState({
                 input: ""
             });
@@ -26,7 +26,7 @@ export class ChatAreaFooter extends React.Component {
 
         const input = this.refs.msgInput.value.trim();
         const partialMsg = {
-            roomId: this.props.selectedRoomId,
+            groupId: this.props.selectedGroupId,
             content: this.state.input
         };
 
@@ -63,7 +63,7 @@ export class ChatAreaFooter extends React.Component {
 }
 
 ChatAreaFooter.propTypes = {
-    selectedRoomId: PropTypes.string,
+    selectedGroupId: PropTypes.string,
     meteorCall: PropTypes.func.isRequired
 };
 
