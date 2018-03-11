@@ -55,3 +55,11 @@ textarea {
     margin-bottom: $space;
     padding: $input-spacing;
 }
+
+input::-webkit-input-placeholder {
+    transition: opacity 0.3s ease;
+}
+
+input:focus::-webkit-input-placeholder {
+    opacity: 0.1;
+}

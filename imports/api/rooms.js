@@ -21,29 +21,5 @@ Meteor.methods({
             messages: [],
             lastMessageAt: moment().valueOf()
         });
-    },
-
-    roomsAddMessage(_id, messageBody) {
-        if (!this.userId) {
-            throw new Meteor.Error("not-authorized");
-        }
-
-        const message = {
-            userId: this.userId,
-            content: messageBody,
-            sentAt: moment().valueOf()
-        };
-
-        return RoomsDB.update(
-            { _id },
-            {
-                $push: {
-                    messages: message
-                },
-                $set: {
-                    lastMessageAt: moment().valueOf()
-                }
-            }
-        );
     }
 });

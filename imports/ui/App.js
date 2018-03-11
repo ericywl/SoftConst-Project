@@ -19,6 +19,4 @@ if (Meteor.isClient) {
             ReactDOM.render(routes, document.getElementById("render-target"));
         });
     });
-
-    Meteor.subscribe("roomsDB");
 }

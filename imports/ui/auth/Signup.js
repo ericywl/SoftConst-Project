@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 
-import { validateNewUser } from "../../api/users";
+import { validateNewUserClient } from "../../api/users";
 
 export class Signup extends React.Component {
     constructor(props) {
@@ -18,13 +18,15 @@ export class Signup extends React.Component {
 
         let email = this.refs.email.value.trim();
         let password = this.refs.password.value;
+        let displayName = this.refs.displayName.value.trim();
         try {
-            validateNewUser(email, password);
+            validateNewUserClient({ displayName, email, password });
         } catch (e) {
             return this.setState({ error: e.reason });
         }
 
-        this.props.createUser({ email, password }, err => {
+        const profile = { displayName };
+        this.props.createUser({ profile, email, password }, err => {
             if (err) {
                 this.setState({ error: err.reason });
             } else {
@@ -46,6 +48,12 @@ export class Signup extends React.Component {
                         noValidate
                         className="boxed-view__form"
                     >
+                        <input
+                            type="text"
+                            ref="displayName"
+                            name="displayName"
+                            placeholder="Display name"
+                        />
                         <input
                             type="email"
                             ref="email"

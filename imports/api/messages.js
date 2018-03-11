@@ -5,8 +5,8 @@ import moment from "moment";
 export const MessagesDB = new Mongo.Collection("messages");
 
 if (Meteor.isServer) {
-    Meteor.publish("messagesDB", function() {
-        return MessagesDB.find();
+    Meteor.publish("messagesByRoom", function(roomId) {
+        return MessagesDB.find({ roomId }, { sort: { sentAt: 1 } });
     });
 }
 
@@ -19,7 +19,8 @@ Meteor.methods({
         return MessagesDB.insert({
             roomId: partialMsg.roomId,
             content: partialMsg.content,
-            senderId: this.userId,
+            userId: this.userId,
+            userName: Meteor.user().profile.displayName,
             sentAt: moment().valueOf()
         });
     }

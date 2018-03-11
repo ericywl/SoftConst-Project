@@ -1,13 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
+import moment from "moment";
 
 export class Message extends React.Component {
     render() {
+        const userName = this.props.message.userName;
+        const messageSentAt = moment(this.props.message.sentAt).fromNow();
+
         return (
             <div>
                 <p>
-                    {this.props.message.senderId} - {this.props.message.content}
+                    {userName} ({messageSentAt}) - {this.props.message.content}
                 </p>
             </div>
         );
