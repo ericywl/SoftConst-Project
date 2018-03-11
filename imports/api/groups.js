@@ -24,11 +24,11 @@ Meteor.methods({
         });
     },
 
-    groupsAddTags() {
+    groupsAddTags(_id, tag) {
         if (!this.userId) {
             throw new Meteor.Error("not-authorized");
         }
 
-        return;
+        return GroupsDB.update({ _id }, { $push: { tags: tag } });
     }
 });

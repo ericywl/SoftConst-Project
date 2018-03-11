@@ -25,8 +25,7 @@ export class Signup extends React.Component {
             return this.setState({ error: e.reason });
         }
 
-        const profile = { displayName };
-        this.props.createUser({ profile, email, password }, err => {
+        this.props.createUser({ displayName, email, password }, err => {
             if (err) {
                 this.setState({ error: err.reason });
             } else {

@@ -20,7 +20,7 @@ Meteor.methods({
             groupId: partialMsg.groupId,
             content: partialMsg.content,
             userId: this.userId,
-            userName: Meteor.user().profile.displayName,
+            userName: Meteor.user().displayName,
             sentAt: moment().valueOf()
         });
     }

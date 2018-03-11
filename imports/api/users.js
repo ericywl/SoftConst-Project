@@ -27,7 +27,7 @@ export const validateNewUserClient = user => {
 
 export const validateNewUserServer = user => {
     const email = user.emails[0].address;
-    const displayName = user.profile.displayName;
+    const displayName = user.displayName;
 
     new SimpleSchema({
         email: {
@@ -44,6 +44,12 @@ export const validateNewUserServer = user => {
     return true;
 };
 
+Meteor.methods({
+    usersJoinGroup(groupId) {
+        Meteor.users;
+    }
+});
+
 if (Meteor.isServer) {
     Meteor.publish("usersProfile", function() {
         return Meteor.users.find(
@@ -59,9 +65,11 @@ if (Meteor.isServer) {
     Accounts.validateNewUser(validateNewUserServer);
 
     Accounts.onCreateUser((options, user) => {
-        if (options.profile) {
-            user.profile = options.profile;
+        if (options.displayName) {
+            user.displayName = options.displayName;
         }
+
+        user.groups = [];
 
         return user;
     });

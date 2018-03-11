@@ -6,7 +6,7 @@ import moment from "moment";
 export class Message extends React.Component {
     render() {
         const userName = this.props.message.userName;
-        const messageSentAt = moment(this.props.message.sentAt).fromNow();
+        const messageSentAt = moment(this.props.message.sentAt).calendar();
 
         return (
             <div>
