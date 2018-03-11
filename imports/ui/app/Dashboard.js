@@ -1,7 +1,8 @@
 import React from "react";
 
 import PrivateHeader from "../auth/PrivateHeader";
-import RoomList from "./RoomList";
+import RoomList from "./room/RoomList";
+import ChatArea from "./chat/ChatArea";
 
 export const Links = () => {
     return (
@@ -12,7 +13,7 @@ export const Links = () => {
                     <RoomList />
                 </div>
                 <div className="page-content__main">
-                    <p>This is main</p>
+                    <ChatArea />
                 </div>
             </div>
         </div>

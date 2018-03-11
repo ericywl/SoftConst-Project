@@ -3,18 +3,14 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import FlipMove from "react-flip-move";
 
-import { RoomsDB } from "../../api/rooms";
+import { RoomsDB } from "../../../api/rooms";
 import RoomListHeader from "./RoomListHeader";
+import RoomListItem from "./RoomListItem";
 
 export class RoomList extends React.Component {
     renderRoomList() {
         return this.props.rooms.map(room => {
-            return (
-                <div key={room._id} className="item">
-                    <h5>{room.name}</h5>
-                    <p>{room.lastMessageAt}</p>
-                </div>
-            );
+            return <RoomListItem key={room._id} room={room} />;
         });
     }
 
@@ -31,13 +27,23 @@ export class RoomList extends React.Component {
 }
 
 RoomList.propTypes = {
-    rooms: PropTypes.array.isRequired
+    rooms: PropTypes.array.isRequired,
+    session: PropTypes.object.isRequired
 };
 
 export default withTracker(() => {
+    const selectedRoomId = Session.get("selectedRoomId");
     Meteor.subscribe("roomsDB");
 
     return {
-        rooms: RoomsDB.find({}, { sort: { lastMessageAt: -1 } }).fetch()
+        rooms: RoomsDB.find({}, { sort: { lastMessageAt: -1 } })
+            .fetch()
+            .map(room => {
+                return {
+                    ...room,
+                    selected: room._id === selectedRoomId
+                };
+            }),
+        session: Session
     };
 })(RoomList);
