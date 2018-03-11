@@ -23,16 +23,22 @@ Meteor.methods({
         });
     },
 
-    roomsAddMessage(_id, message) {
+    roomsAddMessage(_id, messageBody) {
         if (!this.userId) {
             throw new Meteor.Error("not-authorized");
         }
+
+        const message = {
+            userId: this.userId,
+            content: messageBody,
+            sentAt: moment().valueOf()
+        };
 
         return RoomsDB.update(
             { _id },
             {
                 $push: {
-                    messages: message._id
+                    messages: message
                 },
                 $set: {
                     lastMessageAt: moment().valueOf()

@@ -11,13 +11,14 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-    messagesInsert(content) {
+    messagesInsert(partialMsg) {
         if (!this.userId) {
             throw new Meteor.Error("not-authorized");
         }
 
         return MessagesDB.insert({
-            content,
+            roomId: partialMsg.roomId,
+            content: partialMsg.content,
             senderId: this.userId,
             sentAt: moment().valueOf()
         });

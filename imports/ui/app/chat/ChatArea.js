@@ -2,58 +2,37 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
-import { RoomsDB } from "../../../api/rooms";
-import Message from "./Message";
+import MessageList from "./MessageList";
 import ChatAreaFooter from "./ChatAreaFooter";
 
 export class ChatArea extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    renderMessages() {
-        return this.props.room.messages.map(message => {
-            return <Message key={message._id} message={message} />;
-        });
-    }
-
     render() {
-        if (!this.props.room) {
+        if (!this.props.selectedRoomId) {
             return (
                 <div>
-                    <p>
-                        {this.props.selectedRoomId
-                            ? "Room not found!"
-                            : "Pick or create a room to get started."}
-                    </p>
+                    <p>Select a room.</p>
                 </div>
             );
         }
 
         return (
             <div>
-                <p>Messages here...</p>
-                <div>{this.renderMessages()}</div>
-                <ChatAreaFooter />
+                <div>
+                    <MessageList selectedRoomId={this.props.selectedRoomId} />
+                </div>
+
+                <div>
+                    <ChatAreaFooter
+                        selectedRoomId={this.props.selectedRoomId}
+                    />
+                </div>
             </div>
         );
     }
 }
 
-ChatArea.propTypes = {
-    room: PropTypes.object,
-    selectedRoomId: PropTypes.string,
-    call: PropTypes.func.isRequired,
-    session: PropTypes.object.isRequired
-};
-
 export default withTracker(() => {
     const selectedRoomId = Session.get("selectedRoomId");
 
-    return {
-        selectedRoomId,
-        room: RoomsDB.findOne({ _id: selectedRoomId }),
-        session: Session,
-        call: Meteor.call
-    };
+    return { selectedRoomId };
 })(ChatArea);
