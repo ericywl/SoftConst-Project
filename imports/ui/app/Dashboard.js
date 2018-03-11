@@ -7,11 +7,12 @@ import ChatArea from "./chat/ChatArea";
 export const Links = () => {
     return (
         <div>
-            <PrivateHeader title="Notes" />
+            <PrivateHeader title="STUD Chat" />
             <div className="page-content">
                 <div className="page-content__sidebar">
                     <RoomList />
                 </div>
+
                 <div className="page-content__main">
                     <ChatArea />
                 </div>

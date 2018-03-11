@@ -6,9 +6,9 @@ export class Message extends React.Component {
     render() {
         return (
             <div>
-                <h5>
+                <p>
                     {this.props.message.senderId} - {this.props.message.content}
-                </h5>
+                </p>
             </div>
         );
     }
