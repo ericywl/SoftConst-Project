@@ -20,7 +20,10 @@ if (Meteor.isServer) {
             throw new Meteor.Error("not-authorized");
         }
 
-        check(groupId, String);
+        new SimpleSchema({
+            groupId: { type: String }
+        }).validate({ groupId });
+
         return GroupsDB.find({ _id: groupId }, { fields: { tags: 1 } });
     });
 }

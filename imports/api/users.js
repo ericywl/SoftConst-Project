@@ -1,5 +1,26 @@
 import SimpleSchema from "simpl-schema";
 
+if (Meteor.isServer) {
+    Meteor.publish("usersProfile", function() {
+        return Meteor.users.find(
+            {},
+            {
+                fields: {
+                    displayName: 1,
+                    groups: 1,
+                    tags: 1
+                }
+            }
+        );
+    });
+}
+
+Meteor.methods({
+    usersJoinGroup(groupId) {
+        Meteor.users;
+    }
+});
+
 export const validateNewUserClient = user => {
     const email = user.email;
     const password = user.password;
@@ -44,26 +65,7 @@ export const validateNewUserServer = user => {
     return true;
 };
 
-Meteor.methods({
-    usersJoinGroup(groupId) {
-        Meteor.users;
-    }
-});
-
 if (Meteor.isServer) {
-    Meteor.publish("usersProfile", function() {
-        return Meteor.users.find(
-            {},
-            {
-                fields: {
-                    displayName: 1,
-                    groups: 1,
-                    tags: 1
-                }
-            }
-        );
-    });
-
     Accounts.validateNewUser(validateNewUserServer);
 
     Accounts.onCreateUser((options, user) => {
