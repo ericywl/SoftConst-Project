@@ -1,14 +1,14 @@
 .switch {
     border: 1px solid $grey;
     margin-bottom: $space;
-    font-size: $base-font-size;
     padding: $input-spacing;
 }
 
 .switch__text {
+    font-size: $base-font-size;
     color: darken($dark-grey, 10%);
     height: 100%;
-    float: left;
+    float: right;
     text-align: center;
 }
 
@@ -17,7 +17,7 @@
     position: relative;
     width: $switch-box-width;
     height: $switch-box-height;
-    float: right;
+    float: left;
 }
 
 /* Hide default HTML checkbox */

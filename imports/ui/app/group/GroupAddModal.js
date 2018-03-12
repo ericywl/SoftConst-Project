@@ -31,6 +31,7 @@ export default class GroupAddModal extends React.Component {
                 onRequestClose={this.modalToggle.bind(this)}
                 className="boxed-view__large-box"
                 overlayClassName="boxed-view boxed-view--modal"
+                shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
                 <h1>

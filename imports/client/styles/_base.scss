@@ -65,6 +65,11 @@ input[type="email"],
 input[type="password"],
 input[type="search"],
 textarea {
+    &:focus {
+        outline: none;
+        border-color: $brand-primary;
+    }
+
     &:focus::-webkit-input-placeholder {
         opacity: 0.2;
     }
@@ -72,4 +77,8 @@ textarea {
     &::-webkit-input-placeholder {
         transition: opacity 0.3s ease;
     }
+}
+
+.ReactModal__Overlay {
+    outline: none;
 }

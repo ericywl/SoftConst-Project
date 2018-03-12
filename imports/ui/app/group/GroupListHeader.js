@@ -11,7 +11,7 @@ export class GroupListHeader extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="item-list__header">
                 <button
                     className="button"
                     onClick={() => this.child.modalToggle()}

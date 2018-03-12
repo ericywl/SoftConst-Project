@@ -6,7 +6,22 @@ export const GroupsDB = new Mongo.Collection("groups");
 
 if (Meteor.isServer) {
     Meteor.publish("groups", function() {
-        return GroupsDB.find();
+        if (!this.userId) {
+            this.ready();
+            throw new Meteor.Error("not-authorized");
+        }
+
+        return GroupsDB.find({}, { fields: { name: 1, lastMessageAt: 1 } });
+    });
+
+    Meteor.publish("groupTags", function(groupId) {
+        if (!this.userId) {
+            this.ready();
+            throw new Meteor.Error("not-authorized");
+        }
+
+        check(groupId, String);
+        return GroupsDB.find({ _id: groupId }, { fields: { tags: 1 } });
     });
 }
 
