@@ -16,6 +16,8 @@ export class GroupListHeader extends React.Component {
                 >
                     Create group
                 </button>
+
+                <input type="search" />
             </div>
         );
     }
