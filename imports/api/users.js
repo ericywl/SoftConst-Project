@@ -17,8 +17,8 @@ export const validateNewUserClient = user => {
         },
         displayName: {
             type: String,
-            min: 1,
-            max: 50
+            min: 2,
+            max: 30
         }
     }).validate({ email, password, displayName });
 
@@ -37,7 +37,7 @@ export const validateNewUserServer = user => {
         displayName: {
             type: String,
             min: 1,
-            max: 50
+            max: 30
         }
     }).validate({ email, displayName });
 
@@ -56,7 +56,9 @@ if (Meteor.isServer) {
             {},
             {
                 fields: {
-                    profile: 1
+                    displayName: 1,
+                    groups: 1,
+                    tags: 1
                 }
             }
         );
@@ -70,6 +72,7 @@ if (Meteor.isServer) {
         }
 
         user.groups = [];
+        user.tags = [];
 
         return user;
     });

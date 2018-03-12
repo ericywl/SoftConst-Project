@@ -2,20 +2,29 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
+import GroupAddModal from "./GroupAddModal";
+
 export class GroupListHeader extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         return (
             <div>
                 <button
                     className="button"
-                    onClick={() => {
-                        this.props.meteorCall("groupsInsert", (err, res) => {
-                            // call back to set session etc.
-                        });
-                    }}
+                    onClick={() => this.child.modalToggle()}
                 >
                     Create group
                 </button>
+
+                <GroupAddModal
+                    meteorCall={this.props.meteorCall}
+                    ref={ref => {
+                        this.child = ref;
+                    }}
+                />
 
                 <input type="search" />
             </div>

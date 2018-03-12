@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import FlipMove from "react-flip-move";
 import { withTracker } from "meteor/react-meteor-data";
 
 import MessageList from "./MessageList";
@@ -17,9 +18,9 @@ export class ChatArea extends React.Component {
 
         return (
             <div>
-                <div>
+                <FlipMove maintainContainerHeight={true}>
                     <MessageList selectedGroupId={this.props.selectedGroupId} />
-                </div>
+                </FlipMove>
 
                 <div>
                     <ChatAreaFooter

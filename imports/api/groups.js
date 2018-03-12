@@ -16,16 +16,35 @@ Meteor.methods({
      * TODO: check for roles before adding
      * @param {String} name
      */
-    groupsInsert(name = "new group") {
-        if (!this.userId) {
-            throw new Meteor.Error("not-authorized");
-        }
+    groupsInsert(partialGroup) {
+        if (!this.userId) throw new Meteor.Error("not-authorized");
+
+        new SimpleSchema({
+            name: {
+                type: String,
+                min: 3,
+                max: 30
+            },
+            description: {
+                type: String,
+                max: 50
+            }
+        }).validate({
+            name: partialGroup.name,
+            description: partialGroup.description
+        });
+
+        if (!partialGroup.name) throw new Meteor.Error("empty-name");
+        if (!partialGroup.description)
+            throw new Meteor.Error("empty-description");
 
         return GroupsDB.insert({
-            name,
+            name: partialGroup.name,
+            description: partialGroup.description,
             tags: [],
             isPrivate: false,
-            lastMessageAt: moment().valueOf()
+            lastMessageAt: moment().valueOf(),
+            createdBy: this.userId
         });
     },
 
@@ -42,19 +61,38 @@ Meteor.methods({
         return GroupsDB.remove({ _id });
     },
 
+    /**
+     * Add tag to the group identified by groupId
+     * TODO: check for roles before adding
+     * @param {String} _id
+     * @param {String} tag
+     */
     groupsAddTag(_id, tag) {
         const formattedTag = tag.trim();
         if (!this.userId) {
             throw new Meteor.Error("not-authorized");
         }
 
+        if (!GroupsDB.findOne({ _id })) {
+            throw new Meteor.Error("group-not-found");
+        }
+
         return GroupsDB.update({ _id }, { $addToSet: { tags: formattedTag } });
     },
 
+    /**
+     * Remove tag from the group identified by groupId if exists
+     * @param {String} _id
+     * @param {String} tag
+     */
     groupsRemoveTag(_id, tag) {
         const formattedTag = tag.trim();
         if (!this.userId) {
             throw new Meteor.Error("not-authorized");
+        }
+
+        if (!GroupsDB.findOne({ _id })) {
+            throw new Meteor.Error("group-not-found");
         }
 
         if (!GroupsDB.findOne({ _id, tags: formattedTag })) {

@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal } from "react-modal";
 
-import PrivateHeader from "../auth/PrivateHeader";
+import PrivateHeader from "./PrivateHeader";
 import GroupList from "./group/GroupList";
 import ChatArea from "./chat/ChatArea";
 

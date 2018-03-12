@@ -56,6 +56,10 @@ textarea {
     padding: $input-spacing;
 }
 
+textarea {
+    resize: none;
+}
+
 input::-webkit-input-placeholder {
     transition: opacity 0.3s ease;
 }
