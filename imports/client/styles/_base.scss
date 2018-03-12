@@ -60,10 +60,16 @@ textarea {
     resize: none;
 }
 
-input::-webkit-input-placeholder {
-    transition: opacity 0.3s ease;
-}
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea {
+    &:focus::-webkit-input-placeholder {
+        opacity: 0.2;
+    }
 
-input:focus::-webkit-input-placeholder {
-    opacity: 0.1;
+    &::-webkit-input-placeholder {
+        transition: opacity 0.3s ease;
+    }
 }

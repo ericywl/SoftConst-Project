@@ -28,21 +28,21 @@ Meteor.methods({
             description: {
                 type: String,
                 max: 50
+            },
+            isPrivate: {
+                type: Boolean
             }
         }).validate({
             name: partialGroup.name,
-            description: partialGroup.description
+            description: partialGroup.description,
+            isPrivate: partialGroup.isPrivate
         });
-
-        if (!partialGroup.name) throw new Meteor.Error("empty-name");
-        if (!partialGroup.description)
-            throw new Meteor.Error("empty-description");
 
         return GroupsDB.insert({
             name: partialGroup.name,
             description: partialGroup.description,
+            isPrivate: partialGroup.isPrivate,
             tags: [],
-            isPrivate: false,
             lastMessageAt: moment().valueOf(),
             createdBy: this.userId
         });

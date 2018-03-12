@@ -1,0 +1,65 @@
+.switch {
+    border: 1px solid $grey;
+    margin-bottom: $space;
+    font-size: $base-font-size;
+    padding: $input-spacing;
+}
+
+.switch__text {
+    color: darken($dark-grey, 10%);
+    height: 100%;
+    float: left;
+    text-align: center;
+}
+
+/* The switch - the box around the slider */
+.switch__box {
+    position: relative;
+    width: $switch-box-width;
+    height: $switch-box-height;
+    float: right;
+}
+
+/* Hide default HTML checkbox */
+.switch__box input[type="checkbox"] {
+    display: none;
+}
+
+/* The slider */
+.switch__slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $switch-bg-color;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+}
+
+.switch__slider:before {
+    position: absolute;
+    content: "";
+    height: $switch-slider-height;
+    width: $switch-slider-width;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+}
+
+.switch__input:checked + .switch__slider {
+    background-color: $slider-bg-color;
+}
+
+.switch__input:focus + .switch__slider {
+    box-shadow: 0 0 1px $slider-bg-color;
+}
+
+.switch__input:checked + .switch__slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}

@@ -10,6 +10,7 @@ export default class GroupAddModal extends React.Component {
             modalIsOpen: false,
             groupName: "",
             groupDesc: "",
+            groupPrivate: false,
             error: ""
         };
     }
@@ -35,10 +36,11 @@ export default class GroupAddModal extends React.Component {
                 <h1>
                     {this.state.groupName ? this.state.groupName : "New Group"}
                 </h1>
+
                 {this.state.error ? <p>{this.state.error}</p> : undefined}
 
                 <form
-                    onSubmit={this.onSubmit.bind(this)}
+                    onSubmit={event => event.preventDefault()}
                     className="boxed-view__form"
                 >
                     <input
@@ -59,7 +61,31 @@ export default class GroupAddModal extends React.Component {
                         onChange={this.onDescChange.bind(this)}
                     />
 
-                    <button className="button">Create Group</button>
+                    <div className="switch">
+                        <label className="switch__box">
+                            <input
+                                ref="groupPrivate"
+                                className="switch__input"
+                                type="checkbox"
+                                onClick={event =>
+                                    this.setState({
+                                        groupPrivate: event.target.checked
+                                    })
+                                }
+                            />
+                            <span className="switch__slider" />
+                        </label>
+                        <div className="switch__text">Private</div>
+                    </div>
+
+                    <button
+                        type="button"
+                        className="button"
+                        onClick={this.onSubmit.bind(this)}
+                    >
+                        Create Group
+                    </button>
+
                     <button
                         type="button"
                         className="button button--greyed"
@@ -75,7 +101,8 @@ export default class GroupAddModal extends React.Component {
     onSubmit(event) {
         const partialGroup = {
             name: this.state.groupName,
-            description: this.state.groupDesc
+            description: this.state.groupDesc,
+            isPrivate: this.state.groupPrivate
         };
 
         event.preventDefault();
