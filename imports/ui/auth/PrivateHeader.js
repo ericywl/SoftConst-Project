@@ -23,7 +23,18 @@ export const PrivateHeader = props => {
                 >
                     {props.title}
                 </h1>
-
+				<h1 
+					className="header__profile"
+					onClick={() => history.replace("/profile")}
+				>
+					Profile
+				</h1>
+				<h1 
+					className="header__profile"
+					onClick={() => history.replace("/finder")}
+				>
+					Finder
+				</h1>
                 <button
                     className="button button--title"
                     onClick={props.handleLogout}

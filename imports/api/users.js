@@ -70,6 +70,7 @@ if (Meteor.isServer) {
         }
 
         user.groups = [];
+        user.tags = [];
 
         return user;
     });
