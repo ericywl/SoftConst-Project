@@ -56,7 +56,10 @@ if (Meteor.isServer) {
             {},
             {
                 fields: {
-                    profile: 1
+                    _id: 1,
+                    displayName: 1,
+                    tags: 1,
+                    bio: 1
                 }
             }
         );
@@ -71,7 +74,9 @@ if (Meteor.isServer) {
 
         user.groups = [];
         user.tags = [];
+        user.bio = "";
 
         return user;
     });
+
 }

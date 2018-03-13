@@ -1,11 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
+import Modal from "react-modal";
 
 import history from "../../api/history";
 
 export const PrivateHeader = props => {
     const navImgSrc = props.isNavOpen ? "/images/x.svg" : "/images/bars.svg";
+    this.state = {isOpen : false};
+
+    toggleModal = () =>{
+        this.state.isOpen = !this.state.isOpen;
+    }
 
     return (
         <div className="header">
@@ -24,8 +30,8 @@ export const PrivateHeader = props => {
                     {props.title}
                 </h1>
 				<h1 
-					className="header__profile"
-					onClick={() => history.replace("/profile")}
+                    className="header__profile"
+                    onClick={this.toggleModal()}
 				>
 					Profile
 				</h1>
@@ -41,7 +47,15 @@ export const PrivateHeader = props => {
                 >
                     Logout
                 </button>
+                <Modal
+                    show={this.state.isOpen}
+                    onClose={this.toggleModal()}
+                >
+                    Hello
+                    <button onClick={this.toggleModal}>close</button>
+                </Modal>
             </div>
+            
         </div>
     );
 };
