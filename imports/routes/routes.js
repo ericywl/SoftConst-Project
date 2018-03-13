@@ -34,12 +34,6 @@ export const getRoutes = isAuthenticated => {
                         isAuth={isAuthenticated}
                         component={Dashboard}
                     />
-
-                    <PrivateRoute
-                        path="/dashboard/:id"
-                        isAuth={isAuthenticated}
-                        component={Dashboard}
-                    />
 					
                     <Route component={NotFound} />
                 </Switch>
