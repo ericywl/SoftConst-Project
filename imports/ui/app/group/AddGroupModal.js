@@ -28,7 +28,7 @@ export default class AddGroupModal extends React.Component {
                 isOpen={this.state.modalIsOpen}
                 contentLabel="Create New Group"
                 onAfterOpen={() => this.refs.groupName.focus()}
-                onRequestClose={this.modalToggle.bind(this)}
+                onRequestClose={this.toggleModal.bind(this)}
                 className="boxed-view__large-box"
                 overlayClassName="boxed-view boxed-view--modal"
                 shouldReturnFocusAfterClose={false}
@@ -90,7 +90,7 @@ export default class AddGroupModal extends React.Component {
                     <button
                         type="button"
                         className="button button--greyed"
-                        onClick={this.modalToggle.bind(this)}
+                        onClick={this.toggleModal.bind(this)}
                     >
                         Cancel
                     </button>
@@ -108,7 +108,7 @@ export default class AddGroupModal extends React.Component {
 
         event.preventDefault();
         this.props.meteorCall("groupsInsert", partialGroup, (err, res) => {
-            err ? this.setState({ error: err.reason }) : this.modalToggle();
+            err ? this.setState({ error: err.reason }) : this.toggleModal();
         });
     }
 
@@ -130,7 +130,7 @@ export default class AddGroupModal extends React.Component {
         this.setState({ groupDesc: inputValue });
     }
 
-    modalToggle() {
+    toggleModal() {
         this.setState({
             modalIsOpen: !this.state.modalIsOpen,
             groupName: "",

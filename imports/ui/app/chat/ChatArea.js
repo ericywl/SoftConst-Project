@@ -5,8 +5,8 @@ import FlipMove from "react-flip-move";
 import { withTracker } from "meteor/react-meteor-data";
 
 import MessageList from "./MessageList";
+import ChatAreaHeader from "./ChatAreaHeader";
 import ChatAreaFooter from "./ChatAreaFooter";
-import AddTagModal from "./AddTagModal";
 import { GroupsDB } from "../../../api/groups";
 
 export class ChatArea extends React.Component {
@@ -19,29 +19,15 @@ export class ChatArea extends React.Component {
             );
         }
 
-        const modalStyles = { overlay: { zIndex: 10 } };
         return (
             <div>
+                <ChatAreaHeader />
+
                 <FlipMove maintainContainerHeight={true}>
                     <MessageList />
                 </FlipMove>
 
-                <div>
-                    <ChatAreaFooter
-                        selectedGroupId={this.props.selectedGroupId}
-                    />
-                </div>
-
-                <div>
-                    <button onClick={this.modalToggle.bind(this)}>
-                        Manage group tags
-                    </button>
-                    <AddTagModal
-                        ref={ref => {
-                            this.child = ref;
-                        }}
-                    />
-                </div>
+                <ChatAreaFooter selectedGroupId={this.props.selectedGroupId} />
             </div>
         );
     }

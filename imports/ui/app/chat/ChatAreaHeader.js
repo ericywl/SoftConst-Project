@@ -1,16 +1,40 @@
 import React from "react";
+import { withTracker } from "meteor/react-meteor-data";
+
+import ManageTagsModal from "./ManageTagsModal";
+import { GroupsDB } from "../../../api/groups";
 
 export class ChatAreaHeader extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
-
     render() {
         return (
             <div>
-                <form action="" />
+                <button onClick={() => this.child.toggleModal()}>
+                    Manage group tags
+                </button>
+
+                <ManageTagsModal
+                    selectedGroupId={this.props.selectedGroupId}
+                    groupTags={this.props.groupTags}
+                    meteorCall={this.props.meteorCall}
+                    ref={ref => {
+                        this.child = ref;
+                    }}
+                />
             </div>
         );
     }
 }
+
+export default withTracker(() => {
+    const selectedGroupId = Session.get("selectedGroupId");
+    Meteor.subscribe("groupTags", selectedGroupId);
+
+    const group = GroupsDB.findOne();
+    const groupTags = group && group.tags ? group.tags : [];
+
+    return {
+        selectedGroupId,
+        groupTags,
+        meteorCall: Meteor.call
+    };
+})(ChatAreaHeader);
