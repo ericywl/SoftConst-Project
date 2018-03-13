@@ -1,6 +1,8 @@
 import React from "react";
 import Modal from "react-modal";
 
+import { GroupsDB } from "../../../api/groups";
+
 export default class ManageTagsModal extends React.Component {
     constructor(props) {
         super(props);

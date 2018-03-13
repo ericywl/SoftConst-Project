@@ -10,6 +10,7 @@ export class ChatAreaFooter extends React.Component {
         };
     }
 
+    // Reset the message input field if user change group
     componentDidUpdate(prevProps, prevState, prevContext) {
         const currentGroupId = this.props.selectedGroupId;
         const prevGroupId = prevProps.selectedGroupId;

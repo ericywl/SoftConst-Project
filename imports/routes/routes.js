@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect, Router, Route, Switch } from "react-router-dom";
 
-import history from "../api/history";
+import history from "../startup/history";
 import Dashboard from "../ui/app/Dashboard";
 import Login from "../ui/auth/Login";
 import Signup from "../ui/auth/Signup";
