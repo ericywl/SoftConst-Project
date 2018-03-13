@@ -20,18 +20,18 @@ if (Meteor.isClient) {
         });
 
         it("should call loginWithPassword with the form data", function() {
-            const email = "eric@test.com";
+            const user = "eric@test.com";
             const password = "password123";
             const spy = expect.createSpy();
             const wrapper = mount(
                 <Login loginWithPassword={spy} isTesting={true} />
             );
 
-            wrapper.ref("email").value = email;
+            wrapper.ref("user").value = user;
             wrapper.ref("password").value = password;
             wrapper.find("form").simulate("submit");
 
-            expect(spy.calls[0].arguments[0]).toEqual({ email });
+            expect(spy.calls[0].arguments[0]).toEqual(user);
             expect(spy.calls[0].arguments[1]).toBe(password);
         });
 

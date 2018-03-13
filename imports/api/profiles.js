@@ -64,6 +64,10 @@ Meteor.methods({
      * @param {String} newBio
      */
     profilesUpdateBio(newBio) {
+        if (!this.userId) {
+            throw new Meteor.Error("not-authorized");
+        }
+
         return ProfilesDB.update(
             { _id: this.userId },
             { $set: { bio: newBio } }

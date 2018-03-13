@@ -22,40 +22,52 @@ if (Meteor.isServer) {
     });
 }
 
+const validatePartialMsg = (partialMsg, userDisplayName) => {
+    new SimpleSchema({
+        groupId: { type: String },
+        content: { type: String },
+        userDisplayName: {
+            type: String,
+            min: 2,
+            max: 30
+        }
+    }).validate({
+        groupId: partialMsg.groupId,
+        content: partialMsg.content,
+        userDisplayName
+    });
+
+    return true;
+};
+
 Meteor.methods({
-    messagesInsert(partialMsg) {
+    messagesInsert(partialMsg, userDisplayName = undefined) {
         if (!this.userId) {
             throw new Meteor.Error("not-authorized");
         }
 
-        new SimpleSchema({
-            groupId: { type: String },
-            content: { type: String }
-        }).validate({
-            groupId: partialMsg.groupId,
-            content: partialMsg.content
-        });
+        validatePartialMsg(partialMsg, userDisplayName);
+
+        // For API tests only
+        if (userDisplayName === undefined) {
+            userDisplayName = ProfilesDB.findOne({ _id: this.userId })
+                .displayName;
+        }
 
         const now = moment().valueOf();
-        const userDisplayName = ProfilesDB.findOne({ _id: this.userId })
-            .displayName;
-
-        return MessagesDB.insert(
-            {
+        try {
+            const result = MessagesDB.insert({
                 groupId: partialMsg.groupId,
                 content: partialMsg.content,
                 userId: this.userId,
                 userDisplayName,
                 sentAt: now
-            },
-            (err, res) => {
-                if (!err) {
-                    GroupsDB.update(
-                        { _id: partialMsg.groupId },
-                        { $set: { lastMessageAt: now } }
-                    );
-                }
-            }
-        );
+            });
+
+            Meteor.call("groupsUpdateLastMessageAt", partialMsg.groupId, now);
+            return result;
+        } catch (err) {
+            throw new Meteor.Error("messages-insert-failed");
+        }
     }
 });

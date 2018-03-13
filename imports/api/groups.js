@@ -110,5 +110,14 @@ Meteor.methods({
         }
 
         return GroupsDB.update({ _id }, { $pull: { tags: formattedTag } });
+    },
+
+    /**
+     * Update last message at, called only when messages are inserted
+     * @param {String} _id
+     * @param {Number} time
+     */
+    groupsUpdateLastMessageAt(_id, time) {
+        return GroupsDB.update({ _id }, { $set: { lastMessageAt: time } });
     }
 });

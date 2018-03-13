@@ -1,13 +1,14 @@
 import expect from "expect";
 
 import { validateNewUserClient, validateNewUserServer } from "./users";
+import { ProfilesDB } from "./profiles";
 
-// test client methods
+/* test client methods */
 if (Meteor.isClient) {
     describe("users", function() {
         it("should allow valid user email and password", function() {
             const validUser = {
-                displayName: "TestUser1",
+                username: "TestUser1",
                 email: "test@example.com",
                 password: "password"
             };
@@ -15,21 +16,21 @@ if (Meteor.isClient) {
             expect(res).toBe(true);
         });
 
-        it("should reject invalid displayName", function() {
-            const invalidDisplayNameUser = {
-                displayName: "1",
+        it("should reject invalid username", function() {
+            const invalidUsernameUser = {
+                username: "1",
                 email: "invalidEmail",
                 password: "password"
             };
 
             expect(() => {
-                validateNewUserClient(invalidDisplayNameUser);
+                validateNewUserClient(invalidUsernameUser);
             }).toThrow();
         });
 
         it("should reject invalid user email", function() {
             const invalidEmailUser = {
-                displayName: "TestUser1",
+                username: "TestUser1",
                 email: "invalidEmail",
                 password: "password"
             };
@@ -41,7 +42,7 @@ if (Meteor.isClient) {
 
         it("should reject invalid password", function() {
             const invalidPasswordUser = {
-                displayName: "TestUser1",
+                username: "TestUser1",
                 email: "test@example.com",
                 password: "pw"
             };
@@ -53,26 +54,28 @@ if (Meteor.isClient) {
     });
 }
 
-// test server methods
+/* test server methods */
 if (Meteor.isServer) {
     describe("users", function() {
-        it("should allow valid email address and displayName", function() {
+        it("should allow valid email address and username", function() {
             const testUser = {
                 emails: [
                     {
                         address: "Test@example.com"
                     }
                 ],
-                displayName: "Nice Name"
+                username: "Nice Name"
             };
+
+            ProfilesDB.remove({});
             const res = validateNewUserServer(testUser);
 
             expect(res).toBe(true);
         });
 
-        it("should reject invalid displayName", function() {
-            const invalidDisplayNameUser = {
-                displayName: "a",
+        it("should reject invalid username", function() {
+            const invalidusernameUser = {
+                username: "a",
                 emails: [
                     {
                         address: "valid@example.com"
@@ -83,13 +86,12 @@ if (Meteor.isServer) {
 
         it("should reject invalid email", function() {
             const invalidEmailUser = {
-                displayName: "testUser",
                 emails: [
                     {
                         address: "Testcom"
                     }
                 ],
-                displayName: "Is Valid Name"
+                username: "Is Valid Name"
             };
 
             expect(() => {
