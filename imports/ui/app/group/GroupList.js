@@ -35,15 +35,17 @@ export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
     Meteor.subscribe("groups");
 
+    const groups = GroupsDB.find()
+        .fetch()
+        .map(group => {
+            return {
+                ...group,
+                selected: group._id === selectedGroupId
+            };
+        });
+
     return {
-        groups: GroupsDB.find({}, { sort: { lastMessageAt: -1 } })
-            .fetch()
-            .map(group => {
-                return {
-                    ...group,
-                    selected: group._id === selectedGroupId
-                };
-            }),
+        groups,
         session: Session
     };
 })(GroupList);
