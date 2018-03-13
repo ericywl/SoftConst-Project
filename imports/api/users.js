@@ -1,41 +1,23 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
-import { ProfileDB } from "./profile.js";
 
-if (Meteor.isServer) {
-    Meteor.publish("userProfile", function(_id) {
-        return Meteor.users.find(
-            {_id},
-            {
-                fields: {
-                    /*displayName: 1,
-                    groups: 1,
-                    tags: 1,
-                    bio: 1*/
-                }
-            }
-        );
-    });
-}
+import { ProfilesDB } from "./profiles.js";
 
 Meteor.methods({
-    /*usersJoinGroup(groupId) {
-        Meteor.users;
-    },*/
     /**
-     * 
-     * @param {String} _id 
-     * @param {String} arg 
+     *
+     * @param {String} _id
+     * @param {String} arg
      */
     usersUpdateBio(_id, arg) {
-        return Meteor.users.update({_id}, {$set: {bio:arg}});
+        return Meteor.users.update({ _id }, { $set: { bio: arg } });
     }
 });
 
 export const validateNewUserClient = user => {
     const email = user.email;
     const password = user.password;
-    const displayName = user.displayName;
+    const username = user.username;
 
     new SimpleSchema({
         email: {
@@ -47,31 +29,31 @@ export const validateNewUserClient = user => {
             min: 7,
             max: 50
         },
-        displayName: {
+        username: {
             type: String,
             min: 2,
             max: 30
         }
-    }).validate({ email, password, displayName });
+    }).validate({ email, password, username });
 
     return true;
 };
 
 export const validateNewUserServer = user => {
     const email = user.emails[0].address;
-    const displayName = user.displayName;
+    const username = user.username;
 
     new SimpleSchema({
         email: {
             type: String,
             regEx: SimpleSchema.RegEx.Email
         },
-        displayName: {
+        username: {
             type: String,
-            min: 1,
+            min: 2,
             max: 30
         }
-    }).validate({ email, displayName });
+    }).validate({ email, username });
 
     return true;
 };
@@ -80,19 +62,13 @@ if (Meteor.isServer) {
     Accounts.validateNewUser(validateNewUserServer);
 
     Accounts.onCreateUser((options, user) => {
-        if (options.displayName) {
-            user.displayName = options.displayName;
+        if (!options.username) {
+            throw new Meteor.Error("username-not-provided");
         }
-        ProfileDB.insert({
-            _id: user._id,
-            displayName: user.displayName,
-            groups: [],
-            tags: [],
-            bio: ""
-        })
-    
+
+        user.username = options.username;
+        Meteor.call("profilesInsert", user._id, user.username);
+
         return user;
     });
 }
-
-    

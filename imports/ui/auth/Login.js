@@ -14,9 +14,9 @@ export class Login extends React.Component {
     onSubmit(event) {
         event.preventDefault();
 
-        let email = this.refs.email.value.trim();
+        let user = this.refs.user.value.trim();
         let password = this.refs.password.value;
-        this.props.loginWithPassword({ email }, password, err => {
+        this.props.loginWithPassword(user, password, err => {
             if (err) {
                 this.setState({
                     error: err.reason
@@ -41,10 +41,10 @@ export class Login extends React.Component {
                         className="boxed-view__form"
                     >
                         <input
-                            type="email"
-                            ref="email"
-                            name="email"
-                            placeholder="Email"
+                            type="text"
+                            ref="user"
+                            name="user"
+                            placeholder="Email or Username"
                         />
                         <input
                             type="password"

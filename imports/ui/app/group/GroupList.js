@@ -44,8 +44,6 @@ export default withTracker(() => {
             };
         });
 
-    console.log(groups);
-
     return {
         groups,
         session: Session

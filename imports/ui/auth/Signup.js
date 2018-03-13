@@ -18,14 +18,15 @@ export class Signup extends React.Component {
 
         let email = this.refs.email.value.trim();
         let password = this.refs.password.value;
-        let displayName = this.refs.displayName.value.trim();
+        let username = this.refs.username.value.trim();
+
         try {
-            validateNewUserClient({ displayName, email, password });
+            validateNewUserClient({ username, email, password });
         } catch (e) {
             return this.setState({ error: e.reason });
         }
 
-        this.props.createUser({ displayName, email, password }, err => {
+        this.props.createUser({ username, email, password }, err => {
             if (err) {
                 this.setState({ error: err.reason });
             } else {
@@ -49,9 +50,9 @@ export class Signup extends React.Component {
                     >
                         <input
                             type="text"
-                            ref="displayName"
-                            name="displayName"
-                            placeholder="Display name"
+                            ref="username"
+                            name="username"
+                            placeholder="Username"
                         />
                         <input
                             type="email"
