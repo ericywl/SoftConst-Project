@@ -10,6 +10,8 @@ Deployed on https://sutd-chat.herokuapp.com.
 
 2.  Open terminal and cd into the project
 
-3.  Run meteor for the production app
+3.  Run "meteor npm install" to get the depencies
 
-4.  Run npm test to test the project using Mocha
+4a. Run "meteor" for the production app
+
+4b. Run "npm test" to test the project using Mocha
