@@ -1,5 +1,26 @@
 import SimpleSchema from "simpl-schema";
 
+if (Meteor.isServer) {
+    Meteor.publish("usersProfile", function() {
+        return Meteor.users.find(
+            {},
+            {
+                fields: {
+                    displayName: 1,
+                    groups: 1,
+                    tags: 1
+                }
+            }
+        );
+    });
+}
+
+Meteor.methods({
+    usersJoinGroup(groupId) {
+        Meteor.users;
+    }
+});
+
 export const validateNewUserClient = user => {
     const email = user.email;
     const password = user.password;
@@ -17,8 +38,8 @@ export const validateNewUserClient = user => {
         },
         displayName: {
             type: String,
-            min: 1,
-            max: 50
+            min: 2,
+            max: 30
         }
     }).validate({ email, password, displayName });
 
@@ -37,18 +58,12 @@ export const validateNewUserServer = user => {
         displayName: {
             type: String,
             min: 1,
-            max: 50
+            max: 30
         }
     }).validate({ email, displayName });
 
     return true;
 };
-
-Meteor.methods({
-    usersJoinGroup(groupId) {
-        Meteor.users;
-    }
-});
 
 if (Meteor.isServer) {
     Meteor.publish("usersProfile", function() {

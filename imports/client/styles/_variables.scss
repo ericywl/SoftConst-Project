@@ -41,6 +41,14 @@ $button-greyed-bg: $light-grey;
 $button-greyed-border-color: $grey;
 $button-greyed-color: $dark-grey;
 
+/* SLIDER */
+$switch-bg-color: darken($grey, 5%);
+$switch-box-height: 34px;
+$switch-box-width: 60px;
+$switch-slider-height: 26px;
+$switch-slider-width: 26px;
+$slider-bg-color: $brand-primary;
+
 /* ITEM */
 $item-select-border-width: 4px;
 

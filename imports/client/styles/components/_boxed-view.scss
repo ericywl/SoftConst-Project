@@ -22,12 +22,19 @@
     padding: 2.4rem;
     text-align: center;
     width: 30rem;
+    outline: none;
+}
+
+.boxed-view__large-box {
+    background: $boxed-view-bg;
+    border: 1px solid $boxed-view-border-color;
+    padding: 2.4rem;
+    text-align: center;
+    width: 40rem;
+    outline: none;
 }
 
 .boxed-view__form {
     display: flex;
     flex-direction: column;
-}
-
-.boxed-view__modal-buttons {
 }

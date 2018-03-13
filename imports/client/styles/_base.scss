@@ -56,10 +56,29 @@ textarea {
     padding: $input-spacing;
 }
 
-input::-webkit-input-placeholder {
-    transition: opacity 0.3s ease;
+textarea {
+    resize: none;
 }
 
-input:focus::-webkit-input-placeholder {
-    opacity: 0.1;
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea {
+    &:focus {
+        outline: none;
+        border-color: $brand-primary;
+    }
+
+    &:focus::-webkit-input-placeholder {
+        opacity: 0.2;
+    }
+
+    &::-webkit-input-placeholder {
+        transition: opacity 0.3s ease;
+    }
+}
+
+.ReactModal__Overlay {
+    outline: none;
 }

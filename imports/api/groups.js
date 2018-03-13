@@ -6,7 +6,25 @@ export const GroupsDB = new Mongo.Collection("groups");
 
 if (Meteor.isServer) {
     Meteor.publish("groups", function() {
-        return GroupsDB.find();
+        if (!this.userId) {
+            this.ready();
+            throw new Meteor.Error("not-authorized");
+        }
+
+        return GroupsDB.find({}, { fields: { name: 1, lastMessageAt: 1 } });
+    });
+
+    Meteor.publish("groupTags", function(groupId) {
+        if (!this.userId) {
+            this.ready();
+            throw new Meteor.Error("not-authorized");
+        }
+
+        new SimpleSchema({
+            groupId: { type: String }
+        }).validate({ groupId });
+
+        return GroupsDB.find({ _id: groupId }, { fields: { tags: 1 } });
     });
 }
 
@@ -16,16 +34,35 @@ Meteor.methods({
      * TODO: check for roles before adding
      * @param {String} name
      */
-    groupsInsert(name = "new group") {
-        if (!this.userId) {
-            throw new Meteor.Error("not-authorized");
-        }
+    groupsInsert(partialGroup) {
+        if (!this.userId) throw new Meteor.Error("not-authorized");
+
+        new SimpleSchema({
+            name: {
+                type: String,
+                min: 3,
+                max: 30
+            },
+            description: {
+                type: String,
+                max: 50
+            },
+            isPrivate: {
+                type: Boolean
+            }
+        }).validate({
+            name: partialGroup.name,
+            description: partialGroup.description,
+            isPrivate: partialGroup.isPrivate
+        });
 
         return GroupsDB.insert({
-            name,
+            name: partialGroup.name,
+            description: partialGroup.description,
+            isPrivate: partialGroup.isPrivate,
             tags: [],
-            isPrivate: false,
-            lastMessageAt: moment().valueOf()
+            lastMessageAt: moment().valueOf(),
+            createdBy: this.userId
         });
     },
 
@@ -42,19 +79,38 @@ Meteor.methods({
         return GroupsDB.remove({ _id });
     },
 
+    /**
+     * Add tag to the group identified by groupId
+     * TODO: check for roles before adding
+     * @param {String} _id
+     * @param {String} tag
+     */
     groupsAddTag(_id, tag) {
         const formattedTag = tag.trim();
         if (!this.userId) {
             throw new Meteor.Error("not-authorized");
         }
 
+        if (!GroupsDB.findOne({ _id })) {
+            throw new Meteor.Error("group-not-found");
+        }
+
         return GroupsDB.update({ _id }, { $addToSet: { tags: formattedTag } });
     },
 
+    /**
+     * Remove tag from the group identified by groupId if exists
+     * @param {String} _id
+     * @param {String} tag
+     */
     groupsRemoveTag(_id, tag) {
         const formattedTag = tag.trim();
         if (!this.userId) {
             throw new Meteor.Error("not-authorized");
+        }
+
+        if (!GroupsDB.findOne({ _id })) {
+            throw new Meteor.Error("group-not-found");
         }
 
         if (!GroupsDB.findOne({ _id, tags: formattedTag })) {
