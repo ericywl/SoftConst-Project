@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Modal from "react-modal";
 import { withTracker } from "meteor/react-meteor-data";
 
-export default class GroupAddModal extends React.Component {
+export default class AddGroupModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -50,7 +50,7 @@ export default class GroupAddModal extends React.Component {
                         type="text"
                         placeholder="Name"
                         value={this.state.groupName}
-                        onChange={this.onNameChange.bind(this)}
+                        onChange={this.handleNameChange.bind(this)}
                     />
 
                     <textarea
@@ -59,7 +59,7 @@ export default class GroupAddModal extends React.Component {
                         type="text"
                         placeholder="Description"
                         value={this.state.groupDesc}
-                        onChange={this.onDescChange.bind(this)}
+                        onChange={this.handleDescChange.bind(this)}
                     />
 
                     <div className="switch">
@@ -82,7 +82,7 @@ export default class GroupAddModal extends React.Component {
                     <button
                         type="button"
                         className="button"
-                        onClick={this.onSubmit.bind(this)}
+                        onClick={this.handleSubmit.bind(this)}
                     >
                         Create Group
                     </button>
@@ -99,7 +99,7 @@ export default class GroupAddModal extends React.Component {
         );
     }
 
-    onSubmit(event) {
+    handleSubmit(event) {
         const partialGroup = {
             name: this.state.groupName,
             description: this.state.groupDesc,
@@ -112,7 +112,7 @@ export default class GroupAddModal extends React.Component {
         });
     }
 
-    onNameChange(event) {
+    handleNameChange(event) {
         const inputValue = event.target.value;
         const inValLen = inputValue.trim().length;
         if (inValLen > 30) return;
@@ -121,7 +121,7 @@ export default class GroupAddModal extends React.Component {
         this.setState({ groupName: inputValue });
     }
 
-    onDescChange(event) {
+    handleDescChange(event) {
         const inputValue = event.target.value;
         const inValLen = inputValue.trim().length;
         if (inValLen > 50) return;

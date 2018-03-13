@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
-import GroupAddModal from "./GroupAddModal";
+import AddGroupModal from "./AddGroupModal";
 
 export class GroupListHeader extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ export class GroupListHeader extends React.Component {
                     Create group
                 </button>
 
-                <GroupAddModal
+                <AddGroupModal
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
                         this.child = ref;

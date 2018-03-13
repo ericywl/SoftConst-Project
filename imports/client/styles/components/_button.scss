@@ -1,6 +1,6 @@
 .button {
     background-color: $button-bg;
-    border: none;
+    border: 0.5px solid $button-bg;
     color: $button-color;
     cursor: pointer;
     font-size: $base-font-size;
@@ -8,6 +8,10 @@
     margin-bottom: $space;
     padding: $input-spacing;
     text-transform: uppercase;
+}
+
+.button--tag {
+    margin-left: $space;
 }
 
 .button--title {

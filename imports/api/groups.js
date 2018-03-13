@@ -11,7 +11,13 @@ if (Meteor.isServer) {
             throw new Meteor.Error("not-authorized");
         }
 
-        return GroupsDB.find({}, { fields: { name: 1, lastMessageAt: 1 } });
+        return GroupsDB.find(
+            {},
+            {
+                fields: { name: 1, lastMessageAt: 1, tags: 1 },
+                sort: { lastMessageAt: 1 }
+            }
+        );
     });
 
     Meteor.publish("groupTags", function(groupId) {
