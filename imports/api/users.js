@@ -55,13 +55,13 @@ export const validateNewUserServer = user => {
         }
     }).validate({ email, username });
 
+    Meteor.call("profilesInsert", user._id, user.username);
+
     return true;
 };
 
 if (Meteor.isServer) {
-    if (Accounts.validateNewUser(validateNewUserServer)) {
-        Meteor.call("profilesInsert", user._id, user.username);
-    }
+    Accounts.validateNewUser(validateNewUserServer);
 
     Accounts.onCreateUser((options, user) => {
         if (!options.username) {

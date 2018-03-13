@@ -8,6 +8,7 @@ if (Meteor.isClient) {
     describe("users", function() {
         it("should allow valid user email and password", function() {
             const validUser = {
+                _id: "testId1",
                 username: "TestUser1",
                 email: "test@example.com",
                 password: "password"
@@ -18,6 +19,7 @@ if (Meteor.isClient) {
 
         it("should reject invalid username", function() {
             const invalidUsernameUser = {
+                _id: "testId1",
                 username: "1",
                 email: "invalidEmail",
                 password: "password"
@@ -30,6 +32,7 @@ if (Meteor.isClient) {
 
         it("should reject invalid user email", function() {
             const invalidEmailUser = {
+                _id: "testId1",
                 username: "TestUser1",
                 email: "invalidEmail",
                 password: "password"
@@ -42,6 +45,7 @@ if (Meteor.isClient) {
 
         it("should reject invalid password", function() {
             const invalidPasswordUser = {
+                _id: "testId1",
                 username: "TestUser1",
                 email: "test@example.com",
                 password: "pw"
@@ -59,6 +63,7 @@ if (Meteor.isServer) {
     describe("users", function() {
         it("should allow valid email address and username", function() {
             const testUser = {
+                _id: "testId1",
                 emails: [
                     {
                         address: "Test@example.com"
@@ -75,6 +80,7 @@ if (Meteor.isServer) {
 
         it("should reject invalid username", function() {
             const invalidusernameUser = {
+                _id: "testId1",
                 username: "a",
                 emails: [
                     {
@@ -86,6 +92,7 @@ if (Meteor.isServer) {
 
         it("should reject invalid email", function() {
             const invalidEmailUser = {
+                _id: "testId1",
                 emails: [
                     {
                         address: "Testcom"

@@ -46,13 +46,13 @@ Meteor.methods({
             throw new Meteor.Error("not-authorized");
         }
 
-        validatePartialMsg(partialMsg, userDisplayName);
-
         // For API tests only
-        if (userDisplayName === undefined) {
+        if (!userDisplayName) {
             userDisplayName = ProfilesDB.findOne({ _id: this.userId })
                 .displayName;
         }
+
+        validatePartialMsg(partialMsg, userDisplayName);
 
         const now = moment().valueOf();
         try {

@@ -15,8 +15,7 @@ export class ChatAreaHeader extends React.Component {
                 </button>
 
                 <ManageTagsModal
-                    selectedGroupId={this.props.selectedGroup._id}
-                    groupTags={this.props.selectedGroup.tags}
+                    selectedGroup={this.props.selectedGroup}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
                         this.child = ref;

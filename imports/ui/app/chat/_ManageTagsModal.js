@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import FlipMove from "react-flip-move";
 import Modal from "react-modal";
 
 import { GroupsDB } from "../../../api/groups";
@@ -28,44 +29,80 @@ export default class ManageTagsModal extends React.Component {
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <div className="boxed-view__form">
-                    <div className="tags">{this.renderTags()}</div>
-                    <form onSubmit={this.handleSubmit.bind(this)}>
-                        <input
-                            ref="newTag"
-                            name="newTag"
-                            type="text"
-                            value={this.state.newTag}
-                            onChange={this.handleTagChange.bind(this)}
-                        />
-                        <button className="button button--tag">Add tags</button>
-                    </form>
-                </div>
+                <h3 className="tags__title">
+                    {this.props.selectedGroup.name} Tags
+                </h3>
+                <FlipMove
+                    className="tags"
+                    duration={100}
+                    enterAnimation="fade"
+                    leaveAnimation="fade"
+                >
+                    {this.renderTags()}
+                </FlipMove>
+
+                <form
+                    className="boxed-view__form--row"
+                    onSubmit={this.handleSubmit.bind(this)}
+                >
+                    <input
+                        ref="newTag"
+                        name="newTag"
+                        className="tags__input"
+                        type="text"
+                        value={this.state.newTag}
+                        onChange={this.handleTagChange.bind(this)}
+                    />
+                    <button className="button button--tag">Add tags</button>
+                </form>
             </Modal>
         );
     }
 
     renderTags() {
-        return this.props.groupTags.map((tag, index) => (
-            <span
-                style={{ float: "left", padding: "0 0.5rem" }}
-                key={`tag${index}`}
-            >
-                #{tag}
+        if (this.props.selectedGroup.tags.length === 0) {
+            return (
+                <div className="empty-tags">There are no tags currently.</div>
+            );
+        }
+
+        return this.props.selectedGroup.tags.map((tag, index) => (
+            <span className="tags__tag" key={`tag${index}`}>
+                <span className="tags__tag--hash"># </span>
+                <span>{tag}</span>
+                <img
+                    className="tags__tag--cross"
+                    src="/images/round_x.svg"
+                    onClick={this.handleTagDelete.bind(this)}
+                />
             </span>
         ));
     }
 
     handleTagChange(event) {
         event.preventDefault();
-        this.setState({ newTag: event.target.value.trim() });
+        const input = event.target.value.trim();
+        if (input.length > 33) return;
+
+        this.setState({ newTag: input });
+    }
+
+    handleTagDelete(event) {
+        event.preventDefault();
+        const tagName = event.target.parentElement.children[1].innerHTML;
+
+        this.props.meteorCall(
+            "groupsRemoveTag",
+            this.props.selectedGroup._id,
+            tagName
+        );
     }
 
     handleSubmit(event) {
         event.preventDefault();
         this.props.meteorCall(
             "groupsAddTag",
-            this.props.selectedGroupId,
+            this.props.selectedGroup._id,
             this.state.newTag,
             (err, res) => {
                 if (err) {
@@ -87,6 +124,5 @@ export default class ManageTagsModal extends React.Component {
 }
 
 ManageTagsModal.propTypes = {
-    selectedGroupId: PropTypes.string.isRequired,
-    groupTags: PropTypes.array.isRequired
+    selectedGroup: PropTypes.object.isRequired
 };

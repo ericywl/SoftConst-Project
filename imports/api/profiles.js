@@ -21,21 +21,6 @@ if (Meteor.isServer) {
 
 Meteor.methods({
     /**
-     * Insert new profile, called only on new user creation
-     * @param {String} _id
-     * @param {String} displayName
-     */
-    profilesInsert(_id, displayName) {
-        return ProfilesDB.insert({
-            _id: _id,
-            displayName: displayName,
-            groups: [],
-            tags: [],
-            bio: ""
-        });
-    },
-
-    /**
      * Add a new tag to current user
      * @param {String} _id
      * @param {String} tag
@@ -72,5 +57,24 @@ Meteor.methods({
             { _id: this.userId },
             { $set: { bio: newBio } }
         );
+    },
+
+    /**
+     * Insert new profile, called only on new user creation
+     * @param {String} _id
+     * @param {String} displayName
+     */
+    profilesInsert(_id, displayName) {
+        if (Meteor.isClient) {
+            throw new Meteor.Error("access-denied");
+        }
+
+        return ProfilesDB.insert({
+            _id: _id,
+            displayName: displayName,
+            groups: [],
+            tags: [],
+            bio: ""
+        });
     }
 });

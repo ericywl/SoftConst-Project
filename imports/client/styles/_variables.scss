@@ -9,7 +9,7 @@ $dark-red: #f74d4d;
 /* BODY */
 $body-bg-color: #f3f3f3;
 $body-default-color: #333333;
-$body-default-font: Helvetica, Arial, sans-serif;
+$body-default-font: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 /* SPACING */
 $space: 1.4rem;
@@ -51,6 +51,10 @@ $slider-bg-color: $brand-primary;
 
 /* ITEM */
 $item-select-border-width: 4px;
+
+/* TAGS */
+$tags-tag-border-radius: 1.4rem;
+$tags-tag-bg-color: lighten($grey, 5%);
 
 /* BOXED VIEW */
 $boxed-view-overlay-bg: $grey;
