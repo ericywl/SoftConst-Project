@@ -10,6 +10,7 @@ import "../startup/simpl-schema-config";
 if (Meteor.isClient) {
     Meteor.startup(() => {
         Session.set("selectedGroupId", "");
+        Session.set("searchQuery", "");
         Session.set("isNavOpen", false);
 
         Tracker.autorun(() => {

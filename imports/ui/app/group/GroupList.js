@@ -44,13 +44,33 @@ export default withTracker(() => {
                 ...group,
                 selected: group._id === selectedGroupId
             };
-        })
-        .filter(group => {
-            return searchStrip(group.name).indexOf(searchQuery) !== -1;
         });
 
+    const queriedGroups = groupsFilter(groups, searchQuery);
+
     return {
-        groups,
+        groups: queriedGroups,
         session: Session
     };
 })(GroupList);
+
+const groupsFilter = (groups, query) => {
+    if (!groups) throw new Meteor.Error("filter-groups-not-provided");
+    if (!query) return groups;
+
+    if (query[0] === "#") {
+        const queryLen = query.length - 1;
+        return groups.filter(group => {
+            for (let i = 0; i < group.tags.length; i++) {
+                if (group.tags[i].slice(0, queryLen) === query.slice(1))
+                    return true;
+            }
+
+            return false;
+        });
+    }
+
+    return groups.filter(
+        group => searchStrip(group.name).indexOf(query) !== -1
+    );
+};

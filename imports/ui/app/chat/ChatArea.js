@@ -24,7 +24,7 @@ export class ChatArea extends React.Component {
 
         return (
             <div>
-                <ChatAreaHeader />
+                <ChatAreaHeader selectedGroup={this.props.selectedGroup} />
 
                 <FlipMove maintainContainerHeight={true}>
                     <MessageList />
@@ -42,7 +42,12 @@ ChatArea.propTypes = {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
+    Meteor.subscribe("groups", selectedGroupId);
+
+    const selectedGroup = GroupsDB.findOne({ _id: selectedGroupId });
+
     return {
+        selectedGroup,
         selectedGroupId
     };
 })(ChatArea);

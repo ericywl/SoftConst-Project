@@ -10,6 +10,21 @@ export class ChatAreaFooter extends React.Component {
         };
     }
 
+    render() {
+        return (
+            <div>
+                <form onSubmit={this.handleSubmitMessage.bind(this)}>
+                    <input
+                        ref="msgInput"
+                        type="text"
+                        value={this.state.input}
+                        onChange={this.handleInputChange.bind(this)}
+                    />
+                </form>
+            </div>
+        );
+    }
+
     // Reset the message input field if user change group
     componentDidUpdate(prevProps, prevState, prevContext) {
         const currentGroupId = this.props.selectedGroupId;
@@ -43,21 +58,6 @@ export class ChatAreaFooter extends React.Component {
     handleInputChange(event) {
         const input = event.target.value;
         this.setState({ input });
-    }
-
-    render() {
-        return (
-            <div>
-                <form onSubmit={this.handleSubmitMessage.bind(this)}>
-                    <input
-                        ref="msgInput"
-                        type="text"
-                        value={this.state.input}
-                        onChange={this.handleInputChange.bind(this)}
-                    />
-                </form>
-            </div>
-        );
     }
 }
 

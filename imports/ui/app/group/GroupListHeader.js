@@ -32,6 +32,7 @@ export class GroupListHeader extends React.Component {
 
                 <input
                     type="search"
+                    value={this.state.search}
                     placeholder="Search for groups"
                     onChange={this.handleSearchChange.bind(this)}
                 />
@@ -40,10 +41,13 @@ export class GroupListHeader extends React.Component {
     }
 
     handleSearchChange(event) {
-        const search = searchStrip(event.target.value);
+        let newSearch = searchStrip(event.target.value);
+        if (newSearch[0] === "#") {
+            newSearch = newSearch.trim();
+        } else if (newSearch.slice(-1) === "#") return;
 
-        this.setState({ search });
-        this.props.session.set("searchQuery", search);
+        this.setState({ search: newSearch });
+        this.props.session.set("searchQuery", newSearch);
     }
 }
 

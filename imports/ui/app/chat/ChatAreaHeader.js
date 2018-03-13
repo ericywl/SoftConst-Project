@@ -8,13 +8,15 @@ export class ChatAreaHeader extends React.Component {
     render() {
         return (
             <div>
+                <h1>{this.props.selectedGroup.name}</h1>
+
                 <button onClick={() => this.child.toggleModal()}>
                     Manage group tags
                 </button>
 
                 <ManageTagsModal
-                    selectedGroupId={this.props.selectedGroupId}
-                    groupTags={this.props.groupTags}
+                    selectedGroupId={this.props.selectedGroup._id}
+                    groupTags={this.props.selectedGroup.tags}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
                         this.child = ref;
@@ -26,15 +28,7 @@ export class ChatAreaHeader extends React.Component {
 }
 
 export default withTracker(() => {
-    const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groups", selectedGroupId);
-
-    const group = GroupsDB.findOne({ _id: selectedGroupId });
-    const groupTags = group && group.tags ? group.tags : [];
-
     return {
-        selectedGroupId,
-        groupTags,
         meteorCall: Meteor.call
     };
 })(ChatAreaHeader);
