@@ -5,13 +5,14 @@ import moment from "moment";
 
 export class Message extends React.Component {
     render() {
-        const userName = this.props.message.userName;
+        const userDisplayName = this.props.message.userDisplayName;
         const messageSentAt = moment(this.props.message.sentAt).calendar();
 
         return (
             <div>
                 <p>
-                    {userName} ({messageSentAt}) - {this.props.message.content}
+                    {userDisplayName} ({messageSentAt}) -{" "}
+                    {this.props.message.content}
                 </p>
             </div>
         );

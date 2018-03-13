@@ -67,6 +67,8 @@ ChatAreaFooter.propTypes = {
 };
 
 export default withTracker(() => {
+    Meteor.subscribe("profiles", Meteor.userId());
+
     return {
         meteorCall: Meteor.call
     };

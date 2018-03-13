@@ -3,6 +3,7 @@ import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
 import { GroupsDB } from "./groups";
+import { ProfilesDB } from "./profiles";
 
 export const MessagesDB = new Mongo.Collection("messages");
 
@@ -17,7 +18,7 @@ if (Meteor.isServer) {
             groupId: { type: String }
         }).validate({ groupId });
 
-        return MessagesDB.find({ groupId }, { sort: { sentAt: 1 } });
+        return MessagesDB.find({ groupId });
     });
 }
 
@@ -36,12 +37,15 @@ Meteor.methods({
         });
 
         const now = moment().valueOf();
+        const userDisplayName = ProfilesDB.findOne({ _id: this.userId })
+            .displayName;
+
         return MessagesDB.insert(
             {
                 groupId: partialMsg.groupId,
                 content: partialMsg.content,
                 userId: this.userId,
-                userName: Meteor.user().displayName,
+                userDisplayName,
                 sentAt: now
             },
             (err, res) => {
