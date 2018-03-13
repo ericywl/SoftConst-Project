@@ -20,58 +20,57 @@ if (Meteor.isClient) {
         });
 
         it("should call createUser with the form data", function() {
-            const displayName = "Eric1";
+            const username = "Eric1";
             const email = "eric@test.com";
             const password = "password123";
 
             const spy = expect.createSpy();
             const wrapper = mount(<Signup createUser={spy} isTesting={true} />);
 
-            wrapper.ref("displayName").value = displayName;
+            wrapper.ref("username").value = username;
             wrapper.ref("email").value = email;
             wrapper.ref("password").value = password;
             wrapper.find("form").simulate("submit");
 
             expect(spy.calls[0].arguments[0]).toEqual({
-                displayName,
+                username,
                 email,
                 password
             });
         });
 
-        it("should set error if invalid displayName", function() {
-            const displayName1 = "";
-            const displayName2 =
-                "ThisIsAVeryLongDisplayNameThatWillFailTheTest";
+        it("should set error if invalid username", function() {
+            const username1 = "";
+            const username2 = "ThisIsAVeryLongusernameThatWillFailTheTest";
             const email = "eric@test.com";
             const password = "password123";
 
             const spy = expect.createSpy();
             const wrapper = mount(<Signup createUser={spy} isTesting={true} />);
 
-            // submit password, email and invalid displayName (empty)
-            wrapper.ref("displayName").value = displayName1;
+            // submit password, email and invalid username (empty)
+            wrapper.ref("username").value = username1;
             wrapper.ref("email").value = email;
             wrapper.ref("password").value = password;
             wrapper.find("form").simulate("submit");
             expect(wrapper.state("error").length).toBeGreaterThan(0);
 
-            // change displayName field to invalid displayName2 (too long)
-            wrapper.ref("displayName").value = displayName2;
+            // change username field to invalid username2 (too long)
+            wrapper.ref("username").value = username2;
             wrapper.find("form").simulate("submit");
             expect(wrapper.state("error").length).toBeGreaterThan(0);
         });
 
         it("should set error if invalid email", function() {
-            const displayName = "Eric1";
+            const username = "Eric1";
             const email = "eric";
             const password = "password123";
 
             const spy = expect.createSpy();
             const wrapper = mount(<Signup createUser={spy} isTesting={true} />);
 
-            // submit displayName, password and invalid email
-            wrapper.ref("displayName").value = displayName;
+            // submit username, password and invalid email
+            wrapper.ref("username").value = username;
             wrapper.ref("email").value = email;
             wrapper.ref("password").value = password;
             wrapper.find("form").simulate("submit");
@@ -79,7 +78,7 @@ if (Meteor.isClient) {
         });
 
         it("should set error if invalid password", function() {
-            const displayName = "Eric1";
+            const username = "Eric1";
             const email = "eric@test.com";
             const password1 = "pass";
             const password2 =
@@ -88,8 +87,8 @@ if (Meteor.isClient) {
             const spy = expect.createSpy();
             const wrapper = mount(<Signup createUser={spy} isTesting={true} />);
 
-            // submit displayName, email and invalid password1 (too short)
-            wrapper.ref("displayName").value = displayName;
+            // submit username, email and invalid password1 (too short)
+            wrapper.ref("username").value = username;
             wrapper.ref("email").value = email;
             wrapper.ref("password").value = password1;
             wrapper.find("form").simulate("submit");
@@ -104,12 +103,12 @@ if (Meteor.isClient) {
         it("should set state error to createUser callback error", function() {
             // simulate an existing user in database
             Accounts.createUser({
-                displayName: "Eric1",
+                username: "Eric1",
                 email: "existing@db.com",
                 password: "password123"
             });
 
-            const displayName = "RandName";
+            const username = "RandName";
             const email = "existing@db.com";
             const password = "password123";
             const reason = "Some error happened!";
@@ -118,7 +117,7 @@ if (Meteor.isClient) {
             const wrapper = mount(<Signup createUser={spy} isTesting={true} />);
 
             // try to create user with same email
-            wrapper.ref("displayName").value = displayName;
+            wrapper.ref("username").value = username;
             wrapper.ref("email").value = email;
             wrapper.ref("password").value = password;
             wrapper.find("form").simulate("submit");

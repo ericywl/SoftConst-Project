@@ -9,6 +9,9 @@ import ChatAreaHeader from "./ChatAreaHeader";
 import ChatAreaFooter from "./ChatAreaFooter";
 import { GroupsDB } from "../../../api/groups";
 
+/**
+ * Houses the list of messages, chat header and chat footer
+ */
 export class ChatArea extends React.Component {
     render() {
         if (!this.props.selectedGroupId) {

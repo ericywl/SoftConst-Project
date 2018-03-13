@@ -14,23 +14,9 @@ if (Meteor.isServer) {
         return GroupsDB.find(
             {},
             {
-                fields: { name: 1, lastMessageAt: 1, tags: 1 },
-                sort: { lastMessageAt: 1 }
+                fields: { name: 1, lastMessageAt: 1, tags: 1 }
             }
         );
-    });
-
-    Meteor.publish("groupTags", function(groupId) {
-        if (!this.userId) {
-            this.ready();
-            throw new Meteor.Error("not-authorized");
-        }
-
-        new SimpleSchema({
-            groupId: { type: String }
-        }).validate({ groupId });
-
-        return GroupsDB.find({ _id: groupId }, { fields: { tags: 1 } });
     });
 }
 

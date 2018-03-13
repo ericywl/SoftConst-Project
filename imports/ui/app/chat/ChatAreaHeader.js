@@ -1,7 +1,7 @@
 import React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 
-import ManageTagsModal from "./ManageTagsModal";
+import ManageTagsModal from "./_ManageTagsModal";
 import { GroupsDB } from "../../../api/groups";
 
 export class ChatAreaHeader extends React.Component {
@@ -27,9 +27,9 @@ export class ChatAreaHeader extends React.Component {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groupTags", selectedGroupId);
+    Meteor.subscribe("groups", selectedGroupId);
 
-    const group = GroupsDB.findOne();
+    const group = GroupsDB.findOne({ _id: selectedGroupId });
     const groupTags = group && group.tags ? group.tags : [];
 
     return {

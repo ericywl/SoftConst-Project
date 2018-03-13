@@ -35,7 +35,7 @@ export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
     Meteor.subscribe("groups");
 
-    const groups = GroupsDB.find()
+    const groups = GroupsDB.find({}, { sort: { lastMessageAt: -1 } })
         .fetch()
         .map(group => {
             return {
