@@ -5,7 +5,7 @@ export const ProfileDB = new Mongo.Collection("profiles");
 
 if (Meteor.isServer) {
     Meteor.publish("profiles", function(_id) {
-        return Meteor.users.find(
+        return ProfileDB.find(
             {_id},
             {
                 fields: {
@@ -40,10 +40,10 @@ Meteor.methods({
      * @param {String} arg 
      */
     profilesUpdateBio(_id, arg) {
-        return Meteor.users.update({_id}, {$set: {bio:arg}});
+        return ProfileDB.update({_id}, {$set: {bio:arg}});
     }
 });
-
+/*
 export const validateNewUserClient = user => {
     const email = user.email;
     const password = user.password;
@@ -102,4 +102,4 @@ if (Meteor.isServer) {
 
         return user;
     });
-}
+}*/

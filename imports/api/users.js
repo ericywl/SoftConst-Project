@@ -79,14 +79,14 @@ export const validateNewUserServer = user => {
 };
 
 if (Meteor.isServer) {
-    Meteor.subscribe("profiles", Meteor.userId());
+    //Meteor.subscribe("profiles", "");
     Accounts.validateNewUser(validateNewUserServer);
 
     Accounts.onCreateUser((options, user) => {
         if (options.displayName) {
             user.displayName = options.displayName;
         }
-        Meteor.call("profilesInsert", Meteor.userId(), user.displayName)
+        //Meteor.call("profilesInsert", Meteor.userId(), user.displayName)
         /*
         user.groups = [];
         user.tags = [];
