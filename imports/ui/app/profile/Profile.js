@@ -18,7 +18,7 @@ export class Profile extends React.Component {
 
     onUpdateBio() {
         //console.log(this.bio);
-        Meteor.call("usersUpdateBio", Meteor.userId(),this.bio, (err, res) => {
+        Meteor.call("profilesUpdateBio", Meteor.userId(),this.bio, (err, res) => {
             err ? console.log({ error: err.reason }) : null;
         });
         //this.render();
@@ -60,7 +60,7 @@ Profile.propTypes = {
 };
 
 export default withTracker(() => {
-    Meteor.subscribe("userProfile", Meteor.userId());
+    Meteor.subscribe("profiles", Meteor.userId());
     var doc = Meteor.users.find().fetch()[0];
     //console.log(doc.bio);
     return {

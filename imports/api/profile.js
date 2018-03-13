@@ -1,19 +1,18 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
-import { ProfileDB } from "./profile.js";
 
-//export const UsersDB = new Mongo.Collection("usersProfile");
+export const ProfileDB = new Mongo.Collection("profiles");
 
 if (Meteor.isServer) {
-    Meteor.publish("userProfile", function(_id) {
+    Meteor.publish("profiles", function(_id) {
         return Meteor.users.find(
             {_id},
             {
                 fields: {
-                    /*displayName: 1,
+                    displayName: 1,
                     groups: 1,
                     tags: 1,
-                    bio: 1*/
+                    bio: 1
                 }
             }
         );
@@ -21,15 +20,26 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-    /*usersJoinGroup(groupId) {
-        Meteor.users;
-    },*/
+    /**
+     * 
+     * @param {String} _id 
+     * @param {String} displayName 
+     */
+    profilesInsert(_id, displayName) {
+        return ProfileDB.insert({
+                _id: _id,
+                displayName: displayName,
+                groups: [],
+                tags: [],
+                bio: ""
+        });
+    },
     /**
      * 
      * @param {String} _id 
      * @param {String} arg 
      */
-    usersUpdateBio(_id, arg) {
+    profilesUpdateBio(_id, arg) {
         return Meteor.users.update({_id}, {$set: {bio:arg}});
     }
 });
@@ -79,21 +89,17 @@ export const validateNewUserServer = user => {
 };
 
 if (Meteor.isServer) {
-    Meteor.subscribe("profiles", Meteor.userId());
     Accounts.validateNewUser(validateNewUserServer);
 
     Accounts.onCreateUser((options, user) => {
         if (options.displayName) {
             user.displayName = options.displayName;
         }
-        Meteor.call("profilesInsert", Meteor.userId(), user.displayName)
-        /*
+
         user.groups = [];
         user.tags = [];
         user.bio = "";
-        */
+
         return user;
     });
 }
-
-    
