@@ -2,8 +2,6 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import { ProfileDB } from "./profile.js";
 
-//export const UsersDB = new Mongo.Collection("usersProfile");
-
 if (Meteor.isServer) {
     Meteor.publish("userProfile", function(_id) {
         return Meteor.users.find(
@@ -79,19 +77,20 @@ export const validateNewUserServer = user => {
 };
 
 if (Meteor.isServer) {
-    //Meteor.subscribe("profiles", "");
     Accounts.validateNewUser(validateNewUserServer);
 
     Accounts.onCreateUser((options, user) => {
         if (options.displayName) {
             user.displayName = options.displayName;
         }
-        //Meteor.call("profilesInsert", Meteor.userId(), user.displayName)
-        /*
-        user.groups = [];
-        user.tags = [];
-        user.bio = "";
-        */
+        ProfileDB.insert({
+            _id: user._id,
+            displayName: user.displayName,
+            groups: [],
+            tags: [],
+            bio: ""
+        })
+    
         return user;
     });
 }

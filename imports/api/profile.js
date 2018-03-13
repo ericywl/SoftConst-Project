@@ -21,21 +21,37 @@ if (Meteor.isServer) {
 
 Meteor.methods({
     /**
-     * 
+     * Method to insert new profile, called only on new user creation
      * @param {String} _id 
      * @param {String} displayName 
      */
     profilesInsert(_id, displayName) {
         return ProfileDB.insert({
-                _id: _id,
-                displayName: displayName,
-                groups: [],
-                tags: [],
-                bio: ""
+            _id: _id,
+            displayName: displayName,
+            groups: [],
+            tags: [],
+            bio: ""
         });
     },
     /**
-     * 
+     * Method to add tag to current set of user specified by _id
+     * @param {String} _id 
+     * @param {String} tag 
+     */
+    profilesAddTag(_id, tag) {
+        var doc = ProfileDB.findOne({_id:_id});
+        if (!doc) {
+            console.log(_id + " does not exist");
+        } else {
+            return ProfileDB.update({_id:_id}, {$addToSet: {tags:tag}});
+        }
+    },
+    profilesRemoveTag(_id, tag) {
+
+    },
+    /**
+     * Method to update the bio of user specified by _id
      * @param {String} _id 
      * @param {String} arg 
      */
@@ -43,63 +59,3 @@ Meteor.methods({
         return ProfileDB.update({_id}, {$set: {bio:arg}});
     }
 });
-/*
-export const validateNewUserClient = user => {
-    const email = user.email;
-    const password = user.password;
-    const displayName = user.displayName;
-
-    new SimpleSchema({
-        email: {
-            type: String,
-            regEx: SimpleSchema.RegEx.Email
-        },
-        password: {
-            type: String,
-            min: 7,
-            max: 50
-        },
-        displayName: {
-            type: String,
-            min: 2,
-            max: 30
-        }
-    }).validate({ email, password, displayName });
-
-    return true;
-};
-
-export const validateNewUserServer = user => {
-    const email = user.emails[0].address;
-    const displayName = user.displayName;
-
-    new SimpleSchema({
-        email: {
-            type: String,
-            regEx: SimpleSchema.RegEx.Email
-        },
-        displayName: {
-            type: String,
-            min: 1,
-            max: 30
-        }
-    }).validate({ email, displayName });
-
-    return true;
-};
-
-if (Meteor.isServer) {
-    Accounts.validateNewUser(validateNewUserServer);
-
-    Accounts.onCreateUser((options, user) => {
-        if (options.displayName) {
-            user.displayName = options.displayName;
-        }
-
-        user.groups = [];
-        user.tags = [];
-        user.bio = "";
-
-        return user;
-    });
-}*/

@@ -1,11 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
-//import FlipMove from "react-flip-move";
 
 import { ProfileDB } from "../../../api/profile.js"
 
-export class Profile extends React.Component {
+export class ProfileTagsList extends React.Component {
     constructor(props) {
         super(props);
     }
