@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
-import history from "../../api/history";
+import history from "../../startup/history";
 
 export const PrivateHeader = props => {
     const navImgSrc = props.isNavOpen ? "/images/x.svg" : "/images/bars.svg";
