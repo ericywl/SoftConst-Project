@@ -1,6 +1,7 @@
-import React from "react-modal";
+import React from "react";
+import Modal from "react-modal";
 
-export class AddTagModal extends React.Component {
+export default class ManageTagsModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -11,12 +12,14 @@ export class AddTagModal extends React.Component {
     }
 
     render() {
+        const modalStyles = { overlay: { zIndex: 10 } };
+
         return (
             <Modal
                 isOpen={this.state.modalIsOpen}
                 contentLabel="Create New Group"
                 onAfterOpen={() => {}}
-                onRequestClose={this.modalToggle.bind(this)}
+                onRequestClose={this.toggleModal.bind(this)}
                 className="boxed-view__large-box"
                 overlayClassName="boxed-view boxed-view--modal"
                 shouldReturnFocusAfterClose={false}
@@ -71,7 +74,7 @@ export class AddTagModal extends React.Component {
         this.setState({ newTag: "" });
     }
 
-    modalToggle() {
+    toggleModal() {
         this.setState({
             modalIsOpen: !this.state.modalIsOpen,
             newTag: "",
@@ -79,16 +82,3 @@ export class AddTagModal extends React.Component {
         });
     }
 }
-
-export default withTracker(() => {
-    const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groupTags", selectedGroupId);
-
-    const group = GroupsDB.findOne();
-    const groupTags = group && group.tags ? group.tags : [];
-
-    return {
-        groupTags,
-        meteorCall: Meteor.call
-    };
-})(AddTagModal);

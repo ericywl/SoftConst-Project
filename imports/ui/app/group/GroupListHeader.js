@@ -14,7 +14,7 @@ export class GroupListHeader extends React.Component {
             <div className="item-list__header">
                 <button
                     className="button"
-                    onClick={() => this.child.modalToggle()}
+                    onClick={() => this.child.toggleModal()}
                 >
                     Create group
                 </button>
