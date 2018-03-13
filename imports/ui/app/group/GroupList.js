@@ -4,6 +4,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import FlipMove from "react-flip-move";
 
 import { GroupsDB } from "../../../api/groups";
+import { searchStrip } from "../../../methods/methods";
 import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
 
@@ -33,6 +34,7 @@ GroupList.propTypes = {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
+    const searchQuery = Session.get("searchQuery");
     Meteor.subscribe("groups");
 
     const groups = GroupsDB.find({}, { sort: { lastMessageAt: -1 } })
@@ -42,6 +44,9 @@ export default withTracker(() => {
                 ...group,
                 selected: group._id === selectedGroupId
             };
+        })
+        .filter(group => {
+            return searchStrip(group.name).indexOf(searchQuery) !== -1;
         });
 
     return {

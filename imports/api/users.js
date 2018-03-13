@@ -55,6 +55,12 @@ export const validateNewUserServer = user => {
         }
     }).validate({ email, username });
 
+    Meteor.call("profilesInsert", user._id, user.username, (err, res) => {
+        if (err) {
+            throw new Meteor.Error("profiles-insert-failed");
+        }
+    });
+
     return true;
 };
 
@@ -67,7 +73,6 @@ if (Meteor.isServer) {
         }
 
         user.username = options.username;
-        Meteor.call("profilesInsert", user._id, user.username);
 
         return user;
     });

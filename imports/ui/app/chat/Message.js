@@ -23,6 +23,4 @@ Message.propTypes = {
     message: PropTypes.object.isRequired
 };
 
-export default withTracker(() => {
-    return {};
-})(Message);
+export default Message;

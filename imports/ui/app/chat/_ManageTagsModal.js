@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Modal from "react-modal";
 
 import { GroupsDB } from "../../../api/groups";
@@ -84,3 +85,8 @@ export default class ManageTagsModal extends React.Component {
         });
     }
 }
+
+ManageTagsModal.propTypes = {
+    selectedGroupId: PropTypes.string.isRequired,
+    groupTags: PropTypes.array.isRequired
+};

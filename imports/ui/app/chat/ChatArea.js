@@ -36,6 +36,10 @@ export class ChatArea extends React.Component {
     }
 }
 
+ChatArea.propTypes = {
+    selectedGroupId: PropTypes.string.isRequired
+};
+
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
     return {

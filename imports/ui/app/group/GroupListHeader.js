@@ -3,10 +3,14 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
 import AddGroupModal from "./_AddGroupModal";
+import { searchStrip } from "../../../methods/methods";
 
 export class GroupListHeader extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            search: ""
+        };
     }
 
     render() {
@@ -26,9 +30,20 @@ export class GroupListHeader extends React.Component {
                     }}
                 />
 
-                <input type="search" />
+                <input
+                    type="search"
+                    placeholder="Search for groups"
+                    onChange={this.handleSearchChange.bind(this)}
+                />
             </div>
         );
+    }
+
+    handleSearchChange(event) {
+        const search = searchStrip(event.target.value);
+
+        this.setState({ search });
+        this.props.session.set("searchQuery", search);
     }
 }
 
