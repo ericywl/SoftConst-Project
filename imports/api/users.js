@@ -1,14 +1,19 @@
+import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
+
+export const UsersDB = new Mongo.Collection("usersProfile");
 
 if (Meteor.isServer) {
     Meteor.publish("usersProfile", function() {
-        return Meteor.users.find(
+        return UsersDB.find(
             {},
             {
                 fields: {
+                    _id: 1,
                     displayName: 1,
                     groups: 1,
-                    tags: 1
+                    tags: 1,
+                    bio: 1
                 }
             }
         );
@@ -17,7 +22,17 @@ if (Meteor.isServer) {
 
 Meteor.methods({
     usersJoinGroup(groupId) {
-        Meteor.users;
+        UsersDB;
+    },
+    /**
+     * 
+     * @param {String} _id 
+     */
+    usersFindBio(_id) {
+        return UsersDB.findOne({id}).bio;
+    },
+    usersUpdateBio(_id, arg) {
+        return UsersDB.update({_id}, {$set: {bio:arg}});
     }
 });
 
@@ -66,20 +81,6 @@ export const validateNewUserServer = user => {
 };
 
 if (Meteor.isServer) {
-    Meteor.publish("usersProfile", function() {
-        return Meteor.users.find(
-            {},
-            {
-                fields: {
-                    _id: 1,
-                    displayName: 1,
-                    tags: 1,
-                    bio: 1
-                }
-            }
-        );
-    });
-
     Accounts.validateNewUser(validateNewUserServer);
 
     Accounts.onCreateUser((options, user) => {
@@ -93,5 +94,6 @@ if (Meteor.isServer) {
 
         return user;
     });
-
 }
+
+    

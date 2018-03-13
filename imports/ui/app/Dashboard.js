@@ -1,11 +1,7 @@
 import React from "react";
 import Modal from "react-modal";
 
-<<<<<<< HEAD
-import PrivateHeader2 from "../auth/PrivateHeader2";
-=======
-import PrivateHeader from "./PrivateHeader";
->>>>>>> c516e7cdb9d3c1abc3ec4be768bd31c70170c4c8
+import PrivateHeader2 from "./PrivateHeader2.js";
 import GroupList from "./group/GroupList";
 import ChatArea from "./chat/ChatArea";
 
