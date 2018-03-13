@@ -1,35 +1,34 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
-import FlipMove from "react-flip-move";
-//import { UsersDB } from "../../../api/users";
+//import FlipMove from "react-flip-move";
 
 export class Profile extends React.Component {
     constructor(props) {
         super(props);
     }
     renderProfile() {
-        return this.props.bio;
+        return (this.props.bio=="") ? "Replace me": this.props.bio;
     }
 
     onChangeBio(event) {
-        this.props.bio = event.target.value.trim();
+        this.bio = event.target.value.trim();
         //console.log(event.target.value.trim());
     }
 
     onUpdateBio() {
-        console.log(this.bio);
-        Meteor.call("usersUpdateBio", this.props.bio, (err, res) => {
+        //console.log(this.bio);
+        Meteor.call("usersUpdateBio", Meteor.userId(),this.bio, (err, res) => {
             err ? console.log({ error: err.reason }) : null;
         });
-        this.render();
+        //this.render();
     }
 
     render() {
-        this.currentUserId = Meteor.userId;
-        this.props.bio = Meteor.call("usersFindBio",this.currentUserId, (err, res) => {
+        this.currentUserId = Meteor.userId();
+        /*this.props.bio = Meteor.call("usersFindBio",this.currentUserId, (err, res) => {
             err ? console.log({ error: err.reason }) : null;
-        });
+        });*/
         return (
             <div className="profile">
                 <div>
@@ -61,9 +60,11 @@ Profile.propTypes = {
 };
 
 export default withTracker(() => {
-    Meteor.subscribe("usersProfile");
+    Meteor.subscribe("userProfile", Meteor.userId());
+    var doc = Meteor.users.find().fetch()[0];
+    //console.log(doc.bio);
     return {
-        bio: "Replace me",
+        bio: (!doc||!doc.bio) ? "Replace me": doc.bio,
         meteorCall: Meteor.call
     };
 })(Profile);
