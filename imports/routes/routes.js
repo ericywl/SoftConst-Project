@@ -34,7 +34,7 @@ export const getRoutes = isAuthenticated => {
                         isAuth={isAuthenticated}
                         component={Dashboard}
                     />
-
+					
                     <Route component={NotFound} />
                 </Switch>
             </div>

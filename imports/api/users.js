@@ -1,14 +1,17 @@
+import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
+import { ProfileDB } from "./profile.js";
 
 if (Meteor.isServer) {
-    Meteor.publish("usersProfile", function() {
+    Meteor.publish("userProfile", function(_id) {
         return Meteor.users.find(
-            {},
+            {_id},
             {
                 fields: {
-                    displayName: 1,
+                    /*displayName: 1,
                     groups: 1,
-                    tags: 1
+                    tags: 1,
+                    bio: 1*/
                 }
             }
         );
@@ -16,8 +19,16 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-    usersJoinGroup(groupId) {
+    /*usersJoinGroup(groupId) {
         Meteor.users;
+    },*/
+    /**
+     * 
+     * @param {String} _id 
+     * @param {String} arg 
+     */
+    usersUpdateBio(_id, arg) {
+        return Meteor.users.update({_id}, {$set: {bio:arg}});
     }
 });
 
@@ -72,10 +83,16 @@ if (Meteor.isServer) {
         if (options.displayName) {
             user.displayName = options.displayName;
         }
-
-        user.groups = [];
-        user.tags = [];
-
+        ProfileDB.insert({
+            _id: user._id,
+            displayName: user.displayName,
+            groups: [],
+            tags: [],
+            bio: ""
+        })
+    
         return user;
     });
 }
+
+    
