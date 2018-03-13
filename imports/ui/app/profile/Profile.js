@@ -4,6 +4,8 @@ import { withTracker } from "meteor/react-meteor-data";
 //import FlipMove from "react-flip-move";
 
 import { ProfileDB } from "../../../api/profile.js"
+import { ProfileTagsHeader } from "./ProfileTagsHeader.js";
+import { ProfileTagsList } from "./ProfileTagsList.js";
 
 export class Profile extends React.Component {
     constructor(props) {
@@ -15,28 +17,22 @@ export class Profile extends React.Component {
 
     onChangeBio(event) {
         this.bio = event.target.value.trim();
-        //console.log(event.target.value.trim());
     }
 
     onUpdateBio() {
-        //console.log(this.bio);
         Meteor.call("profilesUpdateBio", Meteor.userId(),this.bio, (err, res) => {
             err ? console.log({ error: err.reason }) : null;
         });
-        //this.render();
     }
 
     render() {
         this.currentUserId = Meteor.userId();
-        /*this.props.bio = Meteor.call("usersFindBio",this.currentUserId, (err, res) => {
-            err ? console.log({ error: err.reason }) : null;
-        });*/
         return (
             <div className="profile">
                 <div>
-                <h6>
-                {this.renderProfile()}
-                </h6>
+                    <h6>
+                        {this.renderProfile()}
+                    </h6>
                 </div>
                 <div>
                     <input
@@ -51,6 +47,12 @@ export class Profile extends React.Component {
                         update
                     </button>
                 </div>
+                <div>
+                <ProfileTagsHeader />
+                </div>
+                <div>
+                <ProfileTagsList />
+                </div>
             </div>
         );
     }
@@ -64,9 +66,8 @@ Profile.propTypes = {
 export default withTracker(() => {
     Meteor.subscribe("profiles", Meteor.userId());
     var doc = ProfileDB.find().fetch()[0];
-    //console.log(doc.bio);
     return {
-        bio: (!doc||!doc.bio) ? "Replace me": doc.bio,
+        bio: (!doc||!doc.bio) ? "Bio dummy text" : doc.bio,
         meteorCall: Meteor.call
     };
 })(Profile);
