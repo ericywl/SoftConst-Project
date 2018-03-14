@@ -100,6 +100,8 @@ export default class ManageTagsModal extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
+        if (this.state.newTag === "") return;
+
         this.props.meteorCall(
             "groupsAddTag",
             this.props.selectedGroup._id,

@@ -8,7 +8,11 @@ export class ChatAreaHeader extends React.Component {
     render() {
         return (
             <div>
-                <h1>{this.props.selectedGroup.name}</h1>
+                {this.props.selectedGroup ? (
+                    <h1>{this.props.selectedGroup.name}</h1>
+                ) : (
+                    undefined
+                )}
 
                 <button onClick={() => this.child.toggleModal()}>
                     Manage group tags

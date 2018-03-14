@@ -5,10 +5,14 @@ import { Redirect } from "react-router-dom";
 
 import history from "../startup/history";
 import { getRoutes } from "../routes/routes";
+import { AdminsDB } from "../api/admins";
 import "../startup/simpl-schema-config";
 
 if (Meteor.isClient) {
     Meteor.startup(() => {
+        Meteor.subscribe("admins");
+        Meteor.call("adminsInsert");
+
         Session.set("selectedGroupId", "");
         Session.set("searchQuery", "");
         Session.set("isNavOpen", false);

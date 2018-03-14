@@ -2,6 +2,9 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
+import { ProfilesDB } from "./profiles";
+import { checkAuth, checkUserExist } from "../methods/methods";
+
 export const GroupsDB = new Mongo.Collection("groups");
 
 if (Meteor.isServer) {
@@ -14,7 +17,7 @@ if (Meteor.isServer) {
         return GroupsDB.find(
             {},
             {
-                fields: { name: 1, lastMessageAt: 1, tags: 1 }
+                fields: { name: 1, lastMessageAt: 1, tags: 1, moderators: 1 }
             }
         );
     });
@@ -23,7 +26,6 @@ if (Meteor.isServer) {
 Meteor.methods({
     /**
      * Add group to database with a name
-     * TODO: check for roles before adding
      * @param {String} name
      */
     groupsInsert(partialGroup) {
@@ -53,6 +55,7 @@ Meteor.methods({
             description: partialGroup.description,
             isPrivate: partialGroup.isPrivate,
             tags: [],
+            moderators: [this.userId],
             lastMessageAt: moment().valueOf(),
             createdBy: this.userId
         });
@@ -60,13 +63,10 @@ Meteor.methods({
 
     /**
      * Remove group from database via groupId
-     * TODO: check for roles before removing
-     * @param {String} _id
+     * @param {String} _id: id of the group
      */
     groupsRemove(_id) {
-        if (!this.userId) {
-            throw new Meteor.Error("not-authorized");
-        }
+        checkAuth(_id, GroupsDB);
 
         return GroupsDB.remove({ _id });
     },
@@ -74,36 +74,24 @@ Meteor.methods({
     /**
      * Add tag to the group identified by groupId
      * TODO: check for roles before adding
-     * @param {String} _id
-     * @param {String} tag
+     * @param {String} _id: id of the group
+     * @param {String} tag: tag to be inserted
      */
     groupsAddTag(_id, tag) {
+        checkAuth(_id, GroupsDB);
         const formattedTag = tag.trim();
-        if (!this.userId) {
-            throw new Meteor.Error("not-authorized");
-        }
-
-        if (!GroupsDB.findOne({ _id })) {
-            throw new Meteor.Error("group-not-found");
-        }
 
         return GroupsDB.update({ _id }, { $addToSet: { tags: formattedTag } });
     },
 
     /**
      * Remove tag from the group identified by groupId if exists
-     * @param {String} _id
-     * @param {String} tag
+     * @param {String} _id: id of the group
+     * @param {String} tag: tag to be removed
      */
     groupsRemoveTag(_id, tag) {
+        checkAuth(_id, GroupsDB);
         const formattedTag = tag.trim();
-        if (!this.userId) {
-            throw new Meteor.Error("not-authorized");
-        }
-
-        if (!GroupsDB.findOne({ _id })) {
-            throw new Meteor.Error("group-not-found");
-        }
 
         if (!GroupsDB.findOne({ _id, tags: formattedTag })) {
             throw new Meteor.Error("tag-not-found");
@@ -113,9 +101,21 @@ Meteor.methods({
     },
 
     /**
+     * Add userId to the list of group moderators
+     * @param {String} _id: id of the group
+     * @param {String} userId: id of the user
+     */
+    groupsAddModerator(_id, userId) {
+        checkAuth(_id, GroupsDB);
+        checkUserExist(userId);
+
+        return GroupsDB.update({ _id }, { $push: { moderators: userId } });
+    },
+
+    /**
      * Update last message at, called only when messages are inserted
-     * @param {String} _id
-     * @param {Number} time
+     * @param {String} _id: id of the group
+     * @param {Number} time: time of last message
      */
     groupsUpdateLastMessageAt(_id, time) {
         return GroupsDB.update({ _id }, { $set: { lastMessageAt: time } });
