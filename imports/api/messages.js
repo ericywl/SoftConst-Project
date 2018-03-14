@@ -2,7 +2,6 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { GroupsDB } from "./groups";
 import { ProfilesDB } from "./profiles";
 
 export const MessagesDB = new Mongo.Collection("messages");
@@ -55,19 +54,12 @@ Meteor.methods({
         validatePartialMsg(partialMsg, userDisplayName);
 
         const now = moment().valueOf();
-        try {
-            const result = MessagesDB.insert({
-                groupId: partialMsg.groupId,
-                content: partialMsg.content,
-                userId: Meteor.userId(),
-                userDisplayName,
-                sentAt: now
-            });
-
-            Meteor.call("groupsUpdateLastMessageAt", partialMsg.groupId, now);
-            return result;
-        } catch (err) {
-            throw new Meteor.Error("messages-insert-failed");
-        }
+        return (result = MessagesDB.insert({
+            groupId: partialMsg.groupId,
+            content: partialMsg.content,
+            userId: Meteor.userId(),
+            userDisplayName,
+            sentAt: now
+        }));
     }
 });

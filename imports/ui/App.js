@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import moment from "moment";
 import { Session } from "meteor/session";
 import { Redirect } from "react-router-dom";
 
@@ -24,4 +25,10 @@ if (Meteor.isClient) {
             ReactDOM.render(routes, document.getElementById("render-target"));
         });
     });
+}
+
+Meteor.setInterval(updateSessionTime, 20000);
+
+function updateSessionTime() {
+    Session.set("sessionTime", moment().valueOf());
 }

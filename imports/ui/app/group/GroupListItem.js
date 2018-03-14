@@ -34,6 +34,7 @@ GroupListItem.propTypes = {
 };
 
 export default withTracker(() => {
+    const time = Session.get("sessionTime");
     return {
         session: Session
     };

@@ -1,4 +1,5 @@
 import React from "react";
+import { withTracker } from "meteor/react-meteor-data";
 
 import PrivateHeader from "./PrivateHeader";
 import GroupList from "./group/GroupList";

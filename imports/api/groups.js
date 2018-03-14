@@ -2,7 +2,6 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { ProfilesDB } from "./profiles";
 import { checkAccess, checkUserExist, tagFilter } from "../methods/methods";
 
 export const GroupsDB = new Mongo.Collection("groups");
@@ -14,12 +13,8 @@ if (Meteor.isServer) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        checkUserExist(this.userId);
-        const userGroups = ProfilesDB.findOne({ _id: this.userId }).fetch()
-            .groups;
-
         return GroupsDB.find(
-            { _id: { $in: userGroups } },
+            {},
             {
                 fields: { name: 1, lastMessageAt: 1, tags: 1, moderators: 1 }
             }
@@ -68,19 +63,15 @@ Meteor.methods({
             isPrivate: partialGroup.isPrivate
         });
 
-        try {
-            return GroupsDB.insert({
-                name: partialGroup.name,
-                description: partialGroup.description,
-                isPrivate: partialGroup.isPrivate,
-                tags: [],
-                moderators: [Meteor.userId()],
-                lastMessageAt: moment().valueOf(),
-                createdBy: Meteor.userId()
-            });
-
-            Meteor.call("profilesJoinGroup");
-        } catch (err) {}
+        return GroupsDB.insert({
+            name: partialGroup.name,
+            description: partialGroup.description,
+            isPrivate: partialGroup.isPrivate,
+            tags: [],
+            moderators: [Meteor.userId()],
+            lastMessageAt: moment().valueOf(),
+            createdBy: Meteor.userId()
+        });
     },
 
     /**

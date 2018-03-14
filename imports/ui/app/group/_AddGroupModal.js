@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import Modal from "react-modal";
 import { withTracker } from "meteor/react-meteor-data";
 
+import { ProfilesDB } from "../../../api/profiles";
+
 export default class AddGroupModal extends React.Component {
     constructor(props) {
         super(props);
@@ -107,8 +109,21 @@ export default class AddGroupModal extends React.Component {
         };
 
         event.preventDefault();
+
         this.props.meteorCall("groupsInsert", partialGroup, (err, res) => {
-            err ? this.setState({ error: err.reason }) : this.toggleModal();
+            if (err) this.setState({ error: err.reason });
+
+            if (res) {
+                try {
+                    this.props.meteorCall("profilesJoinGroup", res);
+                } catch (err) {
+                    // remove group from db
+                    throw new Meteor.Error("profiles-join-group-failed");
+                }
+
+                Session.set("selectedGroupId", res);
+                this.toggleModal();
+            }
         });
     }
 

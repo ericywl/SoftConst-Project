@@ -24,13 +24,13 @@ export class ChatArea extends React.Component {
 
         return (
             <div>
-                <ChatAreaHeader selectedGroup={this.props.selectedGroup} />
+                <ChatAreaHeader />
 
                 <FlipMove maintainContainerHeight={true}>
                     <MessageList />
                 </FlipMove>
 
-                <ChatAreaFooter selectedGroupId={this.props.selectedGroupId} />
+                <ChatAreaFooter />
             </div>
         );
     }
@@ -42,12 +42,7 @@ ChatArea.propTypes = {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groups", selectedGroupId);
-
-    const selectedGroup = GroupsDB.findOne({ _id: selectedGroupId });
-
     return {
-        selectedGroup,
         selectedGroupId
     };
 })(ChatArea);

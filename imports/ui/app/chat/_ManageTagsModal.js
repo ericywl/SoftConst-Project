@@ -125,7 +125,3 @@ export default class ManageTagsModal extends React.Component {
         });
     }
 }
-
-ManageTagsModal.propTypes = {
-    selectedGroup: PropTypes.object.isRequired
-};

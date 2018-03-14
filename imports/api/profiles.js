@@ -1,17 +1,19 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 
+import { checkUserExist } from "../methods/methods";
+
 export const ProfilesDB = new Mongo.Collection("profiles");
 
 if (Meteor.isServer) {
-    Meteor.publish("profiles", function(_id) {
+    Meteor.publish("profiles", function() {
         if (!this.userId) {
             this.ready();
             throw new Meteor.Error("not-logged-in");
         }
 
         return ProfilesDB.find(
-            { _id },
+            { _id: this.userId },
             {
                 fields: {
                     displayName: 1,
@@ -25,12 +27,16 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-    profilesJoinGroup() {
+    profilesJoinGroup(groupId) {
         if (!Meteor.userId()) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        return ProfilesDB.update({ _id: Meteor.userId() });
+        checkUserExist(Meteor.userId());
+        return ProfilesDB.update(
+            { _id: Meteor.userId() },
+            { $push: { groups: groupId } }
+        );
     },
 
     /**
@@ -43,11 +49,7 @@ Meteor.methods({
             throw new Meteor.Error("not-logged-in");
         }
 
-        const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
-        if (!userProfile || userProfile.length === 0) {
-            throw new Meteor.Error("profile-not-found");
-        }
-
+        checkUserExist(Meteor.userId());
         return ProfilesDB.update(
             { _id: Meteor.userId() },
             { $addToSet: { tags: tag } }
@@ -66,6 +68,7 @@ Meteor.methods({
             throw new Meteor.Error("not-logged-in");
         }
 
+        checkUserExist(Meteor.userId());
         return ProfilesDB.update(
             { _id: Meteor.userId() },
             { $set: { bio: newBio } }

@@ -6,7 +6,8 @@ export class ChatAreaFooter extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            input: ""
+            input: "",
+            error: ""
         };
     }
 
@@ -47,9 +48,20 @@ export class ChatAreaFooter extends React.Component {
         };
 
         this.props.meteorCall("messagesInsert", partialMsg, (err, res) => {
-            if (err) {
-                // show user error
-            } else {
+            if (err) this.setState({ error: err.reason });
+
+            if (res) {
+                try {
+                    this.props.call(
+                        "groupsUpdateLastMessageAt",
+                        partialMsg.groupId,
+                        now
+                    );
+                } catch (err) {
+                    // remove message from db
+                    throw new Meteor.Error(err.reason);
+                }
+
                 this.setState({ input: "" });
             }
         });
@@ -62,14 +74,15 @@ export class ChatAreaFooter extends React.Component {
 }
 
 ChatAreaFooter.propTypes = {
-    selectedGroupId: PropTypes.string,
+    selectedGroupId: PropTypes.string.isRequired,
     meteorCall: PropTypes.func.isRequired
 };
 
 export default withTracker(() => {
-    Meteor.subscribe("profiles", Meteor.userId());
+    const selectedGroupId = Session.get("selectedGroupId");
 
     return {
+        selectedGroupId,
         meteorCall: Meteor.call
     };
 })(ChatAreaFooter);
