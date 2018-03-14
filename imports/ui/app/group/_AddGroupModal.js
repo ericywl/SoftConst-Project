@@ -22,8 +22,7 @@ export default class AddGroupModal extends React.Component {
     }
 
     render() {
-        const modalStyles = { overlay: {} };
-        modalStyles.overlay["zIndex"] = 10;
+        const modalStyles = { overlay: { zIndex: 10 } };
 
         return (
             <Modal
@@ -129,18 +128,18 @@ export default class AddGroupModal extends React.Component {
 
     handleNameChange(event) {
         const inputValue = event.target.value;
-        const inValLen = inputValue.trim().length;
-        if (inValLen > 30) return;
-        if (inValLen === 0 && this.state.groupName.length === 0) return;
+        const inputLength = inputValue.trim().length;
+        if (inputLength > 30) return;
+        if (inputLength === 0 && this.state.groupName.length === 0) return;
 
         this.setState({ groupName: inputValue });
     }
 
     handleDescChange(event) {
         const inputValue = event.target.value;
-        const inValLen = inputValue.trim().length;
-        if (inValLen > 50) return;
-        if (inValLen === 0 && this.state.groupDesc.length === 0) return;
+        const inputLength = inputValue.trim().length;
+        if (inputLength > 50) return;
+        if (inputLength === 0 && this.state.groupDesc.length === 0) return;
 
         this.setState({ groupDesc: inputValue });
     }

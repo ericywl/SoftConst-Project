@@ -15,11 +15,14 @@ export class ChatAreaHeader extends React.Component {
                 )}
 
                 <button onClick={() => this.child.toggleModal()}>
-                    Manage group tags
+                    {this.props.isModerator
+                        ? "Manage Group Tags"
+                        : "View Group Tags"}
                 </button>
 
                 {this.props.selectedGroup ? (
                     <ManageTagsModal
+                        isModerator={this.props.isModerator}
                         selectedGroup={this.props.selectedGroup}
                         meteorCall={this.props.meteorCall}
                         ref={ref => {
@@ -39,7 +42,10 @@ export default withTracker(() => {
     Meteor.subscribe("groups");
 
     const selectedGroup = GroupsDB.findOne({ _id: selectedGroupId });
+    const isModerator = selectedGroup.moderators.includes(Meteor.userId());
+
     return {
+        isModerator,
         selectedGroup,
         meteorCall: Meteor.call
     };

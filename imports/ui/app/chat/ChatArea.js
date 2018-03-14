@@ -17,7 +17,7 @@ export class ChatArea extends React.Component {
         if (!this.props.selectedGroupId) {
             return (
                 <div>
-                    <p>Select a group.</p>
+                    <p>Please select a group to start chatting.</p>
                 </div>
             );
         }
