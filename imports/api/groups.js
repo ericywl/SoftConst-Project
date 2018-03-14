@@ -3,7 +3,7 @@ import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
 import { ProfilesDB } from "./profiles";
-import { checkAuth, checkUserExist } from "../methods/methods";
+import { checkAccess, checkUserExist, tagFilter } from "../methods/methods";
 
 export const GroupsDB = new Mongo.Collection("groups");
 
@@ -11,11 +11,29 @@ if (Meteor.isServer) {
     Meteor.publish("groups", function() {
         if (!this.userId) {
             this.ready();
-            throw new Meteor.Error("not-authorized");
+            throw new Meteor.Error("not-logged-in");
+        }
+
+        checkUserExist(this.userId);
+        const userGroups = ProfilesDB.findOne({ _id: this.userId }).fetch()
+            .groups;
+
+        return GroupsDB.find(
+            { _id: { $in: userGroups } },
+            {
+                fields: { name: 1, lastMessageAt: 1, tags: 1, moderators: 1 }
+            }
+        );
+    });
+
+    Meteor.publish("publicGroups", function() {
+        if (!this.userId) {
+            this.ready();
+            throw new Meteor.Error("not-logged-in");
         }
 
         return GroupsDB.find(
-            {},
+            { isPrivate: false },
             {
                 fields: { name: 1, lastMessageAt: 1, tags: 1, moderators: 1 }
             }
@@ -29,7 +47,7 @@ Meteor.methods({
      * @param {String} name
      */
     groupsInsert(partialGroup) {
-        if (!this.userId) throw new Meteor.Error("not-authorized");
+        if (!Meteor.userId()) throw new Meteor.Error("not-logged-in");
 
         new SimpleSchema({
             name: {
@@ -50,15 +68,19 @@ Meteor.methods({
             isPrivate: partialGroup.isPrivate
         });
 
-        return GroupsDB.insert({
-            name: partialGroup.name,
-            description: partialGroup.description,
-            isPrivate: partialGroup.isPrivate,
-            tags: [],
-            moderators: [this.userId],
-            lastMessageAt: moment().valueOf(),
-            createdBy: this.userId
-        });
+        try {
+            return GroupsDB.insert({
+                name: partialGroup.name,
+                description: partialGroup.description,
+                isPrivate: partialGroup.isPrivate,
+                tags: [],
+                moderators: [Meteor.userId()],
+                lastMessageAt: moment().valueOf(),
+                createdBy: Meteor.userId()
+            });
+
+            Meteor.call("profilesJoinGroup");
+        } catch (err) {}
     },
 
     /**
@@ -66,7 +88,7 @@ Meteor.methods({
      * @param {String} _id: id of the group
      */
     groupsRemove(_id) {
-        checkAuth(_id, GroupsDB);
+        checkAccess(_id, GroupsDB);
 
         return GroupsDB.remove({ _id });
     },
@@ -78,8 +100,8 @@ Meteor.methods({
      * @param {String} tag: tag to be inserted
      */
     groupsAddTag(_id, tag) {
-        checkAuth(_id, GroupsDB);
-        const formattedTag = tag.trim();
+        checkAccess(_id, GroupsDB);
+        const formattedTag = tagFilter(tag);
 
         return GroupsDB.update({ _id }, { $addToSet: { tags: formattedTag } });
     },
@@ -90,8 +112,8 @@ Meteor.methods({
      * @param {String} tag: tag to be removed
      */
     groupsRemoveTag(_id, tag) {
-        checkAuth(_id, GroupsDB);
-        const formattedTag = tag.trim();
+        checkAccess(_id, GroupsDB);
+        const formattedTag = tagFilter(tag);
 
         if (!GroupsDB.findOne({ _id, tags: formattedTag })) {
             throw new Meteor.Error("tag-not-found");
@@ -106,7 +128,7 @@ Meteor.methods({
      * @param {String} userId: id of the user
      */
     groupsAddModerator(_id, userId) {
-        checkAuth(_id, GroupsDB);
+        checkAccess(_id, GroupsDB);
         checkUserExist(userId);
 
         return GroupsDB.update({ _id }, { $push: { moderators: userId } });

@@ -4,7 +4,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import FlipMove from "react-flip-move";
 
 import { GroupsDB } from "../../../api/groups";
-import { searchStrip } from "../../../methods/methods";
+import { searchFilter } from "../../../methods/methods";
 import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
 
@@ -55,6 +55,7 @@ export default withTracker(() => {
 })(GroupList);
 
 const groupsFilter = (groups, query) => {
+    query = query.replace(/\s/gi, "").toLowerCase();
     if (!groups) throw new Meteor.Error("filter-groups-not-provided");
     if (!query) return groups;
 
@@ -62,8 +63,8 @@ const groupsFilter = (groups, query) => {
         const queryLen = query.length - 1;
         return groups.filter(group => {
             for (let i = 0; i < group.tags.length; i++) {
-                if (group.tags[i].slice(0, queryLen) === query.slice(1))
-                    return true;
+                const tag = group.tags[i].slice(0, queryLen);
+                if (tag.toLowerCase() === query.slice(1)) return true;
             }
 
             return false;
@@ -71,6 +72,6 @@ const groupsFilter = (groups, query) => {
     }
 
     return groups.filter(
-        group => searchStrip(group.name).indexOf(query) !== -1
+        group => searchFilter(group.name).indexOf(query) !== -1
     );
 };

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
 import AddGroupModal from "./_AddGroupModal";
-import { searchStrip } from "../../../methods/methods";
+import { searchFilter } from "../../../methods/methods";
 
 export class GroupListHeader extends React.Component {
     constructor(props) {
@@ -41,7 +41,7 @@ export class GroupListHeader extends React.Component {
     }
 
     handleSearchChange(event) {
-        let newSearch = searchStrip(event.target.value);
+        let newSearch = searchFilter(event.target.value);
         if (newSearch[0] === "#") {
             newSearch = newSearch.trim();
         } else if (newSearch.slice(-1) === "#") return;

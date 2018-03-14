@@ -2,7 +2,7 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { checkAuth, checkUserExist } from "../methods/methods";
+import { checkAccess, checkUserExist } from "../methods/methods";
 
 export const AdminsDB = new Mongo.Collection("admins");
 
@@ -30,8 +30,12 @@ Meteor.methods({
         });
     },
 
+    /**
+     * Add user to the list of admins
+     * @param {String} userId: id of user to be added
+     */
     adminsAddUserId(userId) {
-        checkAuth(studChatAdmins, AdminsDB);
+        checkAccess(studChatAdmins, AdminsDB);
         checkUserExist(userId);
 
         return AdminsDB.update(

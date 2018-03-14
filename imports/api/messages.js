@@ -11,7 +11,7 @@ if (Meteor.isServer) {
     Meteor.publish("messagesByGroup", function(groupId) {
         if (!this.userId) {
             this.ready();
-            throw new Meteor.Error("not-authorized");
+            throw new Meteor.Error("not-logged-in");
         }
 
         new SimpleSchema({
@@ -42,13 +42,13 @@ const validatePartialMsg = (partialMsg, userDisplayName) => {
 
 Meteor.methods({
     messagesInsert(partialMsg, userDisplayName = undefined) {
-        if (!this.userId) {
-            throw new Meteor.Error("not-authorized");
+        if (!Meteor.userId()) {
+            throw new Meteor.Error("not-logged-in");
         }
 
         // For API tests only
         if (!userDisplayName) {
-            userDisplayName = ProfilesDB.findOne({ _id: this.userId })
+            userDisplayName = ProfilesDB.findOne({ _id: Meteor.userId() })
                 .displayName;
         }
 
@@ -59,7 +59,7 @@ Meteor.methods({
             const result = MessagesDB.insert({
                 groupId: partialMsg.groupId,
                 content: partialMsg.content,
-                userId: this.userId,
+                userId: Meteor.userId(),
                 userDisplayName,
                 sentAt: now
             });

@@ -4,6 +4,7 @@ import FlipMove from "react-flip-move";
 import Modal from "react-modal";
 
 import { GroupsDB } from "../../../api/groups";
+import { tagFilter } from "../../../methods/methods";
 
 export default class ManageTagsModal extends React.Component {
     constructor(props) {
@@ -81,7 +82,7 @@ export default class ManageTagsModal extends React.Component {
 
     handleTagChange(event) {
         event.preventDefault();
-        const input = event.target.value.trim();
+        const input = tagFilter(event.target.value.trim());
         if (input.length > 33) return;
 
         this.setState({ newTag: input });

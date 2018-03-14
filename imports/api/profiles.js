@@ -5,6 +5,11 @@ export const ProfilesDB = new Mongo.Collection("profiles");
 
 if (Meteor.isServer) {
     Meteor.publish("profiles", function(_id) {
+        if (!this.userId) {
+            this.ready();
+            throw new Meteor.Error("not-logged-in");
+        }
+
         return ProfilesDB.find(
             { _id },
             {
@@ -20,23 +25,31 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
+    profilesJoinGroup() {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error("not-logged-in");
+        }
+
+        return ProfilesDB.update({ _id: Meteor.userId() });
+    },
+
     /**
      * Add a new tag to current user
      * @param {String} _id
      * @param {String} tag
      */
     profilesAddTag(tag) {
-        if (!this.userId) {
-            throw new Meteor.Error("not-authorized");
+        if (!Meteor.userId()) {
+            throw new Meteor.Error("not-logged-in");
         }
 
-        const userProfile = ProfilesDB.findOne({ _id: this.userId });
+        const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
         if (!userProfile || userProfile.length === 0) {
             throw new Meteor.Error("profile-not-found");
         }
 
         return ProfilesDB.update(
-            { _id: this.userId },
+            { _id: Meteor.userId() },
             { $addToSet: { tags: tag } }
         );
     },
@@ -49,12 +62,12 @@ Meteor.methods({
      * @param {String} newBio
      */
     profilesUpdateBio(newBio) {
-        if (!this.userId) {
-            throw new Meteor.Error("not-authorized");
+        if (!Meteor.userId()) {
+            throw new Meteor.Error("not-logged-in");
         }
 
         return ProfilesDB.update(
-            { _id: this.userId },
+            { _id: Meteor.userId() },
             { $set: { bio: newBio } }
         );
     },
@@ -65,10 +78,6 @@ Meteor.methods({
      * @param {String} displayName
      */
     profilesInsert(_id, displayName) {
-        if (Meteor.isClient) {
-            throw new Meteor.Error("access-denied");
-        }
-
         return ProfilesDB.insert({
             _id: _id,
             displayName: displayName,

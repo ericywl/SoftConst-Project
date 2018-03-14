@@ -3,17 +3,6 @@ import SimpleSchema from "simpl-schema";
 
 import { ProfilesDB } from "./profiles.js";
 
-Meteor.methods({
-    /**
-     *
-     * @param {String} _id
-     * @param {String} arg
-     */
-    usersUpdateBio(_id, arg) {
-        return Meteor.users.update({ _id }, { $set: { bio: arg } });
-    }
-});
-
 export const validateNewUserClient = user => {
     const email = user.email;
     const password = user.password;
