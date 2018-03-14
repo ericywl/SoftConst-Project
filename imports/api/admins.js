@@ -35,8 +35,9 @@ Meteor.methods({
      * @param {String} userId: id of user to be added
      */
     adminsAddUserId(userId) {
-        checkAccess(studChatAdmins, AdminsDB);
+        checkUserExist(Meteor.userId());
         checkUserExist(userId);
+        checkAccess(studChatAdmins, AdminsDB);
 
         return AdminsDB.update(
             { _id: studChatAdmins },

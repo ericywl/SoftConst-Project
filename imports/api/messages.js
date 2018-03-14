@@ -3,11 +3,12 @@ import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
 import { ProfilesDB } from "./profiles";
+import { checkUserExist } from "../methods/methods";
 
 export const MessagesDB = new Mongo.Collection("messages");
 
 if (Meteor.isServer) {
-    Meteor.publish("messagesByGroup", function(groupId) {
+    Meteor.publish("groupMessages", function(groupId) {
         if (!this.userId) {
             this.ready();
             throw new Meteor.Error("not-logged-in");
@@ -41,8 +42,8 @@ const validatePartialMsg = (partialMsg, userDisplayName) => {
 
 Meteor.methods({
     messagesInsert(partialMsg, userDisplayName = undefined) {
-        if (!Meteor.userId()) {
-            throw new Meteor.Error("not-logged-in");
+        if (Meteor.isServer) {
+            checkUserExist(Meteor.userId());
         }
 
         // For API tests only
@@ -54,12 +55,12 @@ Meteor.methods({
         validatePartialMsg(partialMsg, userDisplayName);
 
         const now = moment().valueOf();
-        return (result = MessagesDB.insert({
+        return MessagesDB.insert({
             groupId: partialMsg.groupId,
             content: partialMsg.content,
             userId: Meteor.userId(),
             userDisplayName,
             sentAt: now
-        }));
+        });
     }
 });

@@ -113,7 +113,6 @@ export default class AddGroupModal extends React.Component {
         event.preventDefault();
         this.props.meteorCall("groupsInsert", partialGroup, (err, res) => {
             if (err) this.setState({ error: err.reason });
-
             if (res) {
                 try {
                     this.props.meteorCall("profilesJoinGroup", res);
@@ -122,6 +121,7 @@ export default class AddGroupModal extends React.Component {
                     throw new Meteor.Error("profiles-join-group-failed");
                 }
 
+                Session.set("selectedGroupId", res);
                 this.toggleModal();
             }
         });

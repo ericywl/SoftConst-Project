@@ -2,9 +2,12 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
+import { PublicGroupsDB } from "./groups";
 import { checkUserExist } from "../methods/methods";
 
 export const ProfilesDB = new Mongo.Collection("profiles");
+export const CurrProfileDB = new Mongo.Collection("currentProfile");
+export const GroupProfilesDB = new Mongo.Collection("groupProfiles");
 
 if (Meteor.isServer) {
     Meteor.publish("profiles", function() {
@@ -14,7 +17,7 @@ if (Meteor.isServer) {
         }
 
         return ProfilesDB.find(
-            { _id: this.userId },
+            {},
             {
                 fields: {
                     displayName: 1,
@@ -25,19 +28,75 @@ if (Meteor.isServer) {
             }
         );
     });
+
+    Meteor.publish("currentProfile", function() {
+        if (!this.userId) {
+            this.ready();
+            throw new Meteor.Error("not-logged-in");
+        }
+
+        Mongo.Collection._publishCursor(
+            ProfilesDB.find(
+                { _id: this.userId },
+                {
+                    fields: {
+                        displayName: 1,
+                        groups: 1,
+                        tags: 1,
+                        bio: 1
+                    }
+                }
+            ),
+            this,
+            "currentProfile"
+        );
+        this.ready();
+    });
+
+    Meteor.publish("groupProfiles", function(groupId) {
+        if (!this.userId) {
+            this.ready();
+            throw new Meteor.Error("not-logged-in");
+        }
+
+        if (!groupId) {
+            this.ready();
+            return [];
+        }
+
+        const group = PublicGroupsDB.findOne({ _id: groupId });
+        const groupUsers = group.members.concat(group.moderators);
+
+        Mongo.Collection._publishCursor(
+            ProfilesDB.find(
+                { _id: { $in: groupUsers } },
+                {
+                    fields: {
+                        displayName: 1,
+                        groups: 1,
+                        tags: 1,
+                        bio: 1
+                    }
+                }
+            ),
+            this,
+            "groupProfiles"
+        );
+        this.ready();
+    });
 }
 
 Meteor.methods({
     profilesJoinGroup(groupId) {
-        if (!Meteor.userId()) {
-            throw new Meteor.Error("not-logged-in");
+        const _id = Meteor.userId();
+        if (Meteor.isServer) {
+            checkUserExist(_id);
+            if (ProfilesDB.findOne({ _id }).groups.includes(groupId)) {
+                throw new Meteor.Error("already-in-group");
+            }
         }
 
-        checkUserExist(Meteor.userId());
-        return ProfilesDB.update(
-            { _id: Meteor.userId() },
-            { $push: { groups: groupId } }
-        );
+        return ProfilesDB.update({ _id }, { $push: { groups: groupId } });
     },
 
     /**
@@ -46,20 +105,27 @@ Meteor.methods({
      * @param {String} tag
      */
     profilesAddTag(tag) {
-        if (!Meteor.userId()) {
-            throw new Meteor.Error("not-logged-in");
+        if (Meteor.isServer) {
+            checkUserExist(Meteor.userId());
         }
 
-        checkUserExist(Meteor.userId());
         return ProfilesDB.update(
             { _id: Meteor.userId() },
             { $addToSet: { tags: tag } }
         );
     },
 
-    profilesRemoveTag(_id, tag) {},
+    profilesRemoveTag(_id, tag) {
+        if (Meteor.isServer) {
+            checkUserExist(Meteor.userId());
+        }
+    },
 
-    profilesUpdateDisplayName() {},
+    profilesUpdateDisplayName() {
+        if (Meteor.isServer) {
+            checkUserExist(Meteor.userId());
+        }
+    },
 
     /**
      * Update the bio of the current user
@@ -67,11 +133,10 @@ Meteor.methods({
      * @param {String} newBio
      */
     profilesUpdateBio(newBio) {
-        if (!Meteor.userId()) {
-            throw new Meteor.Error("not-logged-in");
+        if (Meteor.isServer) {
+            checkUserExist(Meteor.userId());
         }
 
-        checkUserExist(Meteor.userId());
         return ProfilesDB.update(
             { _id: Meteor.userId() },
             { $set: { bio: newBio } }
@@ -85,7 +150,7 @@ Meteor.methods({
      */
     profilesInsert(_id, displayName) {
         return ProfilesDB.insert({
-            _id: _id,
+            _id,
             displayName: displayName,
             groups: [],
             tags: [],

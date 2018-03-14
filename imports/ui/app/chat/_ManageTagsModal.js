@@ -5,7 +5,7 @@ import FlipMove from "react-flip-move";
 import Modal from "react-modal";
 
 // APIs
-import { GroupsDB } from "../../../api/groups";
+import { PublicGroupsDB } from "../../../api/groups";
 import { tagFilter } from "../../../methods/methods";
 
 export default class ManageTagsModal extends React.Component {
@@ -67,13 +67,14 @@ export default class ManageTagsModal extends React.Component {
     }
 
     renderTags() {
-        if (this.props.selectedGroup.tags.length === 0) {
+        const tags = this.props.selectedGroup.tags;
+        if (!tags || tags.length === 0) {
             return (
                 <div className="empty-tags">There are no tags currently.</div>
             );
         }
 
-        return this.props.selectedGroup.tags.map((tag, index) => (
+        return tags.map((tag, index) => (
             <span className="tags__tag" key={`tag${index}`}>
                 <span className="tags__tag--hash"># </span>
                 <span>{tag}</span>

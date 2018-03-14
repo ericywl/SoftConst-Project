@@ -23,7 +23,7 @@ export class MessageList extends React.Component {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("messagesByGroup", selectedGroupId);
+    Meteor.subscribe("groupMessages", selectedGroupId);
 
     return {
         messages: MessagesDB.find().fetch()

@@ -11,8 +11,8 @@ import ChatAreaHeader from "./ChatAreaHeader";
 import ChatAreaFooter from "./ChatAreaFooter";
 
 // APIs
-import { GroupsDB } from "../../../api/groups";
-import { ProfilesDB } from "../../../api/profiles";
+import { CurrGroupsDB } from "../../../api/groups";
+import { CurrProfileDB, GroupProfilesDB } from "../../../api/profiles";
 
 /**
  * Houses the list of messages, chat header and chat footer
@@ -32,7 +32,13 @@ export class ChatArea extends React.Component {
             this.props.selectedGroup._id,
             (err, res) => {
                 if (err) this.setState({ error: err.reason });
-                if (res) console.log("you have joined the group!");
+                if (res) {
+                    this.props.meteorCall(
+                        "groupsAddMemberPublic",
+                        this.props.selectedGroup._id,
+                        Meteor.userId()
+                    );
+                }
             }
         );
     }
@@ -82,13 +88,14 @@ ChatArea.propTypes = {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groups");
-    Meteor.subscribe("profiles");
+    Meteor.subscribe("currentGroups");
+    Meteor.subscribe("currentProfile");
+    Meteor.subscribe("groupProfiles", selectedGroupId);
 
-    const userProfile = ProfilesDB.find().fetch()[0];
+    const userProfile = CurrProfileDB.findOne();
     const userGroups = userProfile ? userProfile.groups : [];
 
-    const selectedGroup = GroupsDB.findOne({ _id: selectedGroupId });
+    const selectedGroup = CurrGroupsDB.findOne({ _id: selectedGroupId });
     const isModerator = selectedGroup
         ? selectedGroup.moderators.includes(Meteor.userId())
         : false;

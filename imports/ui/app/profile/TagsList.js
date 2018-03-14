@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import FlipMove from "react-flip-move";
 
-import { GroupsDB } from "../../../api/groups";
+import { PublicGroupsDB } from "../../../api/groups";
 import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
 
@@ -33,10 +33,10 @@ GroupList.propTypes = {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groups");
+    Meteor.subscribe("publicGroups");
 
     return {
-        groups: GroupsDB.find({}, { sort: { lastMessageAt: -1 } })
+        groups: PublicGroupsDB.find({}, { sort: { lastMessageAt: -1 } })
             .fetch()
             .map(group => {
                 return {
