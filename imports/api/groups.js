@@ -16,7 +16,13 @@ if (Meteor.isServer) {
         return GroupsDB.find(
             {},
             {
-                fields: { name: 1, lastMessageAt: 1, tags: 1, moderators: 1 }
+                fields: {
+                    name: 1,
+                    lastMessageAt: 1,
+                    tags: 1,
+                    moderators: 1,
+                    isPrivate: 1
+                }
             }
         );
     });
@@ -68,9 +74,10 @@ Meteor.methods({
             description: partialGroup.description,
             isPrivate: partialGroup.isPrivate,
             tags: [],
-            moderators: [Meteor.userId()],
             lastMessageAt: moment().valueOf(),
-            createdBy: Meteor.userId()
+            createdAt: moment().valueOf(),
+            createdBy: Meteor.userId(),
+            moderators: [Meteor.userId()]
         });
     },
 

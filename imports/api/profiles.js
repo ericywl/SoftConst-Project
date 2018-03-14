@@ -1,5 +1,6 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
+import moment from "moment";
 
 import { checkUserExist } from "../methods/methods";
 
@@ -58,6 +59,8 @@ Meteor.methods({
 
     profilesRemoveTag(_id, tag) {},
 
+    profilesUpdateDisplayName() {},
+
     /**
      * Update the bio of the current user
      * @param {String} _id
@@ -86,7 +89,8 @@ Meteor.methods({
             displayName: displayName,
             groups: [],
             tags: [],
-            bio: ""
+            bio: "",
+            createdAt: moment().valueOf()
         });
     }
 });

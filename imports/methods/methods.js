@@ -54,8 +54,12 @@ export const checkUserExist = userId => {
     return true;
 };
 
-export const searchFilter = input => {
+export const searchGetFilter = input => {
     return input.replace(/[^\w\s#]/gi, "");
+};
+
+export const searchFetchFilter = input => {
+    return input.replace(/[^\w#]/gi, "").toLowerCase();
 };
 
 export const tagFilter = input => {

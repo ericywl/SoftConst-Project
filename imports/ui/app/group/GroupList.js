@@ -5,10 +5,11 @@ import FlipMove from "react-flip-move";
 
 import { GroupsDB } from "../../../api/groups";
 import { ProfilesDB } from "../../../api/profiles";
-import { searchFilter } from "../../../methods/methods";
+import { searchGetFilter, searchFetchFilter } from "../../../methods/methods";
 import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
 
+const SHOWN_GROUPS_LIMIT = 10;
 export class GroupList extends React.Component {
     renderGroupList() {
         return this.props.groups.map(group => {
@@ -34,16 +35,17 @@ GroupList.propTypes = {
 };
 
 const groupsFilter = (groups, query) => {
-    query = query.replace(/\s/gi, "").toLowerCase();
     if (!groups) throw new Meteor.Error("filter-groups-not-provided");
     if (!query) return groups;
 
+    query = searchFetchFilter(query);
     if (query[0] === "#") {
-        const queryLen = query.length - 1;
+        query = query.slice(1);
+        const queryLen = query.length;
         return groups.filter(group => {
             for (let i = 0; i < group.tags.length; i++) {
                 const tag = group.tags[i].slice(0, queryLen);
-                if (tag.toLowerCase() === query.slice(1)) return true;
+                if (tag.toLowerCase() === query) return true;
             }
 
             return false;
@@ -51,8 +53,40 @@ const groupsFilter = (groups, query) => {
     }
 
     return groups.filter(
-        group => searchFilter(group.name).indexOf(query) !== -1
+        group => searchFetchFilter(group.name).indexOf(query) !== -1
     );
+};
+
+const fetchGroupsFromDB = (selectedGroupId, query) => {
+    let groups = [];
+    const userProfile = ProfilesDB.find().fetch()[0];
+    const userGroups = userProfile ? userProfile.groups : [];
+    if (searchFetchFilter(query)[0] === "#") {
+        groups = GroupsDB.find(
+            { isPrivate: false },
+            {
+                sort: {},
+                $limit: SHOWN_GROUPS_LIMIT
+            }
+        ).fetch();
+    } else {
+        groups = GroupsDB.find(
+            { _id: { $in: userGroups } },
+            {
+                sort: { lastMessageAt: -1 },
+                $limit: SHOWN_GROUPS_LIMIT
+            }
+        ).fetch();
+    }
+
+    groups = groups.map(group => {
+        return {
+            ...group,
+            selected: group._id === selectedGroupId
+        };
+    });
+
+    return groups;
 };
 
 export default withTracker(() => {
@@ -61,20 +95,7 @@ export default withTracker(() => {
     Meteor.subscribe("profiles");
     Meteor.subscribe("groups");
 
-    const userProfile = ProfilesDB.find().fetch()[0];
-    const userGroups = userProfile ? userProfile.groups : [];
-    const groups = GroupsDB.find(
-        { _id: { $in: userGroups } },
-        { sort: { lastMessageAt: -1 } }
-    )
-        .fetch()
-        .map(group => {
-            return {
-                ...group,
-                selected: group._id === selectedGroupId
-            };
-        });
-
+    const groups = fetchGroupsFromDB(selectedGroupId, searchQuery);
     const queriedGroups = groupsFilter(groups, searchQuery);
     return {
         groups: queriedGroups,
