@@ -22,21 +22,8 @@ if (Meteor.isServer) {
                     tags: 1,
                     moderators: 1,
                     isPrivate: 1
-                }
-            }
-        );
-    });
-
-    Meteor.publish("publicGroups", function() {
-        if (!this.userId) {
-            this.ready();
-            throw new Meteor.Error("not-logged-in");
-        }
-
-        return GroupsDB.find(
-            { isPrivate: false },
-            {
-                fields: { name: 1, lastMessageAt: 1, tags: 1, moderators: 1 }
+                },
+                $limit: 10
             }
         );
     });

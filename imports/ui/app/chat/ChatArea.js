@@ -18,8 +18,27 @@ import { ProfilesDB } from "../../../api/profiles";
  * Houses the list of messages, chat header and chat footer
  */
 export class ChatArea extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: ""
+        };
+    }
+
+    onClickJoin(event) {
+        event.preventDefault();
+        this.props.meteorCall(
+            "profilesJoinGroup",
+            this.props.selectedGroup._id,
+            (err, res) => {
+                if (err) this.setState({ error: err.reason });
+                if (res) console.log("you have joined the group!");
+            }
+        );
+    }
+
     render() {
-        if (!this.props.selectedGroupId) {
+        if (!this.props.selectedGroup) {
             return (
                 <div>
                     <p>Please select a group to start chatting.</p>
@@ -29,28 +48,55 @@ export class ChatArea extends React.Component {
 
         return (
             <div>
-                <ChatAreaHeader />
+                <ChatAreaHeader
+                    selectedGroup={this.props.selectedGroup}
+                    isModerator={this.props.isModerator}
+                />
 
-                <FlipMove maintainContainerHeight={true}>
-                    <MessageList />
-                </FlipMove>
+                {this.state.error ? <p>{this.state.error}</p> : undefined}
 
-                <ChatAreaFooter />
+                {this.props.notInGroup ? (
+                    <div>
+                        <button onClick={this.onClickJoin.bind(this)}>
+                            Join
+                        </button>
+                    </div>
+                ) : (
+                    <FlipMove maintainContainerHeight={true}>
+                        <MessageList />
+                    </FlipMove>
+                )}
+
+                <ChatAreaFooter notInGroup={this.props.notInGroup} />
             </div>
         );
     }
 }
 
 ChatArea.propTypes = {
-    selectedGroupId: PropTypes.string.isRequired
+    isModerator: PropTypes.bool.isRequired,
+    selectedGroup: PropTypes.object,
+    meteorCall: PropTypes.func.isRequired,
+    notInGroup: PropTypes.bool.isRequired
 };
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    const userProfile = ProfilesDB.find().fetch();
-    console.log(userProfile);
+    Meteor.subscribe("groups");
+    Meteor.subscribe("profiles");
+
+    const userProfile = ProfilesDB.find().fetch()[0];
+    const userGroups = userProfile ? userProfile.groups : [];
+
+    const selectedGroup = GroupsDB.findOne({ _id: selectedGroupId });
+    const isModerator = selectedGroup
+        ? selectedGroup.moderators.includes(Meteor.userId())
+        : false;
 
     return {
-        selectedGroupId
+        isModerator,
+        selectedGroup,
+        meteorCall: Meteor.call,
+        notInGroup: !userGroups.includes(selectedGroupId)
     };
 })(ChatArea);

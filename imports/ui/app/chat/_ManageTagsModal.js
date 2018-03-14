@@ -44,20 +44,24 @@ export default class ManageTagsModal extends React.Component {
                     {this.renderTags()}
                 </FlipMove>
 
-                <form
-                    className="boxed-view__form--row"
-                    onSubmit={this.handleSubmit.bind(this)}
-                >
-                    <input
-                        ref="newTag"
-                        name="newTag"
-                        className="tags__input"
-                        type="text"
-                        value={this.state.newTag}
-                        onChange={this.handleTagChange.bind(this)}
-                    />
-                    <button className="button button--tag">Add tags</button>
-                </form>
+                {this.props.isModerator ? (
+                    <form
+                        className="boxed-view__form--row"
+                        onSubmit={this.handleSubmit.bind(this)}
+                    >
+                        <input
+                            ref="newTag"
+                            name="newTag"
+                            className="tags__input"
+                            type="text"
+                            value={this.state.newTag}
+                            onChange={this.handleTagChange.bind(this)}
+                        />
+                        <button className="button button--tag">Add tags</button>
+                    </form>
+                ) : (
+                    undefined
+                )}
             </Modal>
         );
     }
@@ -73,11 +77,15 @@ export default class ManageTagsModal extends React.Component {
             <span className="tags__tag" key={`tag${index}`}>
                 <span className="tags__tag--hash"># </span>
                 <span>{tag}</span>
-                <img
-                    className="tags__tag--cross"
-                    src="/images/round_x.svg"
-                    onClick={this.handleTagDelete.bind(this)}
-                />
+                {this.props.isModerator ? (
+                    <img
+                        className="tags__tag--cross"
+                        src="/images/round_x.svg"
+                        onClick={this.handleTagDelete.bind(this)}
+                    />
+                ) : (
+                    undefined
+                )}
             </span>
         ));
     }
@@ -127,3 +135,9 @@ export default class ManageTagsModal extends React.Component {
         });
     }
 }
+
+ManageTagsModal.propTypes = {
+    isModerator: PropTypes.bool.isRequired,
+    selectedGroup: PropTypes.object.isRequired,
+    meteorCall: PropTypes.func.isRequired
+};

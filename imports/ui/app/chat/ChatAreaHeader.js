@@ -1,5 +1,6 @@
 // Library
 import React from "react";
+import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
@@ -13,26 +14,24 @@ export class ChatAreaHeader extends React.Component {
         return (
             <div>
                 {this.props.selectedGroup ? (
-                    <h1>{this.props.selectedGroup.name}</h1>
-                ) : (
-                    undefined
-                )}
+                    <div>
+                        <h1>{this.props.selectedGroup.name}</h1>
 
-                <button onClick={() => this.child.toggleModal()}>
-                    {this.props.isModerator
-                        ? "Manage Group Tags"
-                        : "View Group Tags"}
-                </button>
+                        <button onClick={() => this.child.toggleModal()}>
+                            {this.props.isModerator
+                                ? "Manage Group Tags"
+                                : "View Group Tags"}
+                        </button>
 
-                {this.props.selectedGroup ? (
-                    <ManageTagsModal
-                        isModerator={this.props.isModerator}
-                        selectedGroup={this.props.selectedGroup}
-                        meteorCall={this.props.meteorCall}
-                        ref={ref => {
-                            this.child = ref;
-                        }}
-                    />
+                        <ManageTagsModal
+                            isModerator={this.props.isModerator}
+                            selectedGroup={this.props.selectedGroup}
+                            meteorCall={this.props.meteorCall}
+                            ref={ref => {
+                                this.child = ref;
+                            }}
+                        />
+                    </div>
                 ) : (
                     undefined
                 )}
@@ -41,16 +40,15 @@ export class ChatAreaHeader extends React.Component {
     }
 }
 
+ChatAreaHeader.propTypes = {
+    meteorCall: PropTypes.func.isRequired,
+    selectedGroup: PropTypes.object.isRequired
+};
+
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groups");
-
-    const selectedGroup = GroupsDB.findOne({ _id: selectedGroupId });
-    const isModerator = selectedGroup.moderators.includes(Meteor.userId());
 
     return {
-        isModerator,
-        selectedGroup,
         meteorCall: Meteor.call
     };
 })(ChatAreaHeader);

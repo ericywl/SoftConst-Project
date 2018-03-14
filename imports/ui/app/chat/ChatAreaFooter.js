@@ -13,10 +13,17 @@ export class ChatAreaFooter extends React.Component {
     }
 
     render() {
+        const disabled = this.props.notInGroup ? true : false;
+        const placeholder = this.props.notInGroup
+            ? "Join the group to chat!"
+            : "";
+
         return (
             <div>
                 <form onSubmit={this.handleSubmitMessage.bind(this)}>
                     <input
+                        disabled={disabled}
+                        placeholder={placeholder}
                         ref="msgInput"
                         type="text"
                         value={this.state.input}
@@ -75,6 +82,7 @@ export class ChatAreaFooter extends React.Component {
 }
 
 ChatAreaFooter.propTypes = {
+    notInGroup: PropTypes.bool.isRequired,
     selectedGroupId: PropTypes.string.isRequired,
     meteorCall: PropTypes.func.isRequired
 };

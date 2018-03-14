@@ -41,7 +41,21 @@ GroupList.propTypes = {
     session: PropTypes.object.isRequired
 };
 
-const groupsFilter = (groups, query) => {
+export default withTracker(() => {
+    const selectedGroupId = Session.get("selectedGroupId");
+    const searchQuery = Session.get("searchQuery");
+    Meteor.subscribe("profiles");
+    Meteor.subscribe("groups");
+
+    const groups = fetchGroupsFromDB(selectedGroupId, searchQuery);
+    const queriedGroups = filterGroupsByQuery(groups, searchQuery);
+    return {
+        groups: queriedGroups,
+        session: Session
+    };
+})(GroupList);
+
+const filterGroupsByQuery = (groups, query) => {
     if (!groups) throw new Meteor.Error("filter-groups-not-provided");
     if (!query) return groups;
 
@@ -95,17 +109,3 @@ const fetchGroupsFromDB = (selectedGroupId, query) => {
 
     return groups;
 };
-
-export default withTracker(() => {
-    const selectedGroupId = Session.get("selectedGroupId");
-    const searchQuery = Session.get("searchQuery");
-    Meteor.subscribe("profiles");
-    Meteor.subscribe("groups");
-
-    const groups = fetchGroupsFromDB(selectedGroupId, searchQuery);
-    const queriedGroups = groupsFilter(groups, searchQuery);
-    return {
-        groups: queriedGroups,
-        session: Session
-    };
-})(GroupList);

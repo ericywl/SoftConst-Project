@@ -66,6 +66,7 @@ input[type="password"],
 input[type="search"],
 textarea {
     flex-grow: 1;
+    -webkit-appearance: textfield;
 
     &:focus {
         outline: none;
@@ -80,7 +81,11 @@ textarea {
         transition: opacity 0.3s ease;
     }
 
-    -webkit-appearance: textfield;
+    &:disabled {
+        color: $dark-grey;
+        background-color: darken($light-grey, 8%);
+        font-style: italic;
+    }
 }
 
 .ReactModal__Overlay {

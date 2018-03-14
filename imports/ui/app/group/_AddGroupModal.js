@@ -155,3 +155,7 @@ export default class AddGroupModal extends React.Component {
         });
     }
 }
+
+AddGroupModal.propTypes = {
+    meteorCall: PropTypes.func.isRequired
+};
