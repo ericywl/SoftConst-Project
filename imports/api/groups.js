@@ -44,8 +44,8 @@ if (Meteor.isServer) {
 
 Meteor.methods({
     /**
-     * Add group to database with a name
-     * @param {String} name
+     * Add group to database with a partialGroup object
+     * @param {Object} partialGroup : includes name, description and isPrivate
      */
     groupsInsert(partialGroup) {
         if (!Meteor.userId()) throw new Meteor.Error("not-logged-in");
@@ -82,8 +82,8 @@ Meteor.methods({
     },
 
     /**
-     * Remove group from database via groupId
-     * @param {String} _id: id of the group
+     * Remove group from database
+     * @param {String} _id : id of the group to be removed
      */
     groupsRemove(_id) {
         checkAccess(_id, GroupsDB);
@@ -92,10 +92,9 @@ Meteor.methods({
     },
 
     /**
-     * Add tag to the group identified by groupId
-     * TODO: check for roles before adding
-     * @param {String} _id: id of the group
-     * @param {String} tag: tag to be inserted
+     * Add tag to a group
+     * @param {String} _id : id of the group
+     * @param {String} tag : tag to be inserted
      */
     groupsAddTag(_id, tag) {
         checkAccess(_id, GroupsDB);
@@ -106,8 +105,8 @@ Meteor.methods({
 
     /**
      * Remove tag from the group identified by groupId if exists
-     * @param {String} _id: id of the group
-     * @param {String} tag: tag to be removed
+     * @param {String} _id : id of the group
+     * @param {String} tag : tag to be removed
      */
     groupsRemoveTag(_id, tag) {
         checkAccess(_id, GroupsDB);
@@ -122,8 +121,8 @@ Meteor.methods({
 
     /**
      * Add userId to the list of group moderators
-     * @param {String} _id: id of the group
-     * @param {String} userId: id of the user
+     * @param {String} _id : id of the group
+     * @param {String} userId : id of the user
      */
     groupsAddModerator(_id, userId) {
         checkAccess(_id, GroupsDB);
@@ -134,8 +133,8 @@ Meteor.methods({
 
     /**
      * Update last message at, called only when messages are inserted
-     * @param {String} _id: id of the group
-     * @param {Number} time: time of last message
+     * @param {String} _id : id of the group
+     * @param {Number} time : time of last message
      */
     groupsUpdateLastMessageAt(_id, time) {
         return GroupsDB.update({ _id }, { $set: { lastMessageAt: time } });

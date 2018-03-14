@@ -1,7 +1,11 @@
+// Library
 import React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 
+// React Components
 import ManageTagsModal from "./_ManageTagsModal";
+
+// APIs
 import { GroupsDB } from "../../../api/groups";
 
 export class ChatAreaHeader extends React.Component {

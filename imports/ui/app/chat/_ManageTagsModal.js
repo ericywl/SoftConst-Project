@@ -1,8 +1,10 @@
+// Library
 import React from "react";
 import PropTypes from "prop-types";
 import FlipMove from "react-flip-move";
 import Modal from "react-modal";
 
+// APIs
 import { GroupsDB } from "../../../api/groups";
 import { tagFilter } from "../../../methods/methods";
 

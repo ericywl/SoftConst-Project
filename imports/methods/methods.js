@@ -4,8 +4,8 @@ import { ProfilesDB } from "../api/profiles";
 
 /**
  * Check if current user has moderator/admin access to the collection object
- * @param {*} _id: id of the object to be queried
- * @param {*} db: db to be searched
+ * @param {String} _id : id of the object to be queried
+ * @param {Mongo.Collection} db : db to be searched
  */
 export const checkAccess = (_id, db) => {
     if (!Meteor.userId()) {
@@ -38,6 +38,10 @@ export const checkAccess = (_id, db) => {
     return true;
 };
 
+/**
+ * Check if user exists in both ProfilesDB and Meteor.users
+ * @param {String} userId : user id to be checked
+ */
 export const checkUserExist = userId => {
     if (!Meteor.userId()) {
         throw new Meteor.Error("not-logged-in");
@@ -54,11 +58,19 @@ export const checkUserExist = userId => {
     return true;
 };
 
-export const searchGetFilter = input => {
+/**
+ * Filter search input before storing in session variable
+ * @param {String} input : search bar input
+ */
+export const searchFilterBeforeSet = input => {
     return input.replace(/[^\w\s#]/gi, "");
 };
 
-export const searchFetchFilter = input => {
+/**
+ * Filter search query string before fetching from database
+ * @param {String} input : search bar input
+ */
+export const searchFilterBeforeFetch = input => {
     return input.replace(/[^\w#]/gi, "").toLowerCase();
 };
 

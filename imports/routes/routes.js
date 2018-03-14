@@ -1,14 +1,17 @@
+// Library
 import React from "react";
 import { Redirect, Router, Route, Switch } from "react-router-dom";
 
-import history from "../startup/history";
+// React Components
 import Dashboard from "../ui/app/Dashboard";
 import Login from "../ui/auth/Login";
 import Signup from "../ui/auth/Signup";
 import NotFound from "../ui/NotFound";
-
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
+
+// APIs
+import history from "../startup/history";
 
 export const getRoutes = isAuthenticated => {
     return (
@@ -34,7 +37,7 @@ export const getRoutes = isAuthenticated => {
                         isAuth={isAuthenticated}
                         component={Dashboard}
                     />
-					
+
                     <Route component={NotFound} />
                 </Switch>
             </div>

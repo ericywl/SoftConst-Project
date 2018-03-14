@@ -1,8 +1,10 @@
+// Library
 import React from "react";
 import PropTypes from "prop-types";
 import Modal from "react-modal";
 import { withTracker } from "meteor/react-meteor-data";
 
+// APIs
 import { ProfilesDB } from "../../../api/profiles";
 
 export default class AddGroupModal extends React.Component {
@@ -13,7 +15,8 @@ export default class AddGroupModal extends React.Component {
             groupName: "",
             groupDesc: "",
             groupPrivate: false,
-            error: ""
+            error: "",
+            result: ""
         };
     }
 
@@ -108,7 +111,6 @@ export default class AddGroupModal extends React.Component {
         };
 
         event.preventDefault();
-
         this.props.meteorCall("groupsInsert", partialGroup, (err, res) => {
             if (err) this.setState({ error: err.reason });
 
@@ -120,7 +122,6 @@ export default class AddGroupModal extends React.Component {
                     throw new Meteor.Error("profiles-join-group-failed");
                 }
 
-                Session.set("selectedGroupId", res);
                 this.toggleModal();
             }
         });
@@ -149,6 +150,7 @@ export default class AddGroupModal extends React.Component {
             modalIsOpen: !this.state.modalIsOpen,
             groupName: "",
             groupDesc: "",
+            groupPrivate: false,
             error: ""
         });
     }

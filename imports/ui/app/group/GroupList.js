@@ -1,13 +1,20 @@
+// Library
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import FlipMove from "react-flip-move";
 
-import { GroupsDB } from "../../../api/groups";
-import { ProfilesDB } from "../../../api/profiles";
-import { searchGetFilter, searchFetchFilter } from "../../../methods/methods";
+// React Components
 import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
+
+// APIs
+import { GroupsDB } from "../../../api/groups";
+import { ProfilesDB } from "../../../api/profiles";
+import {
+    searchFilterBeforeSet,
+    searchFilterBeforeFetch
+} from "../../../methods/methods";
 
 const SHOWN_GROUPS_LIMIT = 10;
 export class GroupList extends React.Component {
@@ -38,7 +45,7 @@ const groupsFilter = (groups, query) => {
     if (!groups) throw new Meteor.Error("filter-groups-not-provided");
     if (!query) return groups;
 
-    query = searchFetchFilter(query);
+    query = searchFilterBeforeFetch(query);
     if (query[0] === "#") {
         query = query.slice(1);
         const queryLen = query.length;
@@ -53,7 +60,7 @@ const groupsFilter = (groups, query) => {
     }
 
     return groups.filter(
-        group => searchFetchFilter(group.name).indexOf(query) !== -1
+        group => searchFilterBeforeFetch(group.name).indexOf(query) !== -1
     );
 };
 
@@ -61,7 +68,7 @@ const fetchGroupsFromDB = (selectedGroupId, query) => {
     let groups = [];
     const userProfile = ProfilesDB.find().fetch()[0];
     const userGroups = userProfile ? userProfile.groups : [];
-    if (searchFetchFilter(query)[0] === "#") {
+    if (searchFilterBeforeFetch(query)[0] === "#") {
         groups = GroupsDB.find(
             { isPrivate: false },
             {

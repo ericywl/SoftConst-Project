@@ -14,9 +14,10 @@ if (Meteor.isClient) {
         Meteor.subscribe("admins");
         Meteor.call("adminsInsert");
 
-        Session.set("selectedGroupId", "");
-        Session.set("searchQuery", "");
-        Session.set("isNavOpen", false);
+        Session.setDefault("selectedGroupId", "");
+        Session.setDefault("searchQuery", "");
+        Session.setDefault("isNavOpen", false);
+        Session.setDefault("sessionTime", moment().valueOf());
 
         Tracker.autorun(() => {
             const isAuthenticated = !!Meteor.userId();
@@ -29,6 +30,9 @@ if (Meteor.isClient) {
 
 Meteor.setInterval(updateSessionTime, 20000);
 
+/**
+ * Update the session time to refresh fromNow value in group list
+ */
 function updateSessionTime() {
     Session.set("sessionTime", moment().valueOf());
 }
