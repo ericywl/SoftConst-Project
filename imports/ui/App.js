@@ -1,18 +1,19 @@
-// Library
 import React from "react";
 import ReactDOM from "react-dom";
 import moment from "moment";
 import { Session } from "meteor/session";
 import { Redirect } from "react-router-dom";
 
-// APIs
 import history from "../startup/history";
 import { getRoutes } from "../routes/routes";
+import { AdminsDB } from "../api/admins";
 import "../startup/simpl-schema-config";
 
 if (Meteor.isClient) {
     Meteor.startup(() => {
+        Meteor.subscribe("admins");
         Meteor.call("adminsInsert");
+
         Session.setDefault("selectedGroupId", "");
         Session.setDefault("searchQuery", "");
         Session.setDefault("isNavOpen", false);

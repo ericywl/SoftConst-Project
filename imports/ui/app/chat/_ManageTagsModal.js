@@ -67,14 +67,13 @@ export default class ManageTagsModal extends React.Component {
     }
 
     renderTags() {
-        const tags = this.props.selectedGroup.tags;
-        if (!tags || tags.length === 0) {
+        if (this.props.selectedGroup.tags.length === 0) {
             return (
                 <div className="empty-tags">There are no tags currently.</div>
             );
         }
 
-        return tags.map((tag, index) => (
+        return this.props.selectedGroup.tags.map((tag, index) => (
             <span className="tags__tag" key={`tag${index}`}>
                 <span className="tags__tag--hash"># </span>
                 <span>{tag}</span>

@@ -9,13 +9,14 @@ import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
 
 // APIs
-import { PublicGroupsDB, CurrGroupsDB } from "../../../api/groups";
-import { CurrProfileDB } from "../../../api/profiles";
+import { GroupsDB } from "../../../api/groups";
+import { ProfilesDB } from "../../../api/profiles";
 import {
     searchFilterBeforeSet,
     searchFilterBeforeFetch
 } from "../../../methods/methods";
 
+const SHOWN_GROUPS_LIMIT = 10;
 export class GroupList extends React.Component {
     renderGroupList() {
         return this.props.groups.map(group => {
@@ -43,9 +44,8 @@ GroupList.propTypes = {
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
     const searchQuery = Session.get("searchQuery");
-    Meteor.subscribe("publicGroups");
-    Meteor.subscribe("currentGroups");
-    Meteor.subscribe("currentProfile");
+    Meteor.subscribe("profiles");
+    Meteor.subscribe("groups");
 
     const groups = fetchGroupsFromDB(selectedGroupId, searchQuery);
     const queriedGroups = filterGroupsByQuery(groups, searchQuery);
@@ -80,10 +80,24 @@ const filterGroupsByQuery = (groups, query) => {
 
 const fetchGroupsFromDB = (selectedGroupId, query) => {
     let groups = [];
+    const userProfile = ProfilesDB.find().fetch()[0];
+    const userGroups = userProfile ? userProfile.groups : [];
     if (searchFilterBeforeFetch(query)[0] === "#") {
-        groups = PublicGroupsDB.find().fetch();
+        groups = GroupsDB.find(
+            { isPrivate: false },
+            {
+                sort: {},
+                $limit: SHOWN_GROUPS_LIMIT
+            }
+        ).fetch();
     } else {
-        groups = CurrGroupsDB.find().fetch();
+        groups = GroupsDB.find(
+            { _id: { $in: userGroups } },
+            {
+                sort: { lastMessageAt: -1 },
+                $limit: SHOWN_GROUPS_LIMIT
+            }
+        ).fetch();
     }
 
     groups = groups.map(group => {

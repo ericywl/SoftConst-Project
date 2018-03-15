@@ -2,13 +2,12 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { ProfilesDB, CurrProfileDB } from "./profiles";
-import { checkUserExist } from "../methods/methods";
+import { ProfilesDB } from "./profiles";
 
 export const MessagesDB = new Mongo.Collection("messages");
 
 if (Meteor.isServer) {
-    Meteor.publish("groupMessages", function(groupId) {
+    Meteor.publish("messagesByGroup", function(groupId) {
         if (!this.userId) {
             this.ready();
             throw new Meteor.Error("not-logged-in");
@@ -42,31 +41,25 @@ const validatePartialMsg = (partialMsg, userDisplayName) => {
 
 Meteor.methods({
     messagesInsert(partialMsg, userDisplayName = undefined) {
-        if (Meteor.isServer) {
-            checkUserExist(Meteor.userId());
+        if (!Meteor.userId()) {
+            throw new Meteor.Error("not-logged-in");
         }
 
-        if (Meteor.isServer) {
-            // For API tests only
-            if (!userDisplayName) {
-                userDisplayName = ProfilesDB.findOne({ _id: Meteor.userId() })
-                    .displayName;
-            }
-        }
-
-        if (Meteor.isClient) {
-            userDisplayName = CurrProfileDB.findOne().displayName;
+        // For API tests only
+        if (!userDisplayName) {
+            userDisplayName = ProfilesDB.findOne({ _id: Meteor.userId() })
+                .displayName;
         }
 
         validatePartialMsg(partialMsg, userDisplayName);
 
         const now = moment().valueOf();
-        return MessagesDB.insert({
+        return (result = MessagesDB.insert({
             groupId: partialMsg.groupId,
             content: partialMsg.content,
             userId: Meteor.userId(),
             userDisplayName,
             sentAt: now
-        });
+        }));
     }
 });

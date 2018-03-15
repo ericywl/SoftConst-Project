@@ -1,7 +1,6 @@
 // Library
 import React from "react";
 import PropTypes from "prop-types";
-import moment from "moment";
 import { withTracker } from "meteor/react-meteor-data";
 
 // APIs
@@ -47,16 +46,8 @@ PrivateHeader.propTypes = {
 
 export default withTracker(() => {
     return {
-        handleLogout: handleLogoutFunc,
+        handleLogout: () => Accounts.logout(),
         toggleNav: () => Session.set("isNavOpen", !Session.get("isNavOpen")),
         isNavOpen: Session.get("isNavOpen")
     };
 })(PrivateHeader);
-
-const handleLogoutFunc = () =>
-    Accounts.logout(() => {
-        Session.set("selectedGroupId", "");
-        Session.set("searchQuery", "");
-        Session.set("isNavOpen", false);
-        Session.set("sessionTime", moment().valueOf());
-    });

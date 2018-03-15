@@ -1,7 +1,6 @@
 // Library
 import React from "react";
 import PropTypes from "prop-types";
-import moment from "moment";
 import { withTracker } from "meteor/react-meteor-data";
 
 export class ChatAreaFooter extends React.Component {
@@ -57,17 +56,18 @@ export class ChatAreaFooter extends React.Component {
         };
 
         this.props.meteorCall("messagesInsert", partialMsg, (err, res) => {
-            if (err) this.setState({ error: err });
+            if (err) this.setState({ error: err.reason });
 
             if (res) {
                 try {
-                    this.props.meteorCall(
+                    this.props.call(
                         "groupsUpdateLastMessageAt",
                         partialMsg.groupId,
-                        moment().valueOf()
+                        now
                     );
                 } catch (err) {
-                    throw new Meteor.Error(err);
+                    // remove message from db
+                    throw new Meteor.Error(err.reason);
                 }
 
                 this.setState({ input: "" });
