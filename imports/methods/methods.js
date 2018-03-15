@@ -1,4 +1,4 @@
-import { PublicGroupsDB } from "../api/groups";
+import { GroupsDB } from "../api/groups";
 import { AdminsDB } from "../api/admins";
 import { ProfilesDB } from "../api/profiles";
 

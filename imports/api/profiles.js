@@ -2,7 +2,7 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { PublicGroupsDB } from "./groups";
+import { GroupsDB } from "./groups";
 import { checkUserExist } from "../methods/methods";
 
 export const ProfilesDB = new Mongo.Collection("profiles");
@@ -64,7 +64,7 @@ if (Meteor.isServer) {
             return [];
         }
 
-        const group = PublicGroupsDB.findOne({ _id: groupId });
+        const group = GroupsDB.findOne({ _id: groupId });
         const groupUsers = group.members.concat(group.moderators);
 
         Mongo.Collection._publishCursor(

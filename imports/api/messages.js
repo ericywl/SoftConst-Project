@@ -2,7 +2,7 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { ProfilesDB } from "./profiles";
+import { ProfilesDB, CurrProfileDB } from "./profiles";
 import { checkUserExist } from "../methods/methods";
 
 export const MessagesDB = new Mongo.Collection("messages");
@@ -46,10 +46,16 @@ Meteor.methods({
             checkUserExist(Meteor.userId());
         }
 
-        // For API tests only
-        if (!userDisplayName) {
-            userDisplayName = ProfilesDB.findOne({ _id: Meteor.userId() })
-                .displayName;
+        if (Meteor.isServer) {
+            // For API tests only
+            if (!userDisplayName) {
+                userDisplayName = ProfilesDB.findOne({ _id: Meteor.userId() })
+                    .displayName;
+            }
+        }
+
+        if (Meteor.isClient) {
+            userDisplayName = CurrProfileDB.findOne().displayName;
         }
 
         validatePartialMsg(partialMsg, userDisplayName);

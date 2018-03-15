@@ -5,7 +5,7 @@ import FlipMove from "react-flip-move";
 import Modal from "react-modal";
 
 // APIs
-import { PublicGroupsDB } from "../../../api/groups";
+import { GroupsDB } from "../../../api/groups";
 import { tagFilter } from "../../../methods/methods";
 
 export default class ManageTagsModal extends React.Component {
