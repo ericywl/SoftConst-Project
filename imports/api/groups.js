@@ -91,7 +91,7 @@ Meteor.methods({
     },
 
     /**
-     * Remove tag from the group identified by groupId if exists
+     * Remove tag from the group identified by id if exists
      * @param {String} _id : id of the group
      * @param {String} tag : tag to be removed
      */

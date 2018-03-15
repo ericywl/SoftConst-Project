@@ -1,33 +1,30 @@
 import { GroupsDB } from "../api/groups";
 import { AdminsDB } from "../api/admins";
 import { ProfilesDB } from "../api/profiles";
+import { DsbjsDB } from "../api/dsbjs";
 
 /**
  * Check if current user has moderator/admin access to the collection object
- * @param {String} _id : id of the object to be queried
+ * @param {String} itemId : id of the object to be queried
+ * @param {String} userId : id of currentUser
  * @param {Mongo.Collection} db : db to be searched
  */
-export const checkAccess = (_id, db) => {
-    if (!Meteor.userId()) {
-        throw new Meteor.Error("not-logged-in");
-    }
-
-    const dbObj = db.findOne({ _id });
-    if (!dbObj) {
-        throw new Meteor.Error("object-not-found");
-    }
+export const checkAccess = (itemId, db) => {
+    const dbObj = db.findOne({ _id: itemId });
+    if (!dbObj) throw new Meteor.Error("object-not-found");
+    if (AdminsDB.findOne().admins.includes(Meteor.userId())) return true;
 
     switch (db) {
         case GroupsDB:
-            if (!dbObj.moderators.includes(Meteor.userId())) {
-                if (!AdminsDB.findOne().admins.includes(Meteor.userId()))
-                    throw new Meteor.Error("not-authorized");
-            }
+            if (!dbObj.moderators.includes(Meteor.userId()))
+                throw new Meteor.Error("not-authorized");
+
             break;
 
-        case AdminsDB:
-            if (!dbObj.admins.includes(Meteor.userId()))
+        case DsbjsDB:
+            if (dbObj.createdBy !== Meteor.userId())
                 throw new Meteor.Error("not-authorized");
+
             break;
 
         default:
@@ -39,21 +36,15 @@ export const checkAccess = (_id, db) => {
 };
 
 /**
- * Check if user exists in both ProfilesDB and Meteor.users
+ * Check if user exists in Meteor.users and ProfilesDB
  * @param {String} userId : user id to be checked
  */
 export const checkUserExist = userId => {
-    if (!Meteor.userId()) {
-        throw new Meteor.Error("not-logged-in");
-    }
-
-    if (!Meteor.users.findOne({ _id: userId })) {
+    if (Meteor.users.findOne({ _id: userId }))
         throw new Meteor.Error("user-not-found");
-    }
 
-    if (!ProfilesDB.findOne({ _id: userId })) {
+    if (!ProfilesDB.findOne({ _id: userId }))
         throw new Meteor.Error("profile-not-found");
-    }
 
     return true;
 };
