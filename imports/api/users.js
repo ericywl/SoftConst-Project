@@ -1,7 +1,22 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
+import { ProfileDB } from "./profile.js";
 
-import { ProfilesDB } from "./profiles.js";
+if (Meteor.isServer) {
+    Meteor.publish("userProfile", function(_id) {
+        return Meteor.users.find(
+            {_id},
+            {
+                fields: {
+                    /*displayName: 1,
+                    groups: 1,
+                    tags: 1,
+                    bio: 1*/
+                }
+            }
+        );
+    });
+}
 
 export const validateNewUserClient = user => {
     const email = user.email;
@@ -61,3 +76,5 @@ if (Meteor.isServer) {
         return user;
     });
 }
+
+    

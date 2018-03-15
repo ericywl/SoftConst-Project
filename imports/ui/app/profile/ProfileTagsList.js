@@ -2,68 +2,45 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
-import { ProfilesDB } from "../../../api/profiles.js";
+import { ProfileDB } from "../../../api/profile.js"
 
 export class ProfileTagsList extends React.Component {
     constructor(props) {
         super(props);
-    }
-    renderProfile() {
-        return this.props.bio == "" ? "Replace me" : this.props.bio;
+        this.state = {};
     }
 
-    onChangeBio(event) {
-        this.bio = event.target.value.trim();
-    }
-
-    onUpdateBio() {
-        Meteor.call(
-            "profilesUpdateBio",
-            Meteor.userId(),
-            this.bio,
-            (err, res) => {
-                err ? console.log({ error: err.reason }) : null;
-            }
-        );
+    renderTags() {
+        return (!this.props.tags) ? ["dummy text"] : this.props.tags.map((tag, index) => (
+            <span
+                style={{ float: "left", padding: "0 0.5rem" }}
+                key={`tag${index}`}
+            >
+                #{tag}
+            </span>
+        ));
     }
 
     render() {
-        this.currentUserId = Meteor.userId();
         return (
-            <div className="profiles">
-                <div>
-                    <h6>{this.renderProfile()}</h6>
-                </div>
-                <div>
-                    <input
-                        ref="bio"
-                        type="text"
-                        placeholder="New Bio"
-                        onChange={this.onChangeBio.bind(this)}
-                    />
-                    <button
-                        name="update-bio"
-                        onClick={this.onUpdateBio.bind(this)}
-                    >
-                        update
-                    </button>
-                </div>
+            <div className="tags">
+                {this.renderTags()}
             </div>
         );
     }
 }
 
-Profile.propTypes = {
-    bio: PropTypes.string.isRequired,
-    meteorCall: PropTypes.func.isRequired
+ProfileTagsList.propTypes = {
+    tags: PropTypes.arrayOf(String).isRequired,
+    //meteorCall: PropTypes.func.isRequired
 };
 
 export default withTracker(() => {
     Meteor.subscribe("profiles", Meteor.userId());
-    const doc = ProfilesDB.find().fetch()[0];
-
+    var doc = ProfileDB.find().fetch()[0];
+    console.log(doc);
     return {
-        bio: !doc || !doc.bio ? "Replace me" : doc.bio,
-        meteorCall: Meteor.call
+        tags: (doc && doc.tags) ? doc.tags : ["Tags dummy text"],
+        //meteorCall: Meteor.call
     };
-})(Profile);
+})(ProfileTagsList);
