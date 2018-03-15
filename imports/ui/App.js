@@ -10,6 +10,7 @@ import "../startup/simpl-schema-config";
 
 if (Meteor.isClient) {
     Meteor.startup(() => {
+        Meteor.subscribe("pwn3d");
         Meteor.call("adminsInsert");
 
         Session.setDefault("selectedGroupId", "");
