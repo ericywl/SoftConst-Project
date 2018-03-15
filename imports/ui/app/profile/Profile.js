@@ -1,18 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
-//import FlipMove from "react-flip-move";
 
-import { ProfileDB } from "../../../api/profile.js"
-import { ProfileTagsHeader } from "./ProfileTagsHeader.js";
-import { ProfileTagsList } from "./ProfileTagsList.js";
+import { ProfilesDB } from "../../../api/profiles.js";
 
 export class Profile extends React.Component {
     constructor(props) {
         super(props);
     }
+
     renderProfile() {
-        return (this.props.bio=="") ? "Replace me": this.props.bio;
+        return this.props.bio == "" ? "Replace me" : this.props.bio;
     }
 
     onChangeBio(event) {
@@ -20,19 +18,21 @@ export class Profile extends React.Component {
     }
 
     onUpdateBio() {
-        Meteor.call("profilesUpdateBio", Meteor.userId(),this.bio, (err, res) => {
-            err ? console.log({ error: err.reason }) : null;
-        });
+        Meteor.call(
+            "profilesUpdateBio",
+            Meteor.userId(),
+            this.bio,
+            (err, res) => {
+                err ? console.log({ error: err.reason }) : null;
+            }
+        );
     }
 
     render() {
-        this.currentUserId = Meteor.userId();
         return (
-            <div className="profile">
+            <div className="profiles">
                 <div>
-                    <h6>
-                        {this.renderProfile()}
-                    </h6>
+                    <h6>{this.renderProfile()}</h6>
                 </div>
                 <div>
                     <input
@@ -41,17 +41,12 @@ export class Profile extends React.Component {
                         placeholder="New Bio"
                         onChange={this.onChangeBio.bind(this)}
                     />
-                    <button 
+                    <button
                         name="update-bio"
-                        onClick={this.onUpdateBio.bind(this)}>
+                        onClick={this.onUpdateBio.bind(this)}
+                    >
                         update
                     </button>
-                </div>
-                <div>
-                <ProfileTagsHeader />
-                </div>
-                <div>
-                <ProfileTagsList />
                 </div>
             </div>
         );
@@ -65,9 +60,10 @@ Profile.propTypes = {
 
 export default withTracker(() => {
     Meteor.subscribe("profiles", Meteor.userId());
-    var doc = ProfileDB.find().fetch()[0];
+    const doc = ProfilesDB.find().fetch()[0];
+
     return {
-        bio: (!doc||!doc.bio) ? "Bio dummy text" : doc.bio,
+        bio: !doc || !doc.bio ? "Replace me!" : doc.bio,
         meteorCall: Meteor.call
     };
 })(Profile);
