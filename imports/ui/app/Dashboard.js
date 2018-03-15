@@ -1,6 +1,10 @@
+// Library
 import React from "react";
 import Modal from "react-modal";
+import { withTracker } from "meteor/react-meteor-data";
 
+
+// React Components
 import PrivateHeader from "./PrivateHeader";
 import GroupList from "./group/GroupList";
 import ChatArea from "./chat/ChatArea";

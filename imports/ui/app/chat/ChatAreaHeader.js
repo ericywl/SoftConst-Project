@@ -1,40 +1,54 @@
+// Library
 import React from "react";
+import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
+// React Components
 import ManageTagsModal from "./_ManageTagsModal";
+
+// APIs
 import { GroupsDB } from "../../../api/groups";
 
 export class ChatAreaHeader extends React.Component {
     render() {
         return (
             <div>
-                <button onClick={() => this.child.toggleModal()}>
-                    Manage group tags
-                </button>
+                {this.props.selectedGroup ? (
+                    <div>
+                        <h1>{this.props.selectedGroup.name}</h1>
 
-                <ManageTagsModal
-                    selectedGroupId={this.props.selectedGroupId}
-                    groupTags={this.props.groupTags}
-                    meteorCall={this.props.meteorCall}
-                    ref={ref => {
-                        this.child = ref;
-                    }}
-                />
+                        <button onClick={() => this.child.toggleModal()}>
+                            {this.props.isModerator
+                                ? "Manage Group Tags"
+                                : "View Group Tags"}
+                        </button>
+
+                        <ManageTagsModal
+                            isModerator={this.props.isModerator}
+                            selectedGroup={this.props.selectedGroup}
+                            meteorCall={this.props.meteorCall}
+                            ref={ref => {
+                                this.child = ref;
+                            }}
+                        />
+                    </div>
+                ) : (
+                    undefined
+                )}
             </div>
         );
     }
 }
 
+ChatAreaHeader.propTypes = {
+    meteorCall: PropTypes.func.isRequired,
+    selectedGroup: PropTypes.object.isRequired
+};
+
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groups", selectedGroupId);
-
-    const group = GroupsDB.findOne({ _id: selectedGroupId });
-    const groupTags = group && group.tags ? group.tags : [];
 
     return {
-        selectedGroupId,
-        groupTags,
         meteorCall: Meteor.call
     };
 })(ChatAreaHeader);

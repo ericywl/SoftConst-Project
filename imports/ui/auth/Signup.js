@@ -1,8 +1,10 @@
+// Library
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 
+// APIs
 import { validateNewUserClient } from "../../api/users";
 
 export class Signup extends React.Component {

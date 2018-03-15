@@ -18,20 +18,6 @@ if (Meteor.isServer) {
     });
 }
 
-Meteor.methods({
-    /*usersJoinGroup(groupId) {
-        Meteor.users;
-    },*/
-    /**
-     * 
-     * @param {String} _id 
-     * @param {String} arg 
-     */
-    usersUpdateBio(_id, arg) {
-        return Meteor.users.update({_id}, {$set: {bio:arg}});
-    }
-});
-
 export const validateNewUserClient = user => {
     const email = user.email;
     const password = user.password;
@@ -73,6 +59,8 @@ export const validateNewUserServer = user => {
         }
     }).validate({ email, username });
 
+    Meteor.call("profilesInsert", user._id, user.username);
+
     return true;
 };
 
@@ -83,14 +71,8 @@ if (Meteor.isServer) {
         if (!options.username) {
             throw new Meteor.Error("username-not-provided");
         }
-        ProfileDB.insert({
-            _id: user._id,
-            displayName: user.displayName,
-            groups: [],
-            tags: [],
-            bio: ""
-        })
-    
+
+        user.username = options.username;
         return user;
     });
 }

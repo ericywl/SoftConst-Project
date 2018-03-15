@@ -1,3 +1,4 @@
+// Library
 import React from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
@@ -34,6 +35,7 @@ GroupListItem.propTypes = {
 };
 
 export default withTracker(() => {
+    const time = Session.get("sessionTime");
     return {
         session: Session
     };
