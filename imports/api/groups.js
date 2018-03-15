@@ -35,7 +35,7 @@ Meteor.methods({
      * @param {Object} partialGroup : includes name, description and isPrivate
      */
     groupsInsert(partialGroup) {
-        if (!Meteor.userId()) throw new Meteor.Error("not-logged-in");
+        checkUserExist(Meteor.userId());
 
         new SimpleSchema({
             name: {
