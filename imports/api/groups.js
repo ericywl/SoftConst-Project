@@ -37,25 +37,6 @@ Meteor.methods({
     groupsInsert(partialGroup) {
         checkUserExist(Meteor.userId());
 
-        new SimpleSchema({
-            name: {
-                type: String,
-                min: 3,
-                max: 30
-            },
-            description: {
-                type: String,
-                max: 50
-            },
-            isPrivate: {
-                type: Boolean
-            }
-        }).validate({
-            name: partialGroup.name,
-            description: partialGroup.description,
-            isPrivate: partialGroup.isPrivate
-        });
-
         return GroupsDB.insert({
             name: partialGroup.name,
             description: partialGroup.description,
@@ -127,3 +108,26 @@ Meteor.methods({
         return GroupsDB.update({ _id }, { $set: { lastMessageAt: time } });
     }
 });
+
+const validateNewGroup = partialGroup => {
+    new SimpleSchema({
+        name: {
+            type: String,
+            min: 3,
+            max: 30
+        },
+        description: {
+            type: String,
+            max: 50
+        },
+        isPrivate: {
+            type: Boolean
+        }
+    }).validate({
+        name: partialGroup.name,
+        description: partialGroup.description,
+        isPrivate: partialGroup.isPrivate
+    });
+
+    return true;
+};
