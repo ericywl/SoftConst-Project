@@ -66,14 +66,14 @@ Meteor.methods({
      * @param {String} _id
      * @param {String} newBio
      */
-    profilesUpdateBio(newBio) {
+    profilesUpdateBio(_id, newBio) {
         if (!Meteor.userId()) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        checkUserExist(Meteor.userId());
+        checkUserExist(_id);
         return ProfilesDB.update(
-            { _id: Meteor.userId() },
+            { _id: _id },
             { $set: { bio: newBio } }
         );
     },

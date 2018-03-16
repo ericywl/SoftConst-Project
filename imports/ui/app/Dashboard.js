@@ -5,7 +5,7 @@ import { withTracker } from "meteor/react-meteor-data";
 
 
 // React Components
-import PrivateHeader from "./PrivateHeader";
+import PrivateHeader2 from "./PrivateHeader2";
 import GroupList from "./group/GroupList";
 import ChatArea from "./chat/ChatArea";
 
@@ -36,7 +36,7 @@ export class Dashboard extends React.Component {
     render() {
         return (
             <div>
-                <PrivateHeader title="STUD Chat" />
+                <PrivateHeader2 title="STUD Chat" />
                 {this.renderPage()}
             </div>
         );

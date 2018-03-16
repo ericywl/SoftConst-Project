@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
-import { ProfileDB } from "../../../api/profile.js"
+import { ProfilesDB } from "../../../api/profiles.js"
 
 export class ProfileTagsHeader extends React.Component {
     constructor(props) {

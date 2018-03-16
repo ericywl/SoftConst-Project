@@ -1,6 +1,6 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
-import { ProfileDB } from "./profile.js";
+import { ProfilesDB } from "./profiles.js";
 
 if (Meteor.isServer) {
     Meteor.publish("userProfile", function(_id) {
@@ -71,13 +71,13 @@ if (Meteor.isServer) {
         if (!options.username) {
             throw new Meteor.Error("username-not-provided");
         }
-        ProfileDB.insert({
+        /*ProfilesDB.insert({
             _id: user._id,
             displayName: user.displayName,
             groups: [],
             tags: [],
             bio: ""
-        })
+        })*/
     
         return user;
     });

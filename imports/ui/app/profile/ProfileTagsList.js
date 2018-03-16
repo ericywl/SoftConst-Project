@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
-import { ProfileDB } from "../../../api/profile.js"
+import { ProfilesDB } from "../../../api/profiles.js"
 
 export class ProfileTagsList extends React.Component {
     constructor(props) {
@@ -37,7 +37,7 @@ ProfileTagsList.propTypes = {
 
 export default withTracker(() => {
     Meteor.subscribe("profiles", Meteor.userId());
-    var doc = ProfileDB.find().fetch()[0];
+    var doc = ProfilesDB.find().fetch()[0];
     console.log(doc);
     return {
         tags: (doc && doc.tags) ? doc.tags : ["Tags dummy text"],

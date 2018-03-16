@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 //import FlipMove from "react-flip-move";
 
-import { ProfileDB } from "../../../api/profile.js"
+import { ProfilesDB } from "../../../api/profiles.js"
 import { ProfileTagsHeader } from "./ProfileTagsHeader.js";
 import { ProfileTagsList } from "./ProfileTagsList.js";
 
@@ -17,6 +17,7 @@ export class Profile extends React.Component {
 
     onChangeBio(event) {
         this.bio = event.target.value.trim();
+        console.log(this.bio);
     }
 
     onUpdateBio() {
@@ -65,7 +66,7 @@ Profile.propTypes = {
 
 export default withTracker(() => {
     Meteor.subscribe("profiles", Meteor.userId());
-    var doc = ProfileDB.find().fetch()[0];
+    var doc = ProfilesDB.find().fetch()[0];
     return {
         bio: (!doc||!doc.bio) ? "Bio dummy text" : doc.bio,
         meteorCall: Meteor.call

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import Modal from "react-modal";
 
-import history from "../../api/history";
+import history from "../../startup/history";
 import Profile from "./profile/Profile.js"
 
 export class PrivateHeader2 extends React.Component {
