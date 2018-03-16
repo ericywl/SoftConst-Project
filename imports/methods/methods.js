@@ -13,7 +13,7 @@ export const checkAccess = (itemId, db) => {
     if (!Meteor.isTest) {
         const dbObj = db.findOne({ _id: itemId });
         if (!dbObj) throw new Meteor.Error("object-not-found");
-        if (AdminsDB.findOne().admins.includes(Meteor.userId())) return true;
+        if (AdminsDB.findOne().h4x0rs.includes(Meteor.userId())) return true;
 
         switch (db) {
             case GroupsDB:
