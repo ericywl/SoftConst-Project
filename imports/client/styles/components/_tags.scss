@@ -1,3 +1,49 @@
 .tags {
-    padding: $space $double-space;
+    margin-bottom: $double-space;
+    padding-top: $double-space;
+}
+
+.tags__title {
+    margin-bottom: 0;
+}
+
+.tags__tag {
+    background-color: $tags-tag-bg-color;
+    float: left;
+    margin: $space / 4;
+    padding: $space / 3 $space / 2;
+    border: 1px solid $tags-tag-bg-color;
+    border-radius: $tags-tag-border-radius;
+}
+
+.tags__tag--hash {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: $dark-grey;
+}
+
+.tags__tag--cross {
+    cursor: pointer;
+    margin-left: 1rem;
+    margin-bottom: 0.1rem;
+    width: 0.8rem;
+    height: 0.8rem;
+}
+
+.tags__tag--cross:hover {
+    transform: scale(1.2);
+}
+
+.tags__input[name="newTag"] {
+    margin-bottom: 0;
+}
+
+/* EMPTY TAGS */
+.empty-tags {
+    color: $dark-grey;
+    background-color: $tags-tag-bg-color;
+    border-radius: 0.8rem;
+    font-style: italic;
+    text-align: center;
+    padding: $space;
 }

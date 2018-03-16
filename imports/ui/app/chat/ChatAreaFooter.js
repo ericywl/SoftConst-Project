@@ -1,13 +1,38 @@
+// Library
 import React from "react";
 import PropTypes from "prop-types";
+import moment from "moment";
 import { withTracker } from "meteor/react-meteor-data";
 
 export class ChatAreaFooter extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            input: ""
+            input: "",
+            error: ""
         };
+    }
+
+    render() {
+        const disabled = this.props.notInGroup ? true : false;
+        const placeholder = this.props.notInGroup
+            ? "Join the group to chat!"
+            : "";
+
+        return (
+            <div>
+                <form onSubmit={this.handleSubmitMessage.bind(this)}>
+                    <input
+                        disabled={disabled}
+                        placeholder={placeholder}
+                        ref="msgInput"
+                        type="text"
+                        value={this.state.input}
+                        onChange={this.handleInputChange.bind(this)}
+                    />
+                </form>
+            </div>
+        );
     }
 
     // Reset the message input field if user change group
@@ -32,9 +57,20 @@ export class ChatAreaFooter extends React.Component {
         };
 
         this.props.meteorCall("messagesInsert", partialMsg, (err, res) => {
-            if (err) {
-                // show user error
-            } else {
+            if (err) this.setState({ error: err.reason });
+
+            if (res) {
+                try {
+                    this.props.meteorCall(
+                        "groupsUpdateLastMessageAt",
+                        partialMsg.groupId,
+                        moment().valueOf()
+                    );
+                } catch (err) {
+                    // remove message from db
+                    throw new Meteor.Error(err.reason);
+                }
+
                 this.setState({ input: "" });
             }
         });
@@ -44,30 +80,19 @@ export class ChatAreaFooter extends React.Component {
         const input = event.target.value;
         this.setState({ input });
     }
-
-    render() {
-        return (
-            <div>
-                <form onSubmit={this.handleSubmitMessage.bind(this)}>
-                    <input
-                        ref="msgInput"
-                        type="text"
-                        value={this.state.input}
-                        onChange={this.handleInputChange.bind(this)}
-                    />
-                </form>
-            </div>
-        );
-    }
 }
 
 ChatAreaFooter.propTypes = {
-    selectedGroupId: PropTypes.string,
+    notInGroup: PropTypes.bool.isRequired,
+    selectedGroupId: PropTypes.string.isRequired,
     meteorCall: PropTypes.func.isRequired
 };
 
 export default withTracker(() => {
+    const selectedGroupId = Session.get("selectedGroupId");
+
     return {
+        selectedGroupId,
         meteorCall: Meteor.call
     };
 })(ChatAreaFooter);

@@ -18,20 +18,6 @@ if (Meteor.isServer) {
     });
 }
 
-Meteor.methods({
-    /*usersJoinGroup(groupId) {
-        Meteor.users;
-    },*/
-    /**
-     * 
-     * @param {String} _id 
-     * @param {String} arg 
-     */
-    usersUpdateBio(_id, arg) {
-        return Meteor.users.update({_id}, {$set: {bio:arg}});
-    }
-});
-
 export const validateNewUserClient = user => {
     const email = user.email;
     const password = user.password;
@@ -72,6 +58,8 @@ export const validateNewUserServer = user => {
             max: 30
         }
     }).validate({ email, username });
+
+    Meteor.call("profilesInsert", user._id, user.username);
 
     return true;
 };

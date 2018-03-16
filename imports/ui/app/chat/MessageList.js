@@ -1,8 +1,12 @@
+// Library
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
+// React Components
 import { Message } from "./Message";
+
+// APIs
 import { MessagesDB } from "../../../api/messages";
 
 export class MessageList extends React.Component {

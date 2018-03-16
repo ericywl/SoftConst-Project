@@ -1,7 +1,9 @@
+// Library
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
+// APIs
 import history from "../../startup/history";
 
 export const PrivateHeader = props => {
