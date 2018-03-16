@@ -47,7 +47,7 @@ export class ChatArea extends React.Component {
         }
 
         return (
-            <div>
+            <div className="chat-area">
                 <ChatAreaHeader
                     selectedGroup={this.props.selectedGroup}
                     isModerator={this.props.isModerator}
