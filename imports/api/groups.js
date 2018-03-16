@@ -35,26 +35,7 @@ Meteor.methods({
      * @param {Object} partialGroup : includes name, description and isPrivate
      */
     groupsInsert(partialGroup) {
-        if (!Meteor.userId()) throw new Meteor.Error("not-logged-in");
-
-        new SimpleSchema({
-            name: {
-                type: String,
-                min: 3,
-                max: 30
-            },
-            description: {
-                type: String,
-                max: 50
-            },
-            isPrivate: {
-                type: Boolean
-            }
-        }).validate({
-            name: partialGroup.name,
-            description: partialGroup.description,
-            isPrivate: partialGroup.isPrivate
-        });
+        checkUserExist(Meteor.userId());
 
         return GroupsDB.insert({
             name: partialGroup.name,
@@ -91,7 +72,7 @@ Meteor.methods({
     },
 
     /**
-     * Remove tag from the group identified by groupId if exists
+     * Remove tag from the group identified by id if exists
      * @param {String} _id : id of the group
      * @param {String} tag : tag to be removed
      */
@@ -127,3 +108,26 @@ Meteor.methods({
         return GroupsDB.update({ _id }, { $set: { lastMessageAt: time } });
     }
 });
+
+const validateNewGroup = partialGroup => {
+    new SimpleSchema({
+        name: {
+            type: String,
+            min: 3,
+            max: 30
+        },
+        description: {
+            type: String,
+            max: 50
+        },
+        isPrivate: {
+            type: Boolean
+        }
+    }).validate({
+        name: partialGroup.name,
+        description: partialGroup.description,
+        isPrivate: partialGroup.isPrivate
+    });
+
+    return true;
+};

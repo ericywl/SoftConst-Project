@@ -1,6 +1,7 @@
 // Library
 import React from "react";
 import PropTypes from "prop-types";
+import moment from "moment";
 import { withTracker } from "meteor/react-meteor-data";
 
 export class ChatAreaFooter extends React.Component {
@@ -60,10 +61,10 @@ export class ChatAreaFooter extends React.Component {
 
             if (res) {
                 try {
-                    this.props.call(
+                    this.props.meteorCall(
                         "groupsUpdateLastMessageAt",
                         partialMsg.groupId,
-                        now
+                        moment().valueOf()
                     );
                 } catch (err) {
                     // remove message from db

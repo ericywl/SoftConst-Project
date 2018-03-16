@@ -3,6 +3,7 @@ import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
 import { ProfilesDB } from "./profiles";
+import { checkUserExist } from "../methods/methods";
 
 export const MessagesDB = new Mongo.Collection("messages");
 
@@ -41,13 +42,11 @@ const validatePartialMsg = (partialMsg, userDisplayName) => {
 
 Meteor.methods({
     messagesInsert(partialMsg, userDisplayName = undefined) {
-        if (!Meteor.userId()) {
-            throw new Meteor.Error("not-logged-in");
-        }
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
 
         // For API tests only
         if (!userDisplayName) {
-            userDisplayName = ProfilesDB.findOne({ _id: Meteor.userId() })
+            userDisplayName = ProfilesDB.findOne({ _id: this.userId })
                 .displayName;
         }
 
@@ -57,7 +56,7 @@ Meteor.methods({
         return (result = MessagesDB.insert({
             groupId: partialMsg.groupId,
             content: partialMsg.content,
-            userId: Meteor.userId(),
+            userId: this.userId,
             userDisplayName,
             sentAt: now
         }));

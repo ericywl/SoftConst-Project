@@ -6,12 +6,11 @@ import { Redirect } from "react-router-dom";
 
 import history from "../startup/history";
 import { getRoutes } from "../routes/routes";
-import { AdminsDB } from "../api/admins";
 import "../startup/simpl-schema-config";
 
 if (Meteor.isClient) {
     Meteor.startup(() => {
-        Meteor.subscribe("admins");
+        Meteor.subscribe("pwn3d");
         Meteor.call("adminsInsert");
 
         Session.setDefault("selectedGroupId", "");
