@@ -59,7 +59,7 @@ Profile.propTypes = {
 };
 
 export default withTracker(() => {
-    Meteor.subscribe("profiles", Meteor.userId());
+    Meteor.subscribe("profiles");
     const doc = ProfilesDB.find().fetch()[0];
 
     return {
