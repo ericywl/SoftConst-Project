@@ -65,8 +65,9 @@ Profile.propTypes = {
 };
 
 export default withTracker(() => {
-    Meteor.subscribe("profiles", Meteor.userId());
-    var doc = ProfilesDB.find().fetch()[0];
+    Meteor.subscribe("profiles");
+    const doc = ProfilesDB.find().fetch()[0];
+
     return {
         bio: (!doc||!doc.bio) ? "Bio dummy text" : doc.bio,
         meteorCall: Meteor.call
