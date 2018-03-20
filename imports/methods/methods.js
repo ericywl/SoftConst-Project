@@ -70,3 +70,26 @@ export const searchFilterBeforeFetch = input => {
 export const tagFilter = input => {
     return input.replace(/[^\w\s]/gi, "");
 };
+
+export const filterItemsByQuery = (items, query) => {
+    if (!items) throw new Meteor.Error("filter-groups-not-provided");
+    if (!query) return items;
+
+    query = searchFilterBeforeFetch(query);
+    if (query[0] === "#") {
+        query = query.slice(1);
+        const queryLen = query.length;
+        return items.filter(item => {
+            for (let i = 0; i < item.tags.length; i++) {
+                const tag = item.tags[i].slice(0, queryLen);
+                if (tag.toLowerCase() === query) return true;
+            }
+
+            return false;
+        });
+    }
+
+    return items.filter(
+        item => searchFilterBeforeFetch(item.name).indexOf(query) !== -1
+    );
+};

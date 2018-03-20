@@ -20,8 +20,11 @@ export class ChatAreaFooter extends React.Component {
             : "";
 
         return (
-            <div>
-                <form onSubmit={this.handleSubmitMessage.bind(this)}>
+            <div className="chat-area__footer">
+                <form
+                    className="chat-area__footer-form"
+                    onSubmit={this.handleSubmitMessage.bind(this)}
+                >
                     <input
                         disabled={disabled}
                         placeholder={placeholder}

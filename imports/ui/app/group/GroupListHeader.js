@@ -22,7 +22,7 @@ export class GroupListHeader extends React.Component {
             <div className="item-list__header">
                 <button
                     className="button"
-                    onClick={() => this.child.toggleModal()}
+                    onClick={() => this.modalChild.toggleModal()}
                 >
                     Create group
                 </button>
@@ -30,7 +30,7 @@ export class GroupListHeader extends React.Component {
                 <AddGroupModal
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
-                        this.child = ref;
+                        this.modalChild = ref;
                     }}
                 />
 

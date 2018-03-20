@@ -23,6 +23,7 @@ body {
     background-color: $body-bg-color;
     font-family: $body-default-font;
     font-size: $base-font-size;
+    min-height: 10rem;
 }
 
 h1 {

@@ -10,11 +10,14 @@ export class Message extends React.Component {
         const messageSentAt = moment(this.props.message.sentAt).calendar();
 
         return (
-            <div>
-                <p>
-                    {userDisplayName} ({messageSentAt}) -{" "}
+            <div className="message">
+                <div className="message__header">
+                    {userDisplayName}{" "}
+                    <span className="message__time">{messageSentAt}</span>
+                </div>
+                <div className="message__body">
                     {this.props.message.content}
-                </p>
+                </div>
             </div>
         );
     }

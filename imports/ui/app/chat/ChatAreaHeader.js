@@ -11,32 +11,35 @@ import { GroupsDB } from "../../../api/groups";
 
 export class ChatAreaHeader extends React.Component {
     render() {
-        return (
-            <div>
-                {this.props.selectedGroup ? (
-                    <div>
-                        <h1>{this.props.selectedGroup.name}</h1>
+        if (this.props.selectedGroup) {
+            return (
+                <div className="chat-area__header">
+                    <h1 className="chat-area__header-title">
+                        {this.props.selectedGroup.name}
+                    </h1>
 
-                        <button onClick={() => this.child.toggleModal()}>
-                            {this.props.isModerator
-                                ? "Manage Group Tags"
-                                : "View Group Tags"}
-                        </button>
+                    <button
+                        className="button button__chat-area"
+                        onClick={() => this.child.toggleModal()}
+                    >
+                        {this.props.isModerator
+                            ? "Manage Group Tags"
+                            : "View Group Tags"}
+                    </button>
 
-                        <ManageTagsModal
-                            isModerator={this.props.isModerator}
-                            selectedGroup={this.props.selectedGroup}
-                            meteorCall={this.props.meteorCall}
-                            ref={ref => {
-                                this.child = ref;
-                            }}
-                        />
-                    </div>
-                ) : (
-                    undefined
-                )}
-            </div>
-        );
+                    <ManageTagsModal
+                        isModerator={this.props.isModerator}
+                        selectedGroup={this.props.selectedGroup}
+                        meteorCall={this.props.meteorCall}
+                        ref={ref => {
+                            this.child = ref;
+                        }}
+                    />
+                </div>
+            );
+        }
+
+        return undefined;
     }
 }
 

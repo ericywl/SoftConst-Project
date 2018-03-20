@@ -1,8 +1,21 @@
 .chat-area {
     background-color: white;
     border: 2px solid $grey;
-    display: flex;
-    flex-direction: column;
     width: 100%;
     padding: $double-space;
+}
+
+.chat-area__header {
+    display: flex;
+    flex-direction: row;
+    font-size: $base-font-size;
+    padding-bottom: $space;
+    justify-content: space-between;
+}
+
+.chat-area__footer {
+}
+
+.chat-area__footer-form input[type="text"] {
+    margin: 0;
 }
