@@ -5,11 +5,11 @@ import { withTracker } from "meteor/react-meteor-data";
 import FlipMove from "react-flip-move";
 
 // React Components
-import GroupListHeader from "./GroupListHeader";
-import GroupListItem from "./GroupListItem";
+import DsbjListHeader from "./DsbjListHeader";
+import DsbjListItem from "./DsbjListItem";
 
 // APIs
-import { GroupsDB } from "../../../api/groups";
+import { DsbjsDB } from "../../../api/dsbjs";
 import { ProfilesDB } from "../../../api/profiles";
 import {
     searchFilterBeforeSet,
@@ -18,50 +18,50 @@ import {
 } from "../../../methods/methods";
 
 const SHOWN_GROUPS_LIMIT = 10;
-export class GroupList extends React.Component {
-    renderGroupList() {
-        return this.props.groups.map(group => {
-            return <GroupListItem key={group._id} group={group} />;
+export class DsbjList extends React.Component {
+    renderDsbjList() {
+        return this.props.dsbjs.map(dsbj => {
+            return <DsbjListItem key={dsbj._id} group={dsbj} />;
         });
     }
 
     render() {
         return (
             <div className="item-list">
-                <GroupListHeader />
+                <DsbjListHeader />
                 <FlipMove maintainContainerHeight="true">
-                    {this.renderGroupList()}
+                    {this.renderDsbjList()}
                 </FlipMove>
             </div>
         );
     }
 }
 
-GroupList.propTypes = {
-    groups: PropTypes.array.isRequired,
+DsbjList.propTypes = {
+    dsbjs: PropTypes.array.isRequired,
     session: PropTypes.object.isRequired
 };
 
 export default withTracker(() => {
-    const selectedGroupId = Session.get("selectedGroupId");
+    const selectedDsbjId = Session.get("selectedDsbjId");
     const searchQuery = Session.get("searchQuery");
     Meteor.subscribe("profiles");
     Meteor.subscribe("dsbjs");
 
-    const groups = fetchGroupsFromDB(selectedGroupId, searchQuery);
-    const queriedGroups = filterItemsByQuery(groups, searchQuery);
+    const dsbjs = fetchDsbjsFromDB(selectedDsbjId, searchQuery);
+    const queriedDsbjs = filterItemsByQuery(dsbjs, searchQuery);
     return {
-        groups: queriedGroups,
+        dsbjs: queriedDsbjs,
         session: Session
     };
-})(GroupList);
+})(DsbjList);
 
-const fetchGroupsFromDB = (selectedGroupId, query) => {
-    let groups = [];
+const fetchDsbjsFromDB = (selectedDsbjId, query) => {
+    let dsbjs = [];
     const userProfile = ProfilesDB.find().fetch()[0];
-    const userGroups = userProfile ? userProfile.groups : [];
+    const userDsbjs = userProfile ? userProfile.groups : [];
     if (searchFilterBeforeFetch(query)[0] === "#") {
-        groups = GroupsDB.find(
+        dsbjs = DsbjsDB.find(
             { isPrivate: false },
             {
                 sort: {},
@@ -69,8 +69,8 @@ const fetchGroupsFromDB = (selectedGroupId, query) => {
             }
         ).fetch();
     } else {
-        groups = GroupsDB.find(
-            { _id: { $in: userGroups } },
+        dsbjs = DsbjsDB.find(
+            { _id: { $in: userDsbjs } },
             {
                 sort: { lastMessageAt: -1 },
                 $limit: SHOWN_GROUPS_LIMIT
@@ -78,12 +78,12 @@ const fetchGroupsFromDB = (selectedGroupId, query) => {
         ).fetch();
     }
 
-    groups = groups.map(group => {
+    dsbjs = dsbjs.map(dsbj => {
         return {
-            ...group,
-            selected: group._id === selectedGroupId
+            ...dsbj,
+            selected: dsbj._id === selectedDsbjId
         };
     });
 
-    return groups;
+    return dsbjs;
 };

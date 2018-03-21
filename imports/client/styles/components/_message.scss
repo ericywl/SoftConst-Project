@@ -1,0 +1,9 @@
+.message-list {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+.message {
+    padding: $space;
+    border-bottom: 1px solid $grey;
+}

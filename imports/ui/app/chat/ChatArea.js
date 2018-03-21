@@ -55,17 +55,15 @@ export class ChatArea extends React.Component {
 
                 {this.state.error ? <p>{this.state.error}</p> : undefined}
 
-                {this.props.notInGroup ? (
-                    <div>
+                <div className="message-list">
+                    {this.props.notInGroup ? (
                         <button onClick={this.onClickJoin.bind(this)}>
                             Join
                         </button>
-                    </div>
-                ) : (
-                    <FlipMove maintainContainerHeight={true}>
+                    ) : (
                         <MessageList />
-                    </FlipMove>
-                )}
+                    )}
+                </div>
 
                 <ChatAreaFooter notInGroup={this.props.notInGroup} />
             </div>
