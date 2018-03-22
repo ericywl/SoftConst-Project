@@ -21,7 +21,7 @@ if (Meteor.isClient) {
             const invalidUsernameUser = {
                 _id: "testId1",
                 username: "1",
-                email: "invalidEmail",
+                email: "test@example.com",
                 password: "password"
             };
 
