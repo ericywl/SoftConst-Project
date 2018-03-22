@@ -1,9 +1,28 @@
 .message-list {
-    overflow-y: scroll;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    height: 60rem;
+    margin-right: $space;
+    padding-right: $space;
+
+    &::-webkit-scrollbar {
+        width: 2px;
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        background-color: darken($grey, 10%);
+    }
 }
 
 .message {
-    padding: $space;
+    padding: $input-spacing;
+    padding-left: 0;
+    margin: $input-spacing;
+    margin-left: 0;
     border-bottom: 1px solid $grey;
 }

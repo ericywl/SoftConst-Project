@@ -55,7 +55,7 @@ export class ChatArea extends React.Component {
 
                 {this.state.error ? <p>{this.state.error}</p> : undefined}
 
-                <div className="message-list">
+                <div className="message-wrapper">
                     {this.props.notInGroup ? (
                         <button onClick={this.onClickJoin.bind(this)}>
                             Join

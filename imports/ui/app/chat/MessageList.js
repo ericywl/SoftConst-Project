@@ -15,9 +15,32 @@ export class MessageList extends React.Component {
             return <p>Nothing here...</p>;
         }
 
-        return this.props.messages.map(message => {
-            return <Message key={message._id} message={message} />;
-        });
+        return (
+            <div className="message-list">
+                {this.props.messages.map(message => {
+                    return <Message key={message._id} message={message} />;
+                })}
+
+                <div
+                    style={{ float: "left", clear: "both" }}
+                    ref={el => {
+                        this.messagesEnd = el;
+                    }}
+                />
+            </div>
+        );
+    }
+
+    scrollToBottom() {
+        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    }
+
+    componentDidMount() {
+        this.scrollToBottom();
+    }
+
+    componentDidUpdate() {
+        this.scrollToBottom();
     }
 }
 

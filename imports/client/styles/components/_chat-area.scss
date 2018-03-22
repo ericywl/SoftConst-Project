@@ -3,17 +3,26 @@
     border: 2px solid $grey;
     width: 100%;
     padding: $double-space;
+    padding-right: 0;
 }
 
 .chat-area__header {
     display: flex;
     flex-direction: row;
     font-size: $base-font-size;
-    padding-bottom: $space;
     justify-content: space-between;
+    overflow: visible;
+    border-bottom: 2px solid $brand-primary;
+    margin-right: $double-space;
+}
+
+.chat-area__header-title {
+    margin: 0;
+    padding-top: $input-spacing / 2;
 }
 
 .chat-area__footer {
+    margin-right: $double-space;
 }
 
 .chat-area__footer-form input[type="text"] {
