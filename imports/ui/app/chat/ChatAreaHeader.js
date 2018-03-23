@@ -21,11 +21,13 @@ export class ChatAreaHeader extends React.Component {
                         {this.props.selectedGroup.name}
                     </h1>
 
-                    <Dropdown
-                        isModerator={this.props.isModerator}
-                        selectedGroup={this.props.selectedGroup}
-                        meteorCall={this.props.meteorCall}
-                    />
+                    <div className="chat-area__header-dots">
+                        <Dropdown
+                            isModerator={this.props.isModerator}
+                            selectedGroup={this.props.selectedGroup}
+                            meteorCall={this.props.meteorCall}
+                        />
+                    </div>
                 </div>
             );
         }

@@ -1,9 +1,9 @@
 .message-list {
-    overflow-y: auto;
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
-    height: 60rem;
-    margin-right: $space;
-    padding-right: $space;
+    height: 590rem;
+    max-height: 59rem;
+    padding-right: calc(#{$input-spacing} + #{$double-space});
 
     &::-webkit-scrollbar {
         width: 2px;
@@ -20,9 +20,7 @@
 }
 
 .message {
-    padding: $input-spacing;
-    padding-left: 0;
-    margin: $input-spacing;
-    margin-left: 0;
+    padding: $space $input-spacing;
+    padding-right: $double-space;
     border-bottom: 1px solid $grey;
 }
