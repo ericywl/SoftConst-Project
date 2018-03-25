@@ -30,7 +30,7 @@
 .item {
     cursor: pointer;
     border-left: $item-select-border-width solid transparent;
-    padding: $space $double-space;
+    padding: $space $large-space;
     transition: background-color 0.2s ease, border-left-color 0.2s ease;
 }
 

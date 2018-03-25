@@ -10,16 +10,22 @@ import { Message } from "./Message";
 import { MessagesDB } from "../../../api/messages";
 
 export class MessageList extends React.Component {
-    render() {
-        if (!this.props.messages) {
-            return <p>Nothing here...</p>;
-        }
+    constructor(props) {
+        super(props);
+        this.changedGroup = true;
+        this.scrollPositions = {};
+    }
 
+    render() {
         return (
-            <div className="message-list">
-                {this.props.messages.map(message => {
-                    return <Message key={message._id} message={message} />;
-                })}
+            <div className="message-list" ref="messageList">
+                {this.props.messages.length == 0 ? (
+                    <div>Nothing to see here.</div>
+                ) : (
+                    this.props.messages.map(message => {
+                        return <Message key={message._id} message={message} />;
+                    })
+                )}
 
                 <div
                     style={{ float: "left", clear: "both" }}
@@ -35,12 +41,46 @@ export class MessageList extends React.Component {
         this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
 
-    componentDidMount() {
-        this.scrollToBottom();
+    componentWillUpdate(nextProps, nextState, nextContext) {
+        const newMessages = nextProps.messages;
+        const { messageList } = this.refs;
+        const scrollPosition = messageList.scrollTop;
+        const scrollBottom =
+            messageList.scrollHeight - messageList.clientHeight;
+
+        if (this.props.selectedGroupId === nextProps.selectedGroupId) {
+            this.shouldScroll = Math.abs(scrollPosition - scrollBottom) < 1;
+            if (newMessages) {
+                const len = newMessages.length - 1;
+                this.shouldScroll = newMessages[len].userId === Meteor.userId();
+            }
+        } else {
+            this.shouldScroll = false;
+            this.changedGroup = true;
+            this.scrollPositions[this.props.selectedGroupId] = Math.round(
+                scrollPosition
+            );
+        }
     }
 
     componentDidUpdate() {
-        this.scrollToBottom();
+        const groupId = this.props.selectedGroupId;
+        const previousScrollPos = this.scrollPositions[groupId];
+
+        if (this.changedGroup) {
+            if (previousScrollPos === undefined || previousScrollPos === null) {
+                this.refs.messageList.scrollTop = this.refs.messageList.scrollHeight;
+            } else {
+                this.refs.messageList.scrollTop = previousScrollPos;
+            }
+        }
+
+        if (this.shouldScroll) {
+            console.log("Hey");
+            this.scrollToBottom();
+        }
+
+        this.changedGroup = false;
     }
 }
 
@@ -49,6 +89,7 @@ export default withTracker(() => {
     Meteor.subscribe("messagesByGroup", selectedGroupId);
 
     return {
+        selectedGroupId,
         messages: MessagesDB.find().fetch()
     };
 })(MessageList);

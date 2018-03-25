@@ -1,8 +1,10 @@
 .chat-area {
+    display: flex;
+    flex-direction: column;
     background-color: white;
     border: 2px solid $grey;
     width: 100%;
-    padding: $double-space;
+    padding: $large-space;
     padding-right: 0;
 }
 
@@ -12,7 +14,7 @@
     font-size: $base-font-size;
     justify-content: space-between;
     border-bottom: 3px solid $brand-primary;
-    margin-right: $double-space;
+    margin-right: $large-space;
     overflow: visible;
 }
 
@@ -27,17 +29,18 @@
     overflow: visible;
 }
 
+.chat-area__body {
+    height: 100%;
+}
+
 .chat-area__footer {
     border-top: 2px solid $brand-primary;
     padding-top: $input-spacing;
-    margin-right: $double-space;
-}
-
-.chat-area__footer-form {
-    display: flex;
-    flex-direction: column;
+    margin-right: $large-space;
+    overflow: visible;
 }
 
 .chat-area__footer-form input[type="text"] {
+    width: 100%;
     margin: 0;
 }
