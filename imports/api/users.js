@@ -32,6 +32,8 @@ export const validateNewUserServer = user => {
     const email = user.emails[0].address;
     const username = user.username;
 
+    console.log(email, username);
+
     new SimpleSchema({
         email: {
             type: String,
@@ -44,7 +46,9 @@ export const validateNewUserServer = user => {
         }
     }).validate({ email, username });
 
-    Meteor.call("profilesInsert", user._id, user.username);
+    if (!Meteor.isTest) {
+        Meteor.call("profilesInsert", user._id, user.username);
+    }
 
     return true;
 };
