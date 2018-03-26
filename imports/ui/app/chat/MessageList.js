@@ -2,6 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
+import moment from "moment";
 
 // React Components
 import { Message } from "./Message";
@@ -12,7 +13,7 @@ import { MessagesDB } from "../../../api/messages";
 export class MessageList extends React.Component {
     constructor(props) {
         super(props);
-        this.changedGroup = true;
+        this.shouldScroll = false;
         this.scrollPositions = {};
     }
 
@@ -42,45 +43,44 @@ export class MessageList extends React.Component {
     }
 
     componentWillUpdate(nextProps, nextState, nextContext) {
-        const newMessages = nextProps.messages;
+        // console.log(nextProps, nextState, nextContext);
+        const currGroupId = this.props.selectedGroupId;
+        const nextGroupId = nextProps.selectedGroupId;
+
         const { messageList } = this.refs;
-        const scrollPosition = messageList.scrollTop;
         const scrollBottom =
             messageList.scrollHeight - messageList.clientHeight;
 
-        if (this.props.selectedGroupId === nextProps.selectedGroupId) {
-            this.shouldScroll = Math.abs(scrollPosition - scrollBottom) < 1;
-            if (newMessages) {
-                const len = newMessages.length - 1;
-                this.shouldScroll = newMessages[len].userId === Meteor.userId();
-            }
+        if (this.scrollPositions[nextGroupId] === undefined) {
+            console.log("new");
+        }
+
+        this.shouldScroll = Math.abs(messageList.scrollTop - scrollBottom) < 1;
+        if (nextGroupId !== currGroupId) {
+            this.shouldScroll = false;
+            // console.log(shouldScroll);
+            this.scrollPositions[currGroupId] = messageList.scrollTop;
+            return;
+        }
+
+        if (this.props.messages.length !== 0) {
+            const messages = this.props.messages;
+            const lastMessage = messages[messages.length - 1];
+            const byUser = lastMessage.userId === Meteor.userId();
+            const recent =
+                Math.abs(lastMessage.sentAt - moment().valueOf()) < 100;
+
+            this.shouldScroll |= recent && byUser;
         } else {
             this.shouldScroll = false;
-            this.changedGroup = true;
-            this.scrollPositions[this.props.selectedGroupId] = Math.round(
-                scrollPosition
-            );
         }
     }
 
     componentDidUpdate() {
-        const groupId = this.props.selectedGroupId;
-        const previousScrollPos = this.scrollPositions[groupId];
-
-        if (this.changedGroup) {
-            if (previousScrollPos === undefined || previousScrollPos === null) {
-                this.refs.messageList.scrollTop = this.refs.messageList.scrollHeight;
-            } else {
-                this.refs.messageList.scrollTop = previousScrollPos;
-            }
-        }
-
+        console.log(this.shouldScroll);
         if (this.shouldScroll) {
-            console.log("Hey");
             this.scrollToBottom();
         }
-
-        this.changedGroup = false;
     }
 }
 
