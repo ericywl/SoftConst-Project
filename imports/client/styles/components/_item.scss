@@ -5,6 +5,19 @@
     background-color: white;
     border: 2px solid $grey;
     width: 100%;
+
+    &::-webkit-scrollbar {
+        width: 2px;
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        background-color: darken($grey, 10%);
+    }
 }
 
 .item-list__header {
@@ -17,7 +30,7 @@
 .item {
     cursor: pointer;
     border-left: $item-select-border-width solid transparent;
-    padding: $space $double-space;
+    padding: $space $large-space;
     transition: background-color 0.2s ease, border-left-color 0.2s ease;
 }
 

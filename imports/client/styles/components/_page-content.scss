@@ -5,7 +5,7 @@
     max-width: $site-max-width;
 
     @include desktop() {
-        padding: $double-space $space;
+        padding: $large-space $space;
     }
 }
 
@@ -24,7 +24,7 @@
         display: flex;
         position: static;
         width: $page-content-sidebar-width;
-        padding-right: $double-space;
+        padding-right: $large-space;
     }
 }
 

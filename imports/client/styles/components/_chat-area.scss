@@ -1,21 +1,46 @@
 .chat-area {
+    display: flex;
+    flex-direction: column;
     background-color: white;
     border: 2px solid $grey;
     width: 100%;
-    padding: $double-space;
+    padding: $large-space;
+    padding-right: 0;
 }
 
 .chat-area__header {
     display: flex;
     flex-direction: row;
     font-size: $base-font-size;
-    padding-bottom: $space;
     justify-content: space-between;
+    border-bottom: 3px solid $brand-primary;
+    margin-right: $large-space;
+    overflow: visible;
+}
+
+.chat-area__header-title {
+    margin: 0;
+    margin-left: $input-spacing;
+    padding-top: $input-spacing / 2;
+}
+
+.chat-area__header-dots {
+    margin-right: $input-spacing;
+    overflow: visible;
+}
+
+.chat-area__body {
+    height: 100%;
 }
 
 .chat-area__footer {
+    border-top: 2px solid $brand-primary;
+    padding-top: $input-spacing;
+    margin-right: $large-space;
+    overflow: visible;
 }
 
 .chat-area__footer-form input[type="text"] {
+    width: 100%;
     margin: 0;
 }

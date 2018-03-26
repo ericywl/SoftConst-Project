@@ -1,0 +1,49 @@
+.dropdown {
+    width: 20rem;
+    height: 2.5rem;
+    margin: 1.25rem;
+    outline: none;
+    overflow: visible;
+}
+
+.dropdown__control {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-transform: uppercase;
+}
+
+.dropdown__menu {
+    width: inherit;
+    background-color: white;
+    border: 1px solid $dropdown-greyed-border-color;
+    position: relative;
+    z-index: 10;
+}
+
+.dropdown__item {
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    padding: $input-spacing;
+}
+
+.dropdown__item:hover {
+    cursor: pointer;
+    color: white;
+    background-color: $brand-primary;
+    border: 1px solid $brand-primary;
+}
+
+.dropdown__trigger {
+    cursor: pointer;
+    width: 2.5rem;
+    height: 2.5rem;
+    transition: all 0.1s ease;
+}
+
+.dropdown__control--open .dropdown__trigger {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.5rem;
+    content: url("/images/down.png");
+}

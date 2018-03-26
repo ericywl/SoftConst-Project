@@ -9,15 +9,6 @@ html {
     font-size: 62.5%;
 }
 
-::-webkit-scrollbar {
-    width: 2px;
-    background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: darken($grey, 10%);
-}
-
 body {
     color: $body-default-color;
     background-color: $body-bg-color;
