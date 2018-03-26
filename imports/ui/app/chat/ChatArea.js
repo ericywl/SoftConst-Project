@@ -6,9 +6,9 @@ import FlipMove from "react-flip-move";
 import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
-import MessageList from "./MessageList";
 import ChatAreaHeader from "./ChatAreaHeader";
 import ChatAreaFooter from "./ChatAreaFooter";
+import ChatAreaBody from "./ChatAreaBody";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";
@@ -18,25 +18,6 @@ import { ProfilesDB } from "../../../api/profiles";
  * Houses the list of messages, chat header and chat footer
  */
 export class ChatArea extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            error: ""
-        };
-    }
-
-    onClickJoin(event) {
-        event.preventDefault();
-        this.props.meteorCall(
-            "profilesJoinGroup",
-            this.props.selectedGroup._id,
-            (err, res) => {
-                if (err) this.setState({ error: err.reason });
-                if (res) console.log("you have joined the group!");
-            }
-        );
-    }
-
     render() {
         if (!this.props.selectedGroup) {
             return (
@@ -53,17 +34,10 @@ export class ChatArea extends React.Component {
                     isModerator={this.props.isModerator}
                 />
 
-                {this.state.error ? <p>{this.state.error}</p> : undefined}
-
-                <div className="message-list">
-                    {this.props.notInGroup ? (
-                        <button onClick={this.onClickJoin.bind(this)}>
-                            Join
-                        </button>
-                    ) : (
-                        <MessageList />
-                    )}
-                </div>
+                <ChatAreaBody
+                    notInGroup={this.props.notInGroup}
+                    selectedGroupId={this.props.selectedGroup._id}
+                />
 
                 <ChatAreaFooter notInGroup={this.props.notInGroup} />
             </div>
@@ -74,7 +48,6 @@ export class ChatArea extends React.Component {
 ChatArea.propTypes = {
     isModerator: PropTypes.bool.isRequired,
     selectedGroup: PropTypes.object,
-    meteorCall: PropTypes.func.isRequired,
     notInGroup: PropTypes.bool.isRequired
 };
 
@@ -94,7 +67,6 @@ export default withTracker(() => {
     return {
         isModerator,
         selectedGroup,
-        meteorCall: Meteor.call,
         notInGroup: !userGroups.includes(selectedGroupId)
     };
 })(ChatArea);

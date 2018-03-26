@@ -4,13 +4,16 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
-import ManageTagsModal from "./_ManageTagsModal";
+import Dropdown from "./_Dropdown";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";
 
 export class ChatAreaHeader extends React.Component {
     render() {
+        const options = ["one", "two", "bignummsdfsdnkw"];
+        const defaultOption = options[0];
+
         if (this.props.selectedGroup) {
             return (
                 <div className="chat-area__header">
@@ -18,23 +21,13 @@ export class ChatAreaHeader extends React.Component {
                         {this.props.selectedGroup.name}
                     </h1>
 
-                    <button
-                        className="button button__chat-area"
-                        onClick={() => this.child.toggleModal()}
-                    >
-                        {this.props.isModerator
-                            ? "Manage Group Tags"
-                            : "View Group Tags"}
-                    </button>
-
-                    <ManageTagsModal
-                        isModerator={this.props.isModerator}
-                        selectedGroup={this.props.selectedGroup}
-                        meteorCall={this.props.meteorCall}
-                        ref={ref => {
-                            this.child = ref;
-                        }}
-                    />
+                    <div className="chat-area__header-dots">
+                        <Dropdown
+                            isModerator={this.props.isModerator}
+                            selectedGroup={this.props.selectedGroup}
+                            meteorCall={this.props.meteorCall}
+                        />
+                    </div>
                 </div>
             );
         }

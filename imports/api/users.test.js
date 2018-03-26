@@ -21,7 +21,7 @@ if (Meteor.isClient) {
             const invalidUsernameUser = {
                 _id: "testId1",
                 username: "1",
-                email: "invalidEmail",
+                email: "test@example.com",
                 password: "password"
             };
 
@@ -81,13 +81,17 @@ if (Meteor.isServer) {
         it("should reject invalid username", function() {
             const invalidusernameUser = {
                 _id: "testId1",
-                username: "a",
+                username: "asdf",
                 emails: [
                     {
                         address: "valid@example.com"
                     }
                 ]
             };
+
+            expect(() => {
+                validateNewUserServer(invalidusernameUser);
+            }).toThrow();
         });
 
         it("should reject invalid email", function() {

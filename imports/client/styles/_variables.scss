@@ -13,7 +13,7 @@ $body-default-font: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 /* SPACING */
 $space: 1.4rem;
-$double-space: calc(#{$space} * 2);
+$large-space: 2.7rem;
 $site-max-width: 100rem;
 
 /* FONT SIZES */
@@ -40,6 +40,11 @@ $button-pill-padding: 0.4rem 0.9rem;
 $button-greyed-bg: $light-grey;
 $button-greyed-border-color: $grey;
 $button-greyed-color: $dark-grey;
+
+/* DROPDOWN */
+$dropdown-border-color: $brand-primary;
+$dropdown-active-bg-color: $brand-primary;
+$dropdown-greyed-border-color: $grey;
 
 /* SLIDER */
 $switch-bg-color: darken($grey, 5%);
