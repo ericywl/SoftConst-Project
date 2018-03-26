@@ -28,7 +28,10 @@ export class GroupList extends React.Component {
 
     render() {
         return (
-            <div className="item-list__wrapper">
+            <div
+                className="item-list__wrapper"
+                ref={this.setWrapperRef.bind(this)}
+            >
                 <div className="item-list__main">
                     <GroupListHeader />
                     <FlipMove maintainContainerHeight="true">
@@ -39,6 +42,34 @@ export class GroupList extends React.Component {
                 <GroupListSidebar />
             </div>
         );
+    }
+
+    componentDidMount() {
+        document.addEventListener(
+            "mousedown",
+            this.handleClickOutside.bind(this)
+        );
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener(
+            "mousedown",
+            this.handleClickOutside.bind(this)
+        );
+    }
+
+    setWrapperRef(node) {
+        this.wrapperRef = node;
+    }
+
+    handleClickOutside(event) {
+        if (
+            this.wrapperRef &&
+            !this.wrapperRef.contains(event.target) &&
+            event.target.className !== "header__nav-toggle"
+        ) {
+            this.props.session.set("isNavOpen", false);
+        }
     }
 }
 
