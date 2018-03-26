@@ -69,6 +69,7 @@ export class ChatAreaFooter extends React.Component {
                         partialMsg.groupId,
                         moment().valueOf()
                     );
+                    Session.set("sentToGroup", this.props.selectedGroupId);
                 } catch (err) {
                     // remove message from db
                     throw new Meteor.Error(err.reason);

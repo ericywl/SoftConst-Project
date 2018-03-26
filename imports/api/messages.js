@@ -18,7 +18,7 @@ if (Meteor.isServer) {
             groupId: { type: String }
         }).validate({ groupId });
 
-        return MessagesDB.find({ groupId }, { limit: 100 });
+        return MessagesDB.find({ groupId }, { limit: 500 });
     });
 }
 

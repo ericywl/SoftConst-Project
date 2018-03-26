@@ -15,6 +15,7 @@ if (Meteor.isClient) {
 
         Session.setDefault("selectedGroupId", "");
         Session.setDefault("searchQuery", "");
+        Session.setDefault("sentToGroup", "");
         Session.setDefault("isNavOpen", false);
         Session.setDefault("sessionTime", moment().valueOf());
 

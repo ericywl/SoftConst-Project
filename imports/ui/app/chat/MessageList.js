@@ -46,13 +46,7 @@ export class MessageList extends React.Component {
     componentWillUpdate(nextProps, nextState, nextContext) {
         const currGroupId = this.props.selectedGroupId;
         const nextGroupId = nextProps.selectedGroupId;
-
         const { messageList } = this.refs;
-        const scrollBottom =
-            messageList.scrollHeight - messageList.clientHeight;
-
-        // Auto-scroll only if scroll bar is at bottom
-        this.autoScroll = Math.abs(messageList.scrollTop - scrollBottom) < 1;
 
         // If user has changed group, save current scroll position
         if (nextGroupId !== currGroupId) {
@@ -63,45 +57,57 @@ export class MessageList extends React.Component {
             );
             return;
         }
-
-        // Else, add an alternative condition for auto-scroll: user sent message
-        if (this.props.messages.length !== 0) {
-            const messages = this.props.messages;
-            const lastMessage = messages[messages.length - 1];
-            const byUser = lastMessage.userId === Meteor.userId();
-            const recent =
-                Math.abs(lastMessage.sentAt - moment().valueOf()) < 100;
-
-            this.autoScroll |= recent && byUser;
-        } else {
-            this.autoScroll = false;
-        }
     }
 
-    componentDidUpdate() {
-        const prevScrollPos = this.scrollPositions[this.props.selectedGroupId];
-        if (this.changedGroup) {
-            if (prevScrollPos === undefined) {
-                this.refs.messageList.scrollTop = this.refs.messageList.scrollHeight;
-            } else {
-                this.refs.messageList.scrollTop = prevScrollPos;
+    componentDidUpdate(prevProps, prevState) {
+        const { messageList } = this.refs;
+        const groupId = this.props.selectedGroupId;
+
+        if (messageList && this.props.ready) {
+            const scrollPos = this.scrollPositions[groupId];
+            /* If user came from another group, 
+            move scroll to its previous position */
+            if (this.changedGroup) {
+                if (scrollPos !== undefined) {
+                    messageList.scrollTop = scrollPos;
+                } else {
+                    messageList.scrollTop = messageList.scrollHeight;
+                }
+
+                this.changedGroup = false;
             }
 
-            this.changedGroup = false;
-        }
+            // Notify new message if user scrollbar is not at bottom
+            const messages = this.props.messages;
+            const lastMessage = messages[messages.length - 1];
+            const notByUser = lastMessage.userId !== Meteor.userId();
+            const scrollBottom =
+                messageList.scrollHeight - messageList.clientHeight;
+            const scrollIsAtBottom =
+                Math.abs(messageList.scrollTop - scrollBottom) < 1;
+            if (notByUser && !scrollIsAtBottom) {
+                console.log("new message");
+            }
 
-        if (this.autoScroll) {
-            this.scrollToBottom();
+            /* Scroll the bar to the bottom if the user sent the message
+            OR if the scroll bar is at the bottom */
+            const justSent = Session.get("sentToGroup") === groupId;
+            if (scrollIsAtBottom || justSent) {
+                this.scrollToBottom();
+            }
+
+            Session.set("sentToGroup", "");
         }
     }
 }
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("messagesByGroup", selectedGroupId);
+    const handle = Meteor.subscribe("messagesByGroup", selectedGroupId);
 
     return {
         selectedGroupId,
+        ready: handle.ready(),
         messages: MessagesDB.find().fetch()
     };
 })(MessageList);
