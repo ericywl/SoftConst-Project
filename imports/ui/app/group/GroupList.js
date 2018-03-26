@@ -7,6 +7,7 @@ import FlipMove from "react-flip-move";
 // React Components
 import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
+import GroupListSidebar from "./GroupListSidebar";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";
@@ -27,11 +28,15 @@ export class GroupList extends React.Component {
 
     render() {
         return (
-            <div className="item-list">
-                <GroupListHeader />
-                <FlipMove maintainContainerHeight="true">
-                    {this.renderGroupList()}
-                </FlipMove>
+            <div className="item-list__wrapper">
+                <div className="item-list__main">
+                    <GroupListHeader />
+                    <FlipMove maintainContainerHeight="true">
+                        {this.renderGroupList()}
+                    </FlipMove>
+                </div>
+
+                <GroupListSidebar />
             </div>
         );
     }

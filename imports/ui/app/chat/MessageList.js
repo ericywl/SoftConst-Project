@@ -77,16 +77,19 @@ export class MessageList extends React.Component {
                 this.changedGroup = false;
             }
 
-            // Notify new message if user scrollbar is not at bottom
             const messages = this.props.messages;
-            const lastMessage = messages[messages.length - 1];
-            const notByUser = lastMessage.userId !== Meteor.userId();
             const scrollBottom =
                 messageList.scrollHeight - messageList.clientHeight;
             const scrollIsAtBottom =
                 Math.abs(messageList.scrollTop - scrollBottom) < 1;
-            if (notByUser && !scrollIsAtBottom) {
-                console.log("new message");
+
+            // Notify new message if user scrollbar is not at bottom
+            if (messages.length !== 0) {
+                const lastMessage = messages[messages.length - 1];
+                const notByUser = lastMessage.userId !== Meteor.userId();
+                if (notByUser && !scrollIsAtBottom) {
+                    console.log("new message");
+                }
             }
 
             /* Scroll the bar to the bottom if the user sent the message

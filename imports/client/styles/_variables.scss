@@ -14,7 +14,7 @@ $body-default-font: "Helvetica Neue", Helvetica, Arial, sans-serif;
 /* SPACING */
 $space: 1.4rem;
 $large-space: 2.7rem;
-$site-max-width: 100rem;
+$site-max-width: 102rem;
 
 /* FONT SIZES */
 $base-font-size: 1.6rem;
@@ -67,7 +67,7 @@ $boxed-view-bg: white;
 $boxed-view-border-color: $grey;
 
 /* PAGE CONTENT */
-$page-content-sidebar-width: 30rem;
+$page-content-sidebar-width: 32rem;
 $page-content-main-width: calc(
     #{$site-max-width} - #{$page-content-sidebar-width}
 );

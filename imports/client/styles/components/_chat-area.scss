@@ -1,19 +1,22 @@
 .chat-area {
     display: flex;
     flex-direction: column;
-    background-color: white;
-    border: 2px solid $grey;
     width: 100%;
     padding: $large-space;
     padding-right: 0;
+    background-color: white;
+    border: 2px solid $grey;
+    box-sizing: border-box;
 }
 
+/* HEADER */
 .chat-area__header {
     display: flex;
     flex-direction: row;
     font-size: $base-font-size;
     justify-content: space-between;
     border-bottom: 3px solid $brand-primary;
+    padding-bottom: $input-spacing;
     margin-right: $large-space;
     overflow: visible;
 }
@@ -21,18 +24,28 @@
 .chat-area__header-title {
     margin: 0;
     margin-left: $input-spacing;
-    padding-top: $input-spacing / 2;
+    width: 70%;
+    height: 4rem;
+
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .chat-area__header-dots {
+    margin: 0;
     margin-right: $input-spacing;
+    width: 30%;
     overflow: visible;
 }
 
+/* BODY */
 .chat-area__body {
     height: 100%;
 }
 
+/* FOOTER */
 .chat-area__footer {
     border-top: 2px solid $brand-primary;
     padding-top: $input-spacing;
@@ -43,4 +56,15 @@
 .chat-area__footer-form input[type="text"] {
     width: 100%;
     margin: 0;
+}
+
+/* EMPTY */
+.empty-chat-area {
+    color: $dark-grey;
+    background-color: $tags-tag-bg-color;
+    border-radius: 0.8rem;
+    font-style: italic;
+    text-align: center;
+    padding: $space;
+    margin-right: $large-space;
 }

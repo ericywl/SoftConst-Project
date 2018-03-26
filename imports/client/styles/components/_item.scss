@@ -1,10 +1,22 @@
 /* ITEM LIST */
-.item-list {
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
+.item-list__wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 35rem;
+    border-right: 2px solid $dark-grey;
+
+    @include desktop() {
+        border-right: none;
+    }
+}
+
+.item-list__main {
     background-color: white;
     border: 2px solid $grey;
-    width: 100%;
+    width: 85%;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
 
     &::-webkit-scrollbar {
         width: 2px;
@@ -20,10 +32,35 @@
     }
 }
 
-.item-list__header {
+.item-list__main-header {
     display: flex;
     flex-direction: column;
     padding: $space;
+}
+
+/* LIST SIDEBAR */
+.item-list__sidebar {
+    width: 15%;
+    padding-left: 0.5rem;
+    padding-right: 0.1rem;
+    background-color: $grey;
+
+    @include desktop() {
+        background-color: transparent;
+    }
+}
+
+.item-list__sidebar-content {
+    display: table;
+    position: fixed;
+    top: calc(#{$space} - 0.35rem);
+    transform: rotate(90deg);
+    transform-origin: bottom left;
+    margin-right: $space;
+
+    @include desktop() {
+        top: calc(#{$space * 2} + #{$input-spacing});
+    }
 }
 
 /* ITEM */
@@ -40,7 +77,7 @@
 }
 
 .item--selected,
-.item--select:hover {
+.item--selected:hover {
     background-color: $light-grey;
     border-left: $item-select-border-width solid $brand-primary;
 }
@@ -49,6 +86,11 @@
     font-weight: normal;
     font-size: $base-font-size;
     margin-bottom: $space / 2;
+
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .item--selected .item__title {

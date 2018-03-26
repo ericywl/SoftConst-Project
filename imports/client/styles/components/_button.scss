@@ -36,6 +36,7 @@
     padding: $button-pill-padding;
 }
 
+/* GREYED */
 .button--greyed {
     outline: none;
     background-color: $button-greyed-bg;
@@ -49,6 +50,7 @@
     color: $button-greyed-color;
 }
 
+/* DELETE */
 .button--delete {
     outline: none;
 }
@@ -66,6 +68,7 @@
     color: white;
 }
 
+/* SIDE BY SIDE */
 .button__side-by-side {
     display: flex;
     flex-wrap: wrap;
@@ -84,4 +87,33 @@
     button {
         flex: 1;
     }
+}
+
+/* SIDEBAR BUTTON */
+.button--sidebar {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    -webkit-tap-highlight-color: transparent;
+    font-size: $base-font-size;
+    color: $body-default-color;
+    display: inline-block;
+    background: white;
+    border: 2px solid $grey;
+    padding: $input-spacing;
+    margin-left: 0.65rem;
+}
+
+.button--sidebar:hover {
+    cursor: pointer;
+    border: 2px solid $brand-primary;
+}
+
+.button--sidebar:active {
+    background: $light-grey;
+    transform: scale(0.99);
+}
+
+.button--sidebar:disabled {
+    cursor: not-allowed;
+    border: 2px solid $grey;
+    background: lighten($grey, 3%);
 }
