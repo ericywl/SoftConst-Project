@@ -40,7 +40,8 @@ export class PrivateHeader2 extends React.Component {
 
                     <h1
                         className="header__profile"
-                        onClick={this.toggleModal.bind(this)}
+                        onClick={() => history.replace("/profile")}
+                        //onClick={this.toggleModal.bind(this)}
                     >
                         Profile
                     </h1>
@@ -63,12 +64,11 @@ export class PrivateHeader2 extends React.Component {
                         isOpen={this.state.modalIsOpen}
                         onRequestClose={this.toggleModal.bind(this)}
                         ariaHideApp={false}
-                        className="boxed-view__box"
+                        className="boxed-view__large-box"
                         overlayClassName="boxed-view boxed-view--modal"
-                    >
+                        >
                         Hello
                         <Profile />
-                        <button onClick={this.toggleModal.bind(this)}>close</button>
                     </Modal>
                 </div>
             </div>

@@ -8,17 +8,18 @@ import { withTracker } from "meteor/react-meteor-data";
 import PrivateHeader2 from "./PrivateHeader2";
 import GroupList from "./group/GroupList";
 import ChatArea from "./chat/ChatArea";
+import ProfileArea from "./profile/ProfileArea";
 
-export class Dashboard extends React.Component {
+export class ProfilePage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            page: "chat"
+            page: "profile"
         };
     }
 
     renderPage() {
-        if (this.state.page === "chat") {
+        if (this.state.page === "profile") {
             return (
                 <div className="page-content">
                     <div className="page-content__sidebar">
@@ -26,7 +27,7 @@ export class Dashboard extends React.Component {
                     </div>
 
                     <div className="page-content__main">
-                        <ChatArea />
+                        <ProfileArea />
                     </div>
                 </div>
             );
@@ -43,4 +44,4 @@ export class Dashboard extends React.Component {
     }
 }
 
-export default Dashboard;
+export default ProfilePage;

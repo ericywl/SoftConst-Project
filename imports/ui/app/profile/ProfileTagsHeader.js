@@ -7,35 +7,41 @@ import { ProfilesDB } from "../../../api/profiles.js"
 export class ProfileTagsHeader extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            newTag: "",
+        };
     }
-    /*renderProfile() {
-        return (this.props.bio=="") ? "Replace me": this.props.bio;
-    }*/
 
     onChangeTag(event) {
-        this.newTag = event.target.value.trim();
+        event.preventDefault();
+        const input = event.target.value;
+        this.setState({newTag: input});
     }
 
-    onAddTag() {
-        Meteor.call("profilesAddTag", Meteor.userId(),this.newTag, (err, res) => {
+    onAddTag(event) {
+        event.preventDefault();
+        Meteor.call("profilesAddTag", this.state.newTag.trim(), (err, res) => {
             err ? console.log({ error: err.reason }) : null;
         });
         console.log(this.newTag)
+        this.state.newTag = "";
     }
 
     render() {
-        this.currentUserId = Meteor.userId();
+        //this.currentUserId = Meteor.userId();
         return (
-            <div className="boxed-view__form">
-                <form className="">
+            <div >
+                <form class="boxed-view__form--row" onSubmit={this.onAddTag.bind(this)}>
                     <input
+                        class="tags__input"
                         ref="new-tag"
                         type="text"
                         placeholder="New Tag"
+                        value={this.state.newTag}
                         onChange={this.onChangeTag.bind(this)}
                     />
                     <button 
-                        className="button button--tag"
+                        class="button button--tag"
                         name="add-tag"
                         onClick={this.onAddTag.bind(this)}>
                         add
@@ -47,11 +53,9 @@ export class ProfileTagsHeader extends React.Component {
 }
 
 ProfileTagsHeader.propTypes = {
-    //meteorCall: PropTypes.func.isRequired
 };
 
 export default withTracker(() => {
-    //Meteor.subscribe("profiles", Meteor.userId());
     return {
         //meteorCall: Meteor.call
     };

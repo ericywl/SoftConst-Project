@@ -10,13 +10,37 @@ export class ProfileTagsList extends React.Component {
         this.state = {};
     }
 
+    handleTagDelete(event) {
+        event.preventDefault();
+        const tagName = event.target.parentElement.children[1].innerHTML;
+
+        this.props.meteorCall(
+            "profilesRemoveTag",
+            Meteor.userId(),
+            tagName
+        );
+    }
+
     renderTags() {
         return (!this.props.tags) ? ["dummy text"] : this.props.tags.map((tag, index) => (
-            <span
+            /*<span
                 style={{ float: "left", padding: "0 0.5rem" }}
                 key={`tag${index}`}
             >
                 #{tag}
+            </span>*/
+            <span className="tags__tag" key={`tag${index}`}>
+                <span className="tags__tag--hash"># </span>
+                <span>{tag}</span>
+                {this.props.isModerator ? (
+                    <img
+                        className="tags__tag--cross"
+                        src="/images/round_x.svg"
+                        onClick={this.handleTagDelete.bind(this)}
+                    />
+                ) : (
+                    undefined
+                )}
             </span>
         ));
     }
@@ -31,16 +55,15 @@ export class ProfileTagsList extends React.Component {
 }
 
 ProfileTagsList.propTypes = {
-    tags: PropTypes.arrayOf(String).isRequired,
-    //meteorCall: PropTypes.func.isRequired
+    //tags: PropTypes.arrayOf(String).isRequired,
 };
 
 export default withTracker(() => {
-    Meteor.subscribe("profiles", Meteor.userId());
-    var doc = ProfilesDB.find().fetch()[0];
-    console.log(doc);
+    //Meteor.subscribe("profiles");
+    //console.log("test");
+    //const doc = ProfilesDB.find({_id:Meteor.userId()}).fetch()[0];
+    //console.log(doc);
     return {
-        tags: (doc && doc.tags) ? doc.tags : ["Tags dummy text"],
-        //meteorCall: Meteor.call
+        //tags: (doc && doc.tags) ? doc.tags : ["Tags dummy text"],
     };
 })(ProfileTagsList);
