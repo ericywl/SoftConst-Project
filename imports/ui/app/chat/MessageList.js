@@ -13,7 +13,8 @@ import { MessagesDB } from "../../../api/messages";
 export class MessageList extends React.Component {
     constructor(props) {
         super(props);
-        this.shouldScroll = false;
+        this.changedGroup = true;
+        this.autoScroll = false;
         this.scrollPositions = {};
     }
 
@@ -43,7 +44,6 @@ export class MessageList extends React.Component {
     }
 
     componentWillUpdate(nextProps, nextState, nextContext) {
-        // console.log(nextProps, nextState, nextContext);
         const currGroupId = this.props.selectedGroupId;
         const nextGroupId = nextProps.selectedGroupId;
 
@@ -51,18 +51,20 @@ export class MessageList extends React.Component {
         const scrollBottom =
             messageList.scrollHeight - messageList.clientHeight;
 
-        if (this.scrollPositions[nextGroupId] === undefined) {
-            console.log("new");
-        }
+        // Auto-scroll only if scroll bar is at bottom
+        this.autoScroll = Math.abs(messageList.scrollTop - scrollBottom) < 1;
 
-        this.shouldScroll = Math.abs(messageList.scrollTop - scrollBottom) < 1;
+        // If user has changed group, save current scroll position
         if (nextGroupId !== currGroupId) {
-            this.shouldScroll = false;
-            // console.log(shouldScroll);
-            this.scrollPositions[currGroupId] = messageList.scrollTop;
+            this.changedGroup = true;
+            this.autoScroll = false;
+            this.scrollPositions[currGroupId] = Math.round(
+                messageList.scrollTop
+            );
             return;
         }
 
+        // Else, add an alternative condition for auto-scroll: user sent message
         if (this.props.messages.length !== 0) {
             const messages = this.props.messages;
             const lastMessage = messages[messages.length - 1];
@@ -70,15 +72,25 @@ export class MessageList extends React.Component {
             const recent =
                 Math.abs(lastMessage.sentAt - moment().valueOf()) < 100;
 
-            this.shouldScroll |= recent && byUser;
+            this.autoScroll |= recent && byUser;
         } else {
-            this.shouldScroll = false;
+            this.autoScroll = false;
         }
     }
 
     componentDidUpdate() {
-        console.log(this.shouldScroll);
-        if (this.shouldScroll) {
+        const prevScrollPos = this.scrollPositions[this.props.selectedGroupId];
+        if (this.changedGroup) {
+            if (prevScrollPos === undefined) {
+                this.refs.messageList.scrollTop = this.refs.messageList.scrollHeight;
+            } else {
+                this.refs.messageList.scrollTop = prevScrollPos;
+            }
+
+            this.changedGroup = false;
+        }
+
+        if (this.autoScroll) {
             this.scrollToBottom();
         }
     }

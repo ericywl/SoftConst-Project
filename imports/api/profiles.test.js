@@ -18,7 +18,7 @@ if (Meteor.isServer) {
 
             expect(
                 ProfilesDB.findOne({ _id: userId }).groups.includes("group1")
-            );
+            ).toBeTruthy();
         });
     });
 }
