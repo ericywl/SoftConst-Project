@@ -18,7 +18,7 @@ import {
     filterItemsByQuery
 } from "../../../methods/methods";
 
-const SHOWN_GROUPS_LIMIT = 10;
+const SHOWN_GROUPS_LIMIT = 20;
 export class GroupList extends React.Component {
     renderGroupList() {
         return this.props.groups.map(group => {
@@ -82,7 +82,7 @@ export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
     const searchQuery = Session.get("searchQuery");
     Meteor.subscribe("profiles");
-    Meteor.subscribe("dsbjs");
+    Meteor.subscribe("groups");
 
     const groups = fetchGroupsFromDB(selectedGroupId, searchQuery);
     const queriedGroups = filterItemsByQuery(groups, searchQuery);

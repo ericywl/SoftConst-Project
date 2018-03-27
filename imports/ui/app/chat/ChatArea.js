@@ -55,8 +55,8 @@ ChatArea.propTypes = {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groups");
     Meteor.subscribe("profiles");
+    Meteor.subscribe("groups");
 
     const userProfile = ProfilesDB.find().fetch()[0];
     const userGroups = userProfile ? userProfile.groups : [];

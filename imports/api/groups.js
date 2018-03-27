@@ -23,7 +23,7 @@ if (Meteor.isServer) {
                     moderators: 1,
                     isPrivate: 1
                 },
-                $limit: 10
+                $limit: 100
             }
         );
     });
