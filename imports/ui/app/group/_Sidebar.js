@@ -5,7 +5,7 @@ import { withTracker } from "meteor/react-meteor-data";
 
 // API
 import { capitalizeFirstLetter } from "../../../misc/methods";
-import { buttonTextArr } from "../../../misc/constants";
+import { BUTTON_TEXT_ARR } from "../../../misc/constants";
 
 export class GroupListSidebar extends React.Component {
     render() {
@@ -24,7 +24,7 @@ export class GroupListSidebar extends React.Component {
     renderButtons() {
         const isDisabled = !this.props.selectedGroupId || this.props.notInGroup;
 
-        return buttonTextArr.map(text => {
+        return BUTTON_TEXT_ARR.map(text => {
             let selected = "";
             if (this.props.session.get("selectedRoom") === text) {
                 selected = " button--sidebar-selected";

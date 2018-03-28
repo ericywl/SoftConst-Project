@@ -45,31 +45,7 @@ Meteor.methods({
         const now = moment().valueOf();
         return (result = MessagesDB.insert({
             groupId: partialMsg.groupId,
-            room: "messages",
-            content: partialMsg.content,
-            userId: this.userId,
-            userDisplayName,
-            sentAt: now
-        }));
-    },
-
-    announcementsInsert(partialMsg, userDisplayName = undefined) {
-        if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(partialMsg.groupId, GroupsDB);
-
-        // For API tests only
-        if (!userDisplayName) {
-            userDisplayName = ProfilesDB.findOne({ _id: this.userId })
-                .displayName;
-        }
-
-        validateMessage(partialMsg);
-        validateUserDisplayName(userDisplayName);
-
-        const now = moment().valueOf();
-        return (result = MessagesDB.insert({
-            groupId: partialMsg.groupId,
-            room: "announcements",
+            room: partialMsg.room,
             content: partialMsg.content,
             userId: this.userId,
             userDisplayName,

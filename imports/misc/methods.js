@@ -6,6 +6,7 @@ import { GroupsDB } from "../api/groups";
 import { AdminsDB } from "../api/admins";
 import { ProfilesDB } from "../api/profiles";
 import { DsbjsDB } from "../api/dsbjs";
+import { BUTTON_TEXT_ARR } from "../misc/constants";
 
 /**
  * Check if current user has moderator/admin access to the collection object
@@ -110,7 +111,7 @@ export const capitalizeFirstLetter = str => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-// SIMPLE SCHEMA
+// SIMPLE SCHEMA VALIDATION
 /* GROUPS */
 export const validateGroupName = groupName => {
     new SimpleSchema({
@@ -147,13 +148,54 @@ export const validateGroup = partialGroup => {
     return true;
 };
 
+/* DSBJS */
+export const validateDsbj = partialDsbj => {
+    new SimpleSchema({
+        name: {
+            type: String,
+            min: 3,
+            max: 30
+        },
+        description: {
+            type: String,
+            max: 50
+        },
+        isPrivate: {
+            type: Boolean
+        },
+        timeout: {
+            type: SimpleSchema.Integer,
+            min: moment().valueOf()
+        },
+        numberReq: {
+            type: SimpleSchema.Integer,
+            min: 1
+        }
+    }).validate({
+        name: partialDsbj.name,
+        description: partialDsbj.description,
+        isPrivate: partialDsbj.isPrivate
+    });
+
+    return true;
+};
+
 /* MESSAGES */
 export const validateMessage = partialMsg => {
     new SimpleSchema({
         groupId: { type: String },
+        room: {
+            type: String,
+            custom() {
+                if (!BUTTON_TEXT_ARR.includes(this.value)) {
+                    return "invalidRoom";
+                }
+            }
+        },
         content: { type: String }
     }).validate({
         groupId: partialMsg.groupId,
+        room: partialMsg.room,
         content: partialMsg.content
     });
 

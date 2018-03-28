@@ -1,7 +1,10 @@
+// Library
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 
+// API
 import { ProfilesDB } from "./profiles.js";
+import { USERNAME_MIN_LENGTH } from "../misc/constants";
 
 export const validateNewUserClient = user => {
     const email = user.email;
@@ -20,7 +23,7 @@ export const validateNewUserClient = user => {
         },
         username: {
             type: String,
-            min: 2,
+            min: USERNAME_MIN_LENGTH,
             max: 30
         }
     }).validate({ email, password, username });
@@ -41,7 +44,7 @@ export const validateNewUserServer = user => {
         },
         username: {
             type: String,
-            min: 2,
+            min: USERNAME_MIN_LENGTH,
             max: 30
         }
     }).validate({ email, username });

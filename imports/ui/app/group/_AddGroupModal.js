@@ -112,13 +112,6 @@ export default class AddGroupModal extends React.Component {
             isPrivate: this.state.groupPrivate
         };
 
-        try {
-            validateGroup(partialGroup);
-        } catch (err) {
-            this.setState({ error: err.reason });
-            return;
-        }
-
         this.props.meteorCall("groupsInsert", partialGroup, (err, res) => {
             if (err) this.setState({ error: err.reason });
 

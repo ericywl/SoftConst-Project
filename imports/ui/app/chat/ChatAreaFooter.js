@@ -70,18 +70,11 @@ export class ChatAreaFooter extends React.Component {
         event.preventDefault();
         if (this.state.input.trim() === "") return;
 
-        const methodName = this.props.selectedRoom + "Insert";
         const partialMsg = {
             groupId: this.props.selectedGroupId,
+            room: this.props.selectedRoom,
             content: this.state.input.trim()
         };
-
-        try {
-            validateMessage(partialMsg);
-        } catch (err) {
-            this.setState({ error: err.reason });
-            return;
-        }
 
         this.props.meteorCall(methodName, partialMsg, (err, res) => {
             if (err) this.setState({ error: err.reason });

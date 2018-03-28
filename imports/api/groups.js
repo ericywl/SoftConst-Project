@@ -58,64 +58,78 @@ Meteor.methods({
 
     /**
      * Remove group from database
-     * @param {String} _id : id of the group to be removed
+     * @param {String} groupId : id of the group to be removed
      */
-    groupsRemove(_id) {
+    groupsRemove(groupId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(_id, GroupsDB);
+        checkAccess(groupId, GroupsDB);
 
-        return GroupsDB.remove({ _id });
+        return GroupsDB.remove({ _id: groupId });
     },
 
     /**
      * Add tag to a group
-     * @param {String} _id : id of the group
+     * @param {String} groupId : id of the group
      * @param {String} tag : tag to be inserted
      */
-    groupsAddTag(_id, tag) {
+    groupsAddTag(groupId, tag) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(_id, GroupsDB);
+        checkAccess(groupId, GroupsDB);
         const formattedTag = tagFilter(tag);
 
-        return GroupsDB.update({ _id }, { $addToSet: { tags: formattedTag } });
+        return GroupsDB.update(
+            { _id: groupId },
+            { $addToSet: { tags: formattedTag } }
+        );
     },
 
     /**
      * Remove tag from the group identified by id if exists
-     * @param {String} _id : id of the group
+     * @param {String} groupId : id of the group
      * @param {String} tag : tag to be removed
      */
-    groupsRemoveTag(_id, tag) {
+    groupsRemoveTag(groupId, tag) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(_id, GroupsDB);
+        checkAccess(groupId, GroupsDB);
         const formattedTag = tagFilter(tag);
 
-        if (!GroupsDB.findOne({ _id, tags: formattedTag })) {
+        if (!GroupsDB.findOne({ _id: groupId, tags: formattedTag })) {
             throw new Meteor.Error("tag-not-found");
         }
 
-        return GroupsDB.update({ _id }, { $pull: { tags: formattedTag } });
+        return GroupsDB.update(
+            { _id: groupId },
+            { $pull: { tags: formattedTag } }
+        );
     },
 
     /**
      * Add userId to the list of group moderators
-     * @param {String} _id : id of the group
+     * @param {String} groupdId : id of the group
      * @param {String} userId : id of the user
      */
-    groupsAddModerator(_id, userId) {
+    groupsAddModerator(groupdId, userId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkUserExist(userId);
-        checkAccess(_id, GroupsDB);
+        checkAccess(groupdId, GroupsDB);
 
-        return GroupsDB.update({ _id }, { $push: { moderators: userId } });
+        return GroupsDB.update(
+            { _id: groupdId },
+            { $push: { moderators: userId } }
+        );
     },
 
-    groupsChangeName(_id, newName) {
+    /**
+     * Change the group name
+     * @param {String} groupdId : id of the group
+     * @param {String} newName : the group's new name
+     */
+    groupsChangeName(groupdId, newName) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         validateGroupName(newName);
-        checkAccess(_id, GroupsDB);
+        checkAccess(groupdId, GroupsDB);
 
-        return GroupsDB.update({ _id }, { $set: { name: newName } });
+        return GroupsDB.update({ _id: groupdId }, { $set: { name: newName } });
     },
 
     /**
