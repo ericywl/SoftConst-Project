@@ -35,7 +35,10 @@ export class ChatAreaBody extends React.Component {
             this.props.selectedGroupId,
             (err, res) => {
                 if (err) this.setState({ error: err.reason });
-                if (res) console.log("you have joined the group!");
+                if (res) {
+                    // TODO: Add joined group message
+                    console.log("you have joined the group!");
+                }
             }
         );
     }

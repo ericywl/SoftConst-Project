@@ -35,8 +35,6 @@ export const validateNewUserServer = user => {
     const email = user.emails[0].address;
     const username = user.username;
 
-    console.log(email, username);
-
     new SimpleSchema({
         email: {
             type: String,

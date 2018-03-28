@@ -88,6 +88,7 @@ export class MessageList extends React.Component {
                 const lastMessage = messages[messages.length - 1];
                 const notByUser = lastMessage.userId !== Meteor.userId();
                 if (notByUser && !scrollIsAtBottom) {
+                    // TODO: notify new message
                     console.log("new message");
                 }
             }
