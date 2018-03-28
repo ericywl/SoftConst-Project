@@ -4,6 +4,9 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { withTracker } from "meteor/react-meteor-data";
 
+// API
+import { validateMessage } from "../../../misc/methods";
+
 export class ChatAreaFooter extends React.Component {
     constructor(props) {
         super(props);
@@ -21,14 +24,9 @@ export class ChatAreaFooter extends React.Component {
         const disabled =
             this.props.notInGroup || cannotSendToAnnouncements ? true : false;
 
-        let placeholder;
-        let inputClass = "";
-        if (this.props.notInGroup) {
-            placeholder = "Join the group to chat!";
-        } else {
-            placeholder = this.state.error;
-            inputClass = "red-placeholder";
-        }
+        const placeholder = this.props.notInGroup
+            ? "Join the group to chat!"
+            : "";
 
         return (
             <div className="chat-area__footer">
@@ -37,7 +35,6 @@ export class ChatAreaFooter extends React.Component {
                     onSubmit={this.handleSubmitMessage.bind(this)}
                 >
                     <input
-                        className={inputClass}
                         disabled={disabled}
                         placeholder={placeholder}
                         ref="msgInput"
@@ -46,6 +43,10 @@ export class ChatAreaFooter extends React.Component {
                         onChange={this.handleInputChange.bind(this)}
                     />
                 </form>
+
+                <div ref="errorBar" id="snackbar">
+                    {this.state.error}
+                </div>
             </div>
         );
     }
@@ -98,12 +99,22 @@ export class ChatAreaFooter extends React.Component {
                 this.setState({ input: "" });
             }
         });
+
+        if (this.state.error) {
+            this.showSnackbar();
+            this.setState({ error: "" });
+        }
+    }
+
+    showSnackbar() {
+        const errorBar = this.refs.errorBar;
+        errorBar.classList.add("show");
+        setTimeout(() => errorBar.classList.remove("show"), 3000);
     }
 
     handleInputChange(event) {
         const input = event.target.value;
         this.setState({ input });
-        this.setState({ error: "" });
     }
 }
 

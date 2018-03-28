@@ -8,6 +8,7 @@
     "dependencies": {
         "@babel/runtime": "^7.0.0-beta.40",
         "bcrypt": "^1.0.3",
+        "clipboard": "^2.0.0",
         "meteor-node-stubs": "^0.3.2",
         "moment": "^2.21.0",
         "prop-types": "^15.6.1",
