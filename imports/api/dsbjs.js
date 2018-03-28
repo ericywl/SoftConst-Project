@@ -2,7 +2,7 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { checkAccess, checkUserExist, tagFilter } from "../misc/misc";
+import { checkAccess, checkUserExist, tagFilter } from "../misc/methods";
 
 export const DsbjsDB = new Mongo.Collection("dsbjs");
 

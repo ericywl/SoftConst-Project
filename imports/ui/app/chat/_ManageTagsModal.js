@@ -6,7 +6,7 @@ import Modal from "react-modal";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";
-import { tagFilter } from "../../../misc/misc";
+import { tagFilter } from "../../../misc/methods";
 
 export default class ManageTagsModal extends React.Component {
     constructor(props) {

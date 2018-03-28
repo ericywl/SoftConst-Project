@@ -16,7 +16,7 @@ import {
     searchFilterBeforeSet,
     searchFilterBeforeFetch,
     filterItemsByQuery
-} from "../../../misc/misc";
+} from "../../../misc/methods";
 import { join } from "path";
 
 const SHOWN_GROUPS_LIMIT = 20;
@@ -85,16 +85,15 @@ export default withTracker(() => {
     const profilesHandle = Meteor.subscribe("profiles");
     const groupsHandle = Meteor.subscribe("groups");
 
-    const currProfile = ProfilesDB.findOne();
-    const joinedGroups = currProfile ? currProfile.groups : [];
-    const notInGroup = !joinedGroups.includes(selectedGroupId);
+    const userProfile = ProfilesDB.find().fetch()[0];
+    const userGroups = userProfile ? userProfile.groups : [];
 
     const fetchedGroups = fetchGroupsFromDB(selectedGroupId, searchQuery);
     const queriedGroups = filterItemsByQuery(fetchedGroups, searchQuery);
     return {
         ready: profilesHandle.ready() && groupsHandle.ready(),
         groups: queriedGroups,
-        notInGroup,
+        notInGroup: !userGroups.includes(selectedGroupId),
         session: Session
     };
 })(GroupList);

@@ -14,14 +14,21 @@ export class ChatAreaFooter extends React.Component {
     }
 
     render() {
+        const cannotSendToAnnouncements =
+            this.props.selectedRoom === "announcements" &&
+            !this.props.isModerator;
+
         const disabled =
-            this.props.notInGroup ||
-            (this.props.selectedRoom && !this.props.isModerator)
-                ? true
-                : false;
-        const placeholder = this.props.notInGroup
-            ? "Join the group to chat!"
-            : "";
+            this.props.notInGroup || cannotSendToAnnouncements ? true : false;
+
+        let placeholder;
+        let inputClass = "";
+        if (this.props.notInGroup) {
+            placeholder = "Join the group to chat!";
+        } else {
+            placeholder = this.state.error;
+            inputClass = "red-placeholder";
+        }
 
         return (
             <div className="chat-area__footer">
@@ -30,6 +37,7 @@ export class ChatAreaFooter extends React.Component {
                     onSubmit={this.handleSubmitMessage.bind(this)}
                 >
                     <input
+                        className={inputClass}
                         disabled={disabled}
                         placeholder={placeholder}
                         ref="msgInput"
@@ -58,13 +66,20 @@ export class ChatAreaFooter extends React.Component {
         event.preventDefault();
         if (this.state.input.trim() === "") return;
 
+        const methodName = this.props.selectedRoom + "Insert";
         const partialMsg = {
             groupId: this.props.selectedGroupId,
-            room: this.props.selectedRoom,
             content: this.state.input.trim()
         };
 
-        this.props.meteorCall("messagesInsert", partialMsg, (err, res) => {
+        try {
+            validateMessage(partialMsg);
+        } catch (err) {
+            this.setState({ error: err.reason });
+            return;
+        }
+
+        this.props.meteorCall(methodName, partialMsg, (err, res) => {
             if (err) this.setState({ error: err.reason });
 
             if (res) {
@@ -88,6 +103,7 @@ export class ChatAreaFooter extends React.Component {
     handleInputChange(event) {
         const input = event.target.value;
         this.setState({ input });
+        this.setState({ error: "" });
     }
 }
 

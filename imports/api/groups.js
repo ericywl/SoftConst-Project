@@ -2,7 +2,13 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { checkAccess, checkUserExist, tagFilter } from "../misc/misc";
+import {
+    checkAccess,
+    checkUserExist,
+    tagFilter,
+    validateGroup,
+    validateGroupName
+} from "../misc/methods";
 
 export const GroupsDB = new Mongo.Collection("groups");
 
@@ -35,7 +41,8 @@ Meteor.methods({
      * @param {Object} partialGroup : includes name, description and isPrivate
      */
     groupsInsert(partialGroup) {
-        checkUserExist(Meteor.userId());
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        validateGroup(partialGroup);
 
         return GroupsDB.insert({
             name: partialGroup.name,
@@ -54,6 +61,7 @@ Meteor.methods({
      * @param {String} _id : id of the group to be removed
      */
     groupsRemove(_id) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(_id, GroupsDB);
 
         return GroupsDB.remove({ _id });
@@ -65,6 +73,7 @@ Meteor.methods({
      * @param {String} tag : tag to be inserted
      */
     groupsAddTag(_id, tag) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(_id, GroupsDB);
         const formattedTag = tagFilter(tag);
 
@@ -77,6 +86,7 @@ Meteor.methods({
      * @param {String} tag : tag to be removed
      */
     groupsRemoveTag(_id, tag) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(_id, GroupsDB);
         const formattedTag = tagFilter(tag);
 
@@ -93,10 +103,19 @@ Meteor.methods({
      * @param {String} userId : id of the user
      */
     groupsAddModerator(_id, userId) {
-        checkAccess(_id, GroupsDB);
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkUserExist(userId);
+        checkAccess(_id, GroupsDB);
 
         return GroupsDB.update({ _id }, { $push: { moderators: userId } });
+    },
+
+    groupsChangeName(_id, newName) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        validateGroupName(newName);
+        checkAccess(_id, GroupsDB);
+
+        return GroupsDB.update({ _id }, { $set: { name: newName } });
     },
 
     /**
@@ -108,26 +127,3 @@ Meteor.methods({
         return GroupsDB.update({ _id }, { $set: { lastMessageAt: time } });
     }
 });
-
-const validateNewGroup = partialGroup => {
-    new SimpleSchema({
-        name: {
-            type: String,
-            min: 3,
-            max: 30
-        },
-        description: {
-            type: String,
-            max: 50
-        },
-        isPrivate: {
-            type: Boolean
-        }
-    }).validate({
-        name: partialGroup.name,
-        description: partialGroup.description,
-        isPrivate: partialGroup.isPrivate
-    });
-
-    return true;
-};

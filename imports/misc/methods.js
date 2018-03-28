@@ -1,3 +1,7 @@
+// Library
+import SimpleSchema from "simpl-schema";
+
+// API
 import { GroupsDB } from "../api/groups";
 import { AdminsDB } from "../api/admins";
 import { ProfilesDB } from "../api/profiles";
@@ -40,6 +44,10 @@ export const checkAccess = (itemId, db) => {
  * @param {String} userId : user id to be checked
  */
 export const checkUserExist = userId => {
+    new SimpleSchema({
+        userId: String
+    }).validate({ userId });
+
     if (!Meteor.isTest) {
         if (!Meteor.users.findOne({ _id: userId }))
             throw new Meteor.Error("user-not-found");
@@ -67,6 +75,10 @@ export const searchFilterBeforeFetch = input => {
     return input.replace(/[^\w#]/gi, "").toLowerCase();
 };
 
+/**
+ * Filter the tag input in ManageGroupTags
+ * @param {String} input
+ */
 export const tagFilter = input => {
     return input.replace(/[^\w\s]/gi, "");
 };
@@ -94,8 +106,71 @@ export const filterItemsByQuery = (items, query) => {
     );
 };
 
-export const buttonTextArr = ["announcements", "messages"];
-
 export const capitalizeFirstLetter = str => {
     return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+// SIMPLE SCHEMA
+/* GROUPS */
+export const validateGroupName = groupName => {
+    new SimpleSchema({
+        name: {
+            type: String,
+            min: 5,
+            max: 40
+        }
+    }).validate({
+        name: groupName
+    });
+
+    return true;
+};
+
+export const validateGroup = partialGroup => {
+    new SimpleSchema({
+        name: {
+            type: String,
+            min: 5,
+            max: 30
+        },
+        description: {
+            type: String,
+            max: 50
+        },
+        isPrivate: { type: Boolean }
+    }).validate({
+        name: partialGroup.name,
+        description: partialGroup.description,
+        isPrivate: partialGroup.isPrivate
+    });
+
+    return true;
+};
+
+/* MESSAGES */
+export const validateMessage = partialMsg => {
+    new SimpleSchema({
+        groupId: { type: String },
+        content: { type: String }
+    }).validate({
+        groupId: partialMsg.groupId,
+        content: partialMsg.content
+    });
+
+    return true;
+};
+
+/* PROFILES */
+export const validateUserDisplayName = userDisplayName => {
+    new SimpleSchema({
+        userDisplayName: {
+            type: String,
+            min: 5,
+            max: 30
+        }
+    }).validate({
+        userDisplayName
+    });
+
+    return true;
 };

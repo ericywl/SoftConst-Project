@@ -4,7 +4,8 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
 // API
-import { capitalizeFirstLetter, buttonTextArr } from "../../../misc/misc";
+import { capitalizeFirstLetter } from "../../../misc/methods";
+import { buttonTextArr } from "../../../misc/constants";
 
 export class GroupListSidebar extends React.Component {
     render() {

@@ -7,7 +7,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import AddGroupModal from "./_AddGroupModal";
 
 // APIs
-import { searchFilterBeforeSet } from "../../../misc/misc";
+import { searchFilterBeforeSet } from "../../../misc/methods";
 
 export class GroupListHeader extends React.Component {
     constructor(props) {

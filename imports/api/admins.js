@@ -2,7 +2,7 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { checkAccess, checkUserExist } from "../misc/misc";
+import { checkAccess, checkUserExist } from "../misc/methods";
 
 export const AdminsDB = new Mongo.Collection("pwn3d");
 

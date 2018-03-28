@@ -1,9 +1,16 @@
+// Library
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
+// API
 import { ProfilesDB } from "./profiles";
-import { buttonTextArr } from "../misc/misc";
+import { GroupsDB } from "./groups";
+import {
+    checkAccess,
+    validateMessage,
+    validateUserDisplayName
+} from "../misc/methods";
 
 export const MessagesDB = new Mongo.Collection("messages");
 
@@ -22,31 +29,6 @@ if (Meteor.isServer) {
     });
 }
 
-const validatePartialMsg = (partialMsg, userDisplayName) => {
-    new SimpleSchema({
-        groupId: { type: String },
-        room: { type: String },
-        content: { type: String },
-        userDisplayName: {
-            type: String,
-            min: 2,
-            max: 30
-        }
-    }).validate({
-        groupId: partialMsg.groupId,
-        content: partialMsg.content,
-        room: partialMsg.room,
-        userDisplayName
-    });
-
-    if (!buttonTextArr.includes(partialMsg.room)) {
-        throw new Meteor.Error("illegal-room-name");
-        return false;
-    }
-
-    return true;
-};
-
 Meteor.methods({
     messagesInsert(partialMsg, userDisplayName = undefined) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
@@ -57,12 +39,37 @@ Meteor.methods({
                 .displayName;
         }
 
-        validatePartialMsg(partialMsg, userDisplayName);
+        validateMessage(partialMsg);
+        validateUserDisplayName(userDisplayName);
 
         const now = moment().valueOf();
         return (result = MessagesDB.insert({
             groupId: partialMsg.groupId,
-            room: partialMsg.room,
+            room: "messages",
+            content: partialMsg.content,
+            userId: this.userId,
+            userDisplayName,
+            sentAt: now
+        }));
+    },
+
+    announcementsInsert(partialMsg, userDisplayName = undefined) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkAccess(partialMsg.groupId, GroupsDB);
+
+        // For API tests only
+        if (!userDisplayName) {
+            userDisplayName = ProfilesDB.findOne({ _id: this.userId })
+                .displayName;
+        }
+
+        validateMessage(partialMsg);
+        validateUserDisplayName(userDisplayName);
+
+        const now = moment().valueOf();
+        return (result = MessagesDB.insert({
+            groupId: partialMsg.groupId,
+            room: "announcements",
             content: partialMsg.content,
             userId: this.userId,
             userDisplayName,

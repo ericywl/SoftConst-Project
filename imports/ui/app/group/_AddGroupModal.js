@@ -6,6 +6,7 @@ import { withTracker } from "meteor/react-meteor-data";
 
 // APIs
 import { ProfilesDB } from "../../../api/profiles";
+import { validateGroup } from "../../../misc/methods";
 
 export default class AddGroupModal extends React.Component {
     constructor(props) {
@@ -104,20 +105,27 @@ export default class AddGroupModal extends React.Component {
     }
 
     handleSubmit(event) {
+        event.preventDefault();
         const partialGroup = {
             name: this.state.groupName,
             description: this.state.groupDesc,
             isPrivate: this.state.groupPrivate
         };
 
-        event.preventDefault();
+        try {
+            validateGroup(partialGroup);
+        } catch (err) {
+            this.setState({ error: err.reason });
+            return;
+        }
+
         this.props.meteorCall("groupsInsert", partialGroup, (err, res) => {
             if (err) this.setState({ error: err.reason });
 
             if (res) {
                 try {
                     this.props.meteorCall("profilesJoinGroup", res);
-                } catch (err) {
+                } catch (newErr) {
                     // remove group from db
                     throw new Meteor.Error("profiles-join-group-failed");
                 }
