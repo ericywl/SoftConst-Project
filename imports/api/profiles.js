@@ -39,6 +39,7 @@ Meteor.methods({
             { $push: { groups: groupId } }
         );
     },
+    //test
 
     /**
      * Add a new tag to current user
