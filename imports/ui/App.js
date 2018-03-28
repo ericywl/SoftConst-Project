@@ -19,7 +19,7 @@ if (Meteor.isClient) {
         Meteor.call("adminsInsert");
 
         Session.setDefault("selectedGroupId", "");
-        Session.setDefault("selectedRoom", "Messages");
+        Session.setDefault("selectedRoom", "messages");
         Session.setDefault("searchQuery", "");
         Session.setDefault("sentToGroup", "");
         Session.setDefault("isNavOpen", false);

@@ -2,7 +2,7 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { checkUserExist } from "../methods/methods";
+import { checkUserExist } from "../misc/misc";
 
 export const ProfilesDB = new Mongo.Collection("profiles");
 

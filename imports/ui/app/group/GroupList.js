@@ -7,7 +7,7 @@ import FlipMove from "react-flip-move";
 // React Components
 import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
-import GroupListSidebar from "./GroupListSidebar";
+import GroupListSidebar from "./_Sidebar";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";
@@ -16,7 +16,8 @@ import {
     searchFilterBeforeSet,
     searchFilterBeforeFetch,
     filterItemsByQuery
-} from "../../../methods/methods";
+} from "../../../misc/misc";
+import { join } from "path";
 
 const SHOWN_GROUPS_LIMIT = 20;
 export class GroupList extends React.Component {
@@ -39,7 +40,7 @@ export class GroupList extends React.Component {
                     </FlipMove>
                 </div>
 
-                <GroupListSidebar />
+                <GroupListSidebar notInGroup={this.props.notInGroup} />
             </div>
         );
     }
@@ -81,13 +82,19 @@ GroupList.propTypes = {
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
     const searchQuery = Session.get("searchQuery");
-    Meteor.subscribe("profiles");
-    Meteor.subscribe("groups");
+    const profilesHandle = Meteor.subscribe("profiles");
+    const groupsHandle = Meteor.subscribe("groups");
 
-    const groups = fetchGroupsFromDB(selectedGroupId, searchQuery);
-    const queriedGroups = filterItemsByQuery(groups, searchQuery);
+    const currProfile = ProfilesDB.findOne();
+    const joinedGroups = currProfile ? currProfile.groups : [];
+    const notInGroup = !joinedGroups.includes(selectedGroupId);
+
+    const fetchedGroups = fetchGroupsFromDB(selectedGroupId, searchQuery);
+    const queriedGroups = filterItemsByQuery(fetchedGroups, searchQuery);
     return {
+        ready: profilesHandle.ready() && groupsHandle.ready(),
         groups: queriedGroups,
+        notInGroup,
         session: Session
     };
 })(GroupList);

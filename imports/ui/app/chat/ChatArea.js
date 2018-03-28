@@ -41,7 +41,10 @@ export class ChatArea extends React.Component {
                     selectedGroupId={this.props.selectedGroup._id}
                 />
 
-                <ChatAreaFooter notInGroup={this.props.notInGroup} />
+                <ChatAreaFooter
+                    notInGroup={this.props.notInGroup}
+                    isModerator={this.props.isModerator}
+                />
             </div>
         );
     }

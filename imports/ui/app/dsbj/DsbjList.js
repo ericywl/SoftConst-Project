@@ -15,7 +15,7 @@ import {
     searchFilterBeforeSet,
     searchFilterBeforeFetch,
     filterItemsByQuery
-} from "../../../methods/methods";
+} from "../../../misc/misc";
 
 const SHOWN_GROUPS_LIMIT = 10;
 export class DsbjList extends React.Component {

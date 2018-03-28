@@ -14,7 +14,11 @@ export class ChatAreaFooter extends React.Component {
     }
 
     render() {
-        const disabled = this.props.notInGroup ? true : false;
+        const disabled =
+            this.props.notInGroup ||
+            (this.props.selectedRoom && !this.props.isModerator)
+                ? true
+                : false;
         const placeholder = this.props.notInGroup
             ? "Join the group to chat!"
             : "";
@@ -56,6 +60,7 @@ export class ChatAreaFooter extends React.Component {
 
         const partialMsg = {
             groupId: this.props.selectedGroupId,
+            room: this.props.selectedRoom,
             content: this.state.input.trim()
         };
 
@@ -89,14 +94,17 @@ export class ChatAreaFooter extends React.Component {
 ChatAreaFooter.propTypes = {
     notInGroup: PropTypes.bool.isRequired,
     selectedGroupId: PropTypes.string.isRequired,
+    selectedRoom: PropTypes.string.isRequired,
     meteorCall: PropTypes.func.isRequired
 };
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
+    const selectedRoom = Session.get("selectedRoom");
 
     return {
         selectedGroupId,
+        selectedRoom,
         meteorCall: Meteor.call
     };
 })(ChatAreaFooter);

@@ -106,11 +106,12 @@ export class MessageList extends React.Component {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
+    const selectedRoom = Session.get("selectedRoom");
     const handle = Meteor.subscribe("messagesByGroup", selectedGroupId);
 
     return {
         selectedGroupId,
         ready: handle.ready(),
-        messages: MessagesDB.find().fetch()
+        messages: MessagesDB.find({ room: selectedRoom }).fetch()
     };
 })(MessageList);

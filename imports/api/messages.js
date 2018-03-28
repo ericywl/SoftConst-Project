@@ -3,7 +3,7 @@ import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
 import { ProfilesDB } from "./profiles";
-import { checkUserExist } from "../methods/methods";
+import { buttonTextArr } from "../misc/misc";
 
 export const MessagesDB = new Mongo.Collection("messages");
 
@@ -25,6 +25,7 @@ if (Meteor.isServer) {
 const validatePartialMsg = (partialMsg, userDisplayName) => {
     new SimpleSchema({
         groupId: { type: String },
+        room: { type: String },
         content: { type: String },
         userDisplayName: {
             type: String,
@@ -34,8 +35,14 @@ const validatePartialMsg = (partialMsg, userDisplayName) => {
     }).validate({
         groupId: partialMsg.groupId,
         content: partialMsg.content,
+        room: partialMsg.room,
         userDisplayName
     });
+
+    if (!buttonTextArr.includes(partialMsg.room)) {
+        throw new Meteor.Error("illegal-room-name");
+        return false;
+    }
 
     return true;
 };
@@ -55,6 +62,7 @@ Meteor.methods({
         const now = moment().valueOf();
         return (result = MessagesDB.insert({
             groupId: partialMsg.groupId,
+            room: partialMsg.room,
             content: partialMsg.content,
             userId: this.userId,
             userDisplayName,

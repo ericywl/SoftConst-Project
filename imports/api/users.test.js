@@ -3,7 +3,7 @@ import expect from "expect";
 import { validateNewUserClient, validateNewUserServer } from "./users";
 import { ProfilesDB } from "./profiles";
 
-/* test client methods */
+/* test client misc */
 if (Meteor.isClient) {
     describe("users", function() {
         it("should allow valid user email and password", function() {
@@ -58,7 +58,7 @@ if (Meteor.isClient) {
     });
 }
 
-/* test server methods */
+/* test server misc */
 if (Meteor.isServer) {
     describe("users", function() {
         it("should allow valid email address and username", function() {

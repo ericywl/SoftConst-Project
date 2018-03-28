@@ -93,3 +93,9 @@ export const filterItemsByQuery = (items, query) => {
         item => searchFilterBeforeFetch(item.name).indexOf(query) !== -1
     );
 };
+
+export const buttonTextArr = ["announcements", "messages"];
+
+export const capitalizeFirstLetter = str => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
