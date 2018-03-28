@@ -81,7 +81,7 @@ if (Meteor.isServer) {
         it("should reject invalid username", function() {
             const invalidusernameUser = {
                 _id: "testId1",
-                username: "asdf",
+                username: "a",
                 emails: [
                     {
                         address: "valid@example.com"
