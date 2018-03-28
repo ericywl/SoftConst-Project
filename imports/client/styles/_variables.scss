@@ -18,6 +18,7 @@ $site-max-width: 102rem;
 
 /* FONT SIZES */
 $base-font-size: 1.6rem;
+$medium-font-size: 1.8rem;
 $large-font-size: 2rem;
 
 /* FORM INPUTS */
@@ -56,6 +57,10 @@ $slider-bg-color: $brand-primary;
 
 /* ITEM */
 $item-select-border-width: 4px;
+
+/* SNACKBAR */
+$snackbar-color: white;
+$snackbar-bg-color: #333;
 
 /* TAGS */
 $tags-tag-border-radius: 1.4rem;

@@ -4,7 +4,7 @@
     flex-direction: row;
     width: 100%;
     max-width: 35rem;
-    border-right: 2px solid $dark-grey;
+    border-right: 3px solid $dark-grey;
 
     @include desktop() {
         border-right: none;
