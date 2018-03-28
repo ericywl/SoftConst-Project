@@ -1,0 +1,18 @@
+.modal {
+    background: fade-out($color: $boxed-view-overlay-bg, $amount: 0.3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.modal__title {
+    margin-left: $space;
+    margin-right: $space;
+
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

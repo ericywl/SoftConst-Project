@@ -23,6 +23,7 @@ if (Meteor.isClient) {
         Session.setDefault("searchQuery", "");
         Session.setDefault("sentToGroup", "");
         Session.setDefault("isNavOpen", false);
+        Session.setDefault("isGroupModalOpen", false);
         Session.setDefault("sessionTime", moment().valueOf());
 
         Tracker.autorun(() => {

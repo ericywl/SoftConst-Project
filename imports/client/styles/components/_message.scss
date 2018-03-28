@@ -23,3 +23,10 @@
     padding-right: $large-space;
     border-bottom: 1px solid $grey;
 }
+
+/* EMPTY */
+.empty-message-list {
+    color: $dark-grey;
+    font-style: italic;
+    padding: $large-space $space;
+}

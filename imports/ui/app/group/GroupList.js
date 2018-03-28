@@ -46,6 +46,7 @@ export class GroupList extends React.Component {
     }
 
     componentDidMount() {
+        // Add listener for click events
         document.addEventListener(
             "mousedown",
             this.handleClickOutside.bind(this)
@@ -53,6 +54,7 @@ export class GroupList extends React.Component {
     }
 
     componentWillUnmount() {
+        // Remove listener for click events
         document.removeEventListener(
             "mousedown",
             this.handleClickOutside.bind(this)
@@ -64,9 +66,12 @@ export class GroupList extends React.Component {
     }
 
     handleClickOutside(event) {
+        const inWrapperRef =
+            this.wrapperRef && !this.wrapperRef.contains(event.target);
+
         if (
-            this.wrapperRef &&
-            !this.wrapperRef.contains(event.target) &&
+            inWrapperRef &&
+            !this.props.session.get("isGroupModalOpen") &&
             event.target.className !== "header__nav-toggle"
         ) {
             this.props.session.set("isNavOpen", false);

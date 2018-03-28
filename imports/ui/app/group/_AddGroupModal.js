@@ -35,11 +35,11 @@ export default class AddGroupModal extends React.Component {
                 onAfterOpen={() => this.refs.groupName.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
                 className="boxed-view__large-box"
-                overlayClassName="boxed-view boxed-view--modal"
+                overlayClassName="boxed-view modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <h1>
+                <h1 className="modal__title">
                     {this.state.groupName ? this.state.groupName : "New Group"}
                 </h1>
 
@@ -147,6 +147,8 @@ export default class AddGroupModal extends React.Component {
     }
 
     toggleModal() {
+        Session.set("isGroupModalOpen", !this.state.modalIsOpen);
+
         this.setState({
             modalIsOpen: !this.state.modalIsOpen,
             groupName: "",

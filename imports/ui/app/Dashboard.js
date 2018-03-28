@@ -18,13 +18,17 @@ export class Dashboard extends React.Component {
     renderPage() {
         if (this.state.page === "chat") {
             return (
-                <div className="page-content">
-                    <div className="page-content__sidebar">
-                        <GroupList />
-                    </div>
+                <div>
+                    <div>Hi</div>
 
-                    <div className="page-content__main">
-                        <ChatArea />
+                    <div className="page-content">
+                        <div className="page-content__sidebar">
+                            <GroupList />
+                        </div>
+
+                        <div className="page-content__main">
+                            <ChatArea />
+                        </div>
                     </div>
                 </div>
             );

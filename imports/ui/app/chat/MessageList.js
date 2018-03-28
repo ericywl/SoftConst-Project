@@ -22,7 +22,9 @@ export class MessageList extends React.Component {
         return (
             <div className="message-list" ref="messageList">
                 {this.props.messages.length == 0 ? (
-                    <div>Nothing to see here.</div>
+                    <div className="empty-message-list">
+                        Nothing to see here.
+                    </div>
                 ) : (
                     this.props.messages.map(message => {
                         return <Message key={message._id} message={message} />;

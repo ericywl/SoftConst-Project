@@ -41,6 +41,7 @@
 /* LIST SIDEBAR */
 .item-list__sidebar {
     width: 15%;
+    position: relative;
     padding-left: 0.5rem;
     background-color: $grey;
 
@@ -52,14 +53,9 @@
 .item-list__sidebar-content {
     display: table;
     position: fixed;
-    top: calc(#{$space} - 0.35rem);
-    transform: rotate(90deg);
+    transform: rotate(90deg) translateX(-4.9rem);
     transform-origin: bottom left;
     margin-right: $space;
-
-    @include desktop() {
-        top: calc(#{$space * 2} + #{$input-spacing});
-    }
 }
 
 /* ITEM */
