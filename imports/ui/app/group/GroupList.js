@@ -7,6 +7,7 @@ import FlipMove from "react-flip-move";
 // React Components
 import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
+import GroupListSidebar from "./_Sidebar";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";
@@ -15,9 +16,10 @@ import {
     searchFilterBeforeSet,
     searchFilterBeforeFetch,
     filterItemsByQuery
-} from "../../../methods/methods";
+} from "../../../misc/methods";
+import { join } from "path";
 
-const SHOWN_GROUPS_LIMIT = 10;
+const SHOWN_GROUPS_LIMIT = 20;
 export class GroupList extends React.Component {
     renderGroupList() {
         return this.props.groups.map(group => {
@@ -27,13 +29,48 @@ export class GroupList extends React.Component {
 
     render() {
         return (
-            <div className="item-list">
-                <GroupListHeader />
-                <FlipMove maintainContainerHeight="true">
-                    {this.renderGroupList()}
-                </FlipMove>
+            <div
+                className="item-list__wrapper"
+                ref={this.setWrapperRef.bind(this)}
+            >
+                <div className="item-list__main">
+                    <GroupListHeader />
+                    <FlipMove maintainContainerHeight="true">
+                        {this.renderGroupList()}
+                    </FlipMove>
+                </div>
+
+                <GroupListSidebar notInGroup={this.props.notInGroup} />
             </div>
         );
+    }
+
+    componentDidMount() {
+        document.addEventListener(
+            "mousedown",
+            this.handleClickOutside.bind(this)
+        );
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener(
+            "mousedown",
+            this.handleClickOutside.bind(this)
+        );
+    }
+
+    setWrapperRef(node) {
+        this.wrapperRef = node;
+    }
+
+    handleClickOutside(event) {
+        if (
+            this.wrapperRef &&
+            !this.wrapperRef.contains(event.target) &&
+            event.target.className !== "header__nav-toggle"
+        ) {
+            this.props.session.set("isNavOpen", false);
+        }
     }
 }
 
@@ -45,13 +82,18 @@ GroupList.propTypes = {
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
     const searchQuery = Session.get("searchQuery");
-    Meteor.subscribe("profiles");
-    Meteor.subscribe("dsbjs");
+    const profilesHandle = Meteor.subscribe("profiles");
+    const groupsHandle = Meteor.subscribe("groups");
 
-    const groups = fetchGroupsFromDB(selectedGroupId, searchQuery);
-    const queriedGroups = filterItemsByQuery(groups, searchQuery);
+    const userProfile = ProfilesDB.find().fetch()[0];
+    const userGroups = userProfile ? userProfile.groups : [];
+
+    const fetchedGroups = fetchGroupsFromDB(selectedGroupId, searchQuery);
+    const queriedGroups = filterItemsByQuery(fetchedGroups, searchQuery);
     return {
+        ready: profilesHandle.ready() && groupsHandle.ready(),
         groups: queriedGroups,
+        notInGroup: !userGroups.includes(selectedGroupId),
         session: Session
     };
 })(GroupList);

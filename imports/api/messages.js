@@ -1,9 +1,16 @@
+// Library
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
+// API
 import { ProfilesDB } from "./profiles";
-import { checkUserExist } from "../methods/methods";
+import { GroupsDB } from "./groups";
+import {
+    checkAccess,
+    validateMessage,
+    validateUserDisplayName
+} from "../misc/methods";
 
 export const MessagesDB = new Mongo.Collection("messages");
 
@@ -18,27 +25,9 @@ if (Meteor.isServer) {
             groupId: { type: String }
         }).validate({ groupId });
 
-        return MessagesDB.find({ groupId }, { limit: 100 });
+        return MessagesDB.find({ groupId }, { limit: 500 });
     });
 }
-
-const validatePartialMsg = (partialMsg, userDisplayName) => {
-    new SimpleSchema({
-        groupId: { type: String },
-        content: { type: String },
-        userDisplayName: {
-            type: String,
-            min: 2,
-            max: 30
-        }
-    }).validate({
-        groupId: partialMsg.groupId,
-        content: partialMsg.content,
-        userDisplayName
-    });
-
-    return true;
-};
 
 Meteor.methods({
     messagesInsert(partialMsg, userDisplayName = undefined) {
@@ -50,11 +39,13 @@ Meteor.methods({
                 .displayName;
         }
 
-        validatePartialMsg(partialMsg, userDisplayName);
+        validateMessage(partialMsg);
+        validateUserDisplayName(userDisplayName);
 
         const now = moment().valueOf();
         return (result = MessagesDB.insert({
             groupId: partialMsg.groupId,
+            room: partialMsg.room,
             content: partialMsg.content,
             userId: this.userId,
             userDisplayName,

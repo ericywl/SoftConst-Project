@@ -1,12 +1,14 @@
 .dropdown {
-    width: 20rem;
+    max-width: 20rem;
+    width: 100%;
     height: 2.5rem;
-    margin: 1.25rem;
+    margin-top: 1rem;
     outline: none;
     overflow: visible;
 }
 
 .dropdown__control {
+    width: inherit;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -14,11 +16,11 @@
 }
 
 .dropdown__menu {
-    width: inherit;
+    max-width: 20rem;
+    width: 100%;
     background-color: white;
     border: 1px solid $dropdown-greyed-border-color;
     position: relative;
-    z-index: 10;
 }
 
 .dropdown__item {

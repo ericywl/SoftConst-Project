@@ -1,7 +1,12 @@
+// Library
+import SimpleSchema from "simpl-schema";
+
+// API
 import { GroupsDB } from "../api/groups";
 import { AdminsDB } from "../api/admins";
 import { ProfilesDB } from "../api/profiles";
 import { DsbjsDB } from "../api/dsbjs";
+import { BUTTON_TEXT_ARR } from "../misc/constants";
 
 /**
  * Check if current user has moderator/admin access to the collection object
@@ -40,6 +45,10 @@ export const checkAccess = (itemId, db) => {
  * @param {String} userId : user id to be checked
  */
 export const checkUserExist = userId => {
+    new SimpleSchema({
+        userId: String
+    }).validate({ userId });
+
     if (!Meteor.isTest) {
         if (!Meteor.users.findOne({ _id: userId }))
             throw new Meteor.Error("user-not-found");
@@ -67,6 +76,10 @@ export const searchFilterBeforeFetch = input => {
     return input.replace(/[^\w#]/gi, "").toLowerCase();
 };
 
+/**
+ * Filter the tag input in ManageGroupTags
+ * @param {String} input
+ */
 export const tagFilter = input => {
     return input.replace(/[^\w\s]/gi, "");
 };
@@ -92,4 +105,114 @@ export const filterItemsByQuery = (items, query) => {
     return items.filter(
         item => searchFilterBeforeFetch(item.name).indexOf(query) !== -1
     );
+};
+
+export const capitalizeFirstLetter = str => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+// SIMPLE SCHEMA VALIDATION
+/* GROUPS */
+export const validateGroupName = groupName => {
+    new SimpleSchema({
+        name: {
+            type: String,
+            min: 5,
+            max: 40
+        }
+    }).validate({
+        name: groupName
+    });
+
+    return true;
+};
+
+export const validateGroup = partialGroup => {
+    new SimpleSchema({
+        name: {
+            type: String,
+            min: 5,
+            max: 30
+        },
+        description: {
+            type: String,
+            max: 50
+        },
+        isPrivate: { type: Boolean }
+    }).validate({
+        name: partialGroup.name,
+        description: partialGroup.description,
+        isPrivate: partialGroup.isPrivate
+    });
+
+    return true;
+};
+
+/* DSBJS */
+export const validateDsbj = partialDsbj => {
+    new SimpleSchema({
+        name: {
+            type: String,
+            min: 3,
+            max: 30
+        },
+        description: {
+            type: String,
+            max: 50
+        },
+        isPrivate: {
+            type: Boolean
+        },
+        timeout: {
+            type: SimpleSchema.Integer,
+            min: moment().valueOf()
+        },
+        numberReq: {
+            type: SimpleSchema.Integer,
+            min: 1
+        }
+    }).validate({
+        name: partialDsbj.name,
+        description: partialDsbj.description,
+        isPrivate: partialDsbj.isPrivate
+    });
+
+    return true;
+};
+
+/* MESSAGES */
+export const validateMessage = partialMsg => {
+    new SimpleSchema({
+        groupId: { type: String },
+        room: {
+            type: String,
+            custom() {
+                if (!BUTTON_TEXT_ARR.includes(this.value)) {
+                    return "invalidRoom";
+                }
+            }
+        },
+        content: { type: String }
+    }).validate({
+        groupId: partialMsg.groupId,
+        room: partialMsg.room,
+        content: partialMsg.content
+    });
+
+    return true;
+};
+
+/* PROFILES */
+export const validateUserDisplayName = userDisplayName => {
+    new SimpleSchema({
+        userDisplayName: {
+            type: String,
+            min: 5,
+            max: 30
+        }
+    }).validate({
+        userDisplayName
+    });
+
+    return true;
 };

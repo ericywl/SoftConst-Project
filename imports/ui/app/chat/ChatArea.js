@@ -21,8 +21,10 @@ export class ChatArea extends React.Component {
     render() {
         if (!this.props.selectedGroup) {
             return (
-                <div>
-                    <p>Please select a group to start chatting.</p>
+                <div className="chat-area">
+                    <p className="empty-chat-area">
+                        Please select a group to start chatting.
+                    </p>
                 </div>
             );
         }
@@ -39,7 +41,10 @@ export class ChatArea extends React.Component {
                     selectedGroupId={this.props.selectedGroup._id}
                 />
 
-                <ChatAreaFooter notInGroup={this.props.notInGroup} />
+                <ChatAreaFooter
+                    notInGroup={this.props.notInGroup}
+                    isModerator={this.props.isModerator}
+                />
             </div>
         );
     }
@@ -53,8 +58,8 @@ ChatArea.propTypes = {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groups");
     Meteor.subscribe("profiles");
+    Meteor.subscribe("groups");
 
     const userProfile = ProfilesDB.find().fetch()[0];
     const userGroups = userProfile ? userProfile.groups : [];

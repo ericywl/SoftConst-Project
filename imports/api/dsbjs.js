@@ -2,7 +2,12 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { checkAccess, checkUserExist, tagFilter } from "../methods/methods";
+import {
+    checkAccess,
+    checkUserExist,
+    tagFilter,
+    validateDsbj
+} from "../misc/methods";
 
 export const DsbjsDB = new Mongo.Collection("dsbjs");
 
@@ -25,7 +30,7 @@ Meteor.methods({
     dsbjsInsert(partialDsbj) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
 
-        validateNewDsbj(partialDsbj);
+        validateDsbj(partialDsbj);
 
         return DsbjsDB.insert({
             name: partialDsbj.name,
@@ -58,7 +63,7 @@ Meteor.methods({
      */
     dsbjsAddAttendee(dsbjId, addedUserId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(dsbjId, addedUserId);
+        checkAccess(dsbjId, DsbjsDB);
 
         if (DsbjsDB.findOne({ dsbjId }).attendees.includes(removedUserId))
             throw new Meteor.Error("user-already-in-dsbj");
@@ -76,7 +81,7 @@ Meteor.methods({
      */
     dsbjsRemoveAttendee(dsbjId, removedUserId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(dsbjId, removedUserId);
+        checkAccess(dsbjId, DsbjsDB);
 
         if (!DsbjsDB.findOne({ dsbjId }).attendees.includes(removedUserId))
             throw new Meteor.Error("user-not-in-dsbj");
@@ -169,34 +174,3 @@ Meteor.methods({
         );
     }
 });
-
-const validateNewDsbj = partialDsbj => {
-    new SimpleSchema({
-        name: {
-            type: String,
-            min: 3,
-            max: 30
-        },
-        description: {
-            type: String,
-            max: 50
-        },
-        isPrivate: {
-            type: Boolean
-        },
-        timeout: {
-            type: SimpleSchema.Integer,
-            min: moment().valueOf()
-        },
-        numberReq: {
-            type: SimpleSchema.Integer,
-            min: 1
-        }
-    }).validate({
-        name: partialDsbj.name,
-        description: partialDsbj.description,
-        isPrivate: partialDsbj.isPrivate
-    });
-
-    return true;
-};

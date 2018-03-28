@@ -7,7 +7,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import AddGroupModal from "./_AddGroupModal";
 
 // APIs
-import { searchFilterBeforeSet } from "../../../methods/methods";
+import { searchFilterBeforeSet } from "../../../misc/methods";
 
 export class GroupListHeader extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ export class GroupListHeader extends React.Component {
 
     render() {
         return (
-            <div className="item-list__header">
+            <div className="item-list__main-header">
                 <button
                     className="button"
                     onClick={() => this.modalChild.toggleModal()}

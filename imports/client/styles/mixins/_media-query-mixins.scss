@@ -1,5 +1,11 @@
 @mixin desktop() {
-    @media (min-width: 50rem) {
+    @media (min-width: 52rem) {
+        @content;
+    }
+}
+
+@mixin phone() {
+    @media (max-width: 30rem) {
         @content;
     }
 }

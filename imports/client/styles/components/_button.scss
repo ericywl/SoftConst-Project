@@ -36,6 +36,7 @@
     padding: $button-pill-padding;
 }
 
+/* GREYED */
 .button--greyed {
     outline: none;
     background-color: $button-greyed-bg;
@@ -49,6 +50,7 @@
     color: $button-greyed-color;
 }
 
+/* DELETE */
 .button--delete {
     outline: none;
 }
@@ -66,6 +68,7 @@
     color: white;
 }
 
+/* SIDE BY SIDE */
 .button__side-by-side {
     display: flex;
     flex-wrap: wrap;
@@ -83,5 +86,93 @@
 
     button {
         flex: 1;
+    }
+}
+
+/* SIDEBAR BUTTON */
+.button--sidebar {
+    font-size: $base-font-size;
+    color: $body-default-color;
+    display: inline-block;
+    background: white;
+    outline: none;
+    border: 2px solid $grey;
+    padding: $input-spacing;
+    margin-left: 0.65rem;
+
+    &:hover {
+        cursor: pointer;
+        border: 2px solid;
+        animation: border-dance 4s infinite ease;
+    }
+
+    @keyframes border-dance {
+        0% {
+            border-color: lighten($brand-primary, 25%);
+        }
+        13% {
+            border-color: lighten($brand-primary, 15%);
+        }
+        25% {
+            border-color: lighten($brand-primary, 5%);
+        }
+        37% {
+            border-color: $brand-primary;
+        }
+        50% {
+            border-color: darken($brand-primary, 5%);
+        }
+        63% {
+            border-color: $brand-primary;
+        }
+        75% {
+            border-color: lighten($brand-primary, 5%);
+        }
+        88% {
+            border-color: lighten($brand-primary, 15%);
+        }
+        100% {
+            border-color: lighten($brand-primary, 25%);
+        }
+    }
+
+    &:active {
+        background: $light-grey;
+        transform: scale(0.99);
+    }
+
+    &:focus {
+        border: 2px solid $brand-primary;
+        animation: none;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        animation: none;
+        border: 2px solid $grey;
+        background: lighten($grey, 3%);
+    }
+}
+
+.button--sidebar-selected {
+    border: 2px solid $brand-primary;
+    animation: none;
+
+    &:hover {
+        cursor: default;
+        border: 2px solid $brand-primary;
+        animation: none;
+    }
+
+    &:active {
+        background: white;
+        transform: none;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        animation: none;
+        border: 2px solid $grey;
+        background: lighten($grey, 3%);
     }
 }
