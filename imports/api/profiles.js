@@ -29,17 +29,16 @@ if (Meteor.isServer) {
 
 Meteor.methods({
     profilesJoinGroup(groupId) {
-        if (!this.userId()) {
+        if (!this.userId) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        checkUserExist(this.userId());
+        checkUserExist(this.userId);
         return ProfilesDB.update(
-            { _id: this.userId() },
+            { _id: this.userId },
             { $push: { groups: groupId } }
         );
     },
-    //test
 
     /**
      * Add a new tag to current user
@@ -47,13 +46,13 @@ Meteor.methods({
      * @param {String} tag
      */
     profilesAddTag(tag) {
-        if (!this.userId()) {
+        if (!this.userId) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        checkUserExist(this.userId());
+        checkUserExist(this.userId);
         return ProfilesDB.update(
-            { _id: this.userId() },
+            { _id: this.userId },
             { $addToSet: { tags: tag } }
         );
     },
@@ -68,13 +67,13 @@ Meteor.methods({
      * @param {String} newBio
      */
     profilesUpdateBio(newBio) {
-        if (!this.userId()) {
+        if (!this.userId) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        checkUserExist(this.userId());
+        checkUserExist(this.userId);
         return ProfilesDB.update(
-            { _id: this.userId() },
+            { _id: this.userId },
             { $set: { bio: newBio } }
         );
     },
