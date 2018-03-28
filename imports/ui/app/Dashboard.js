@@ -1,5 +1,6 @@
 // Library
 import React from "react";
+import { Link } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
@@ -16,23 +17,30 @@ export class Dashboard extends React.Component {
     }
 
     renderPage() {
-        if (this.state.page === "chat") {
-            return (
-                <div>
-                    <div>Hi</div>
+        return (
+            <div>
+                <div className="tab-container__wrapper">
+                    <ul className="tab-container">
+                        <li>
+                            <button>Channels</button>
+                        </li>
+                        <li>
+                            <button>DSBJs</button>
+                        </li>
+                    </ul>
+                </div>
 
-                    <div className="page-content">
-                        <div className="page-content__sidebar">
-                            <GroupList />
-                        </div>
+                <div className="page-content">
+                    <div className="page-content__sidebar">
+                        <GroupList />
+                    </div>
 
-                        <div className="page-content__main">
-                            <ChatArea />
-                        </div>
+                    <div className="page-content__main">
+                        <ChatArea />
                     </div>
                 </div>
-            );
-        }
+            </div>
+        );
     }
 
     render() {

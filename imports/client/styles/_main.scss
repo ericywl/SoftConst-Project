@@ -1,17 +1,26 @@
+/* MISC */
 @import "./_variables.scss";
 @import "./mixins/_media-query-mixins.scss";
 @import "./_base.scss";
 
+/* COMPONENTS */
 @import "./components/_boxed-view.scss";
 @import "./components/_button.scss";
-@import "./components/_header.scss";
-@import "./components/_checkbox.scss";
-@import "./components/_page-content.scss";
-@import "./components/_item.scss";
-@import "./components/_chat-area.scss";
-@import "./components/_message.scss";
-@import "./components/_switch.scss";
+@import "components/switch";
 @import "./components/_tags.scss";
-@import "./components/_dropdown.scss";
+@import "components/dropdown";
 @import "./components/_snackbar.scss";
 @import "./components/_modal.scss";
+
+/* DASHBOARD */
+@import "components/dashboard/header";
+@import "components/dashboard/page-content";
+
+/* PAGE-SIDEBAR */
+@import "components/page-sidebar/item";
+@import "components/page-sidebar/room-bar";
+
+/* PAGE-MAIN */
+@import "components/page-main/chat-area";
+@import "components/page-main/message";
+

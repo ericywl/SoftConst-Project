@@ -7,7 +7,7 @@ import FlipMove from "react-flip-move";
 // React Components
 import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
-import GroupListSidebar from "./_Sidebar";
+import GroupListSidebar from "./_RoomBar";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";

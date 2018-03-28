@@ -7,13 +7,13 @@ import { withTracker } from "meteor/react-meteor-data";
 import { capitalizeFirstLetter } from "../../../misc/methods";
 import { BUTTON_TEXT_ARR } from "../../../misc/constants";
 
-export class GroupListSidebar extends React.Component {
+export class GroupListRoomBar extends React.Component {
     render() {
         return (
-            <div className="item-list__sidebar">
+            <div className="room-bar">
                 <div
                     ref="sidebarContent"
-                    className="item-list__sidebar-content"
+                    className="room-bar__content"
                 >
                     {this.renderButtons()}
                 </div>
@@ -27,14 +27,14 @@ export class GroupListSidebar extends React.Component {
         return BUTTON_TEXT_ARR.map(text => {
             let selected = "";
             if (this.props.session.get("selectedRoom") === text) {
-                selected = " button--sidebar-selected";
+                selected = " button--room-bar-selected";
             }
 
             return (
                 <button
                     key={text}
                     name={text}
-                    className={"button--sidebar" + selected}
+                    className={"button--room-bar" + selected}
                     disabled={isDisabled}
                     onClick={this.handleOnClick.bind(this)}
                 >
@@ -47,17 +47,17 @@ export class GroupListSidebar extends React.Component {
     handleOnClick(event) {
         if (this.props.session.get("selectedRoom") !== event.target.name) {
             Array.from(this.refs.sidebarContent.children).forEach(child => {
-                child.classList.remove("button--sidebar-selected");
+                child.classList.remove("button--room-bar-selected");
             });
 
-            event.target.classList.add("button--sidebar-selected");
+            event.target.classList.add("button--room-bar-selected");
             this.props.session.set("selectedRoom", event.target.name);
             this.props.session.set("isNavOpen", false);
         }
     }
 }
 
-GroupListSidebar.propTypes = {
+GroupListRoomBar.propTypes = {
     selectedGroupId: PropTypes.string.isRequired,
     session: PropTypes.object.isRequired,
     notInGroup: PropTypes.bool.isRequired
@@ -71,4 +71,4 @@ export default withTracker(() => {
         selectedGroupId,
         session: Session
     };
-})(GroupListSidebar);
+})(GroupListRoomBar);

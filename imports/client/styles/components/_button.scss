@@ -89,8 +89,8 @@
     }
 }
 
-/* SIDEBAR BUTTON */
-.button--sidebar {
+/* SELECT-BAR BUTTON */
+.button--room-bar {
     font-size: $base-font-size;
     color: $body-default-color;
     display: inline-block;
@@ -154,7 +154,7 @@
     }
 }
 
-.button--sidebar-selected {
+.button--room-bar-selected {
     border: 2px solid $brand-primary;
     animation: none;
 
