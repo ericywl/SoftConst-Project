@@ -1,11 +1,13 @@
 .page-content {
     display: flex;
     margin: 0 auto;
-    height: $page-content-height;
+    height: $page-content-height-mobile;
     max-width: $site-max-width;
 
     @include desktop() {
-        padding: $large-space $space;
+        height: $page-content-height-desktop;
+        padding-top: $input-spacing;
+        padding-bottom: $large-space;
     }
 }
 
@@ -23,8 +25,9 @@
     @include desktop() {
         display: flex;
         position: static;
-        width: $page-content-sidebar-width;
-        padding-right: 0.6rem;
+        width: 100%;
+        max-width: $page-content-sidebar-width;
+        margin-right: 0.5rem;
     }
 }
 
@@ -37,6 +40,7 @@
     width: 100%;
 
     @include desktop() {
-        width: $page-content-main-width;
+        width: 100%;
+        max-width: $page-content-main-width;
     }
 }

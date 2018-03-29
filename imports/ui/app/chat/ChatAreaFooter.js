@@ -76,7 +76,7 @@ export class ChatAreaFooter extends React.Component {
             content: this.state.input.trim()
         };
 
-        this.props.meteorCall(methodName, partialMsg, (err, res) => {
+        this.props.meteorCall("messagesInsert", partialMsg, (err, res) => {
             if (err) this.setState({ error: err.reason });
 
             if (res) {

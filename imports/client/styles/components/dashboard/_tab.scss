@@ -1,3 +1,75 @@
 /* TAB CONTAINER */
 .tab-container__wrapper {
+    width: 100vw;
+    overflow: visible;
+    border-bottom: 2px solid $grey;
+    display: none;
+
+    @include desktop() {
+        display: block;
+    }
+}
+
+.tab-container {
+    height: $tab-height;
+    padding-top: $space;
+    padding-left: $input-spacing;
+    max-width: 102rem;
+    margin: 0 auto;
+    overflow: visible;
+}
+
+/* TAB */
+.tab {
+    display: inline-block;
+    margin-right: -20px;
+    height: 4.7rem;
+    z-index: 2;
+}
+
+.tab__box {
+    background: white;
+    border: 2px solid $grey;
+    display: inline-block;
+    position: relative;
+    width: 13rem;
+    padding: $space;
+    margin: 0 22px;
+
+    color: $brand-primary;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: $medium-font-size;
+    font-weight: bold;
+
+    transition: background 0.25s;
+    overflow: visible;
+}
+
+.tab__box:before {
+    content: "";
+    background-color: inherit;
+    border-top: 2px solid $boxed-view-border-color;
+    border-left: 2px solid $boxed-view-border-color;
+    height: 100%;
+    position: absolute;
+    left: -15px;
+    top: -2px;
+    width: 20px;
+    transform: skewX(-10deg);
+}
+
+.tab__box:after {
+    content: "";
+    background-color: inherit;
+    border-top: 2px solid $boxed-view-border-color;
+    border-right: 2px solid $boxed-view-border-color;
+    height: 100%;
+    position: absolute;
+    right: -15px;
+    top: -2px;
+    width: 20px;
+    transform: skewX(10deg);
+    z-index: 1;
 }

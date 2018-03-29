@@ -6,10 +6,10 @@
 }
 
 html {
-    font-size: 62.5%;
+    font-size: 55%;
 
-    @include phone() {
-        font-size: 55%;
+    @include desktop() {
+        font-size: 62.5%;
     }
 }
 

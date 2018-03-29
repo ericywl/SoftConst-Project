@@ -18,16 +18,31 @@ export class Dashboard extends React.Component {
 
     renderPage() {
         return (
-            <div>
+            <div className="page">
                 <div className="tab-container__wrapper">
-                    <ul className="tab-container">
-                        <li>
-                            <button>Channels</button>
-                        </li>
-                        <li>
-                            <button>DSBJs</button>
-                        </li>
-                    </ul>
+                    <div className="tab-container">
+                        <ul>
+                            <li className="tab">
+                                <a
+                                    href="#"
+                                    className="tab__box"
+                                    onClick={e => e.preventDefault()}
+                                >
+                                    Groups
+                                </a>
+                            </li>
+
+                            <li className="tab">
+                                <a
+                                    href="#"
+                                    className="tab__box"
+                                    onClick={e => e.preventDefault()}
+                                >
+                                    DSBJs
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div className="page-content">

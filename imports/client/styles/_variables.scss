@@ -30,6 +30,17 @@ $header-bg: $brand-primary;
 $header-color: white;
 $header-height: 6rem;
 
+/* TAB */
+$tab-height: 6rem;
+
+/* PAGE CONTENT */
+$page-content-sidebar-width: 32rem;
+$page-content-main-width: calc(
+    #{$site-max-width} - #{$page-content-sidebar-width}
+);
+$page-content-height-desktop: calc(100vh - #{$header-height} - #{$tab-height});
+$page-content-height-mobile: calc(100vh - #{$header-height});
+
 /* BUTTON */
 $button-bg: $brand-primary;
 $button-color: white;
@@ -70,10 +81,3 @@ $tags-tag-bg-color: lighten($grey, 5%);
 $boxed-view-overlay-bg: $grey;
 $boxed-view-bg: white;
 $boxed-view-border-color: $grey;
-
-/* PAGE CONTENT */
-$page-content-sidebar-width: 32rem;
-$page-content-main-width: calc(
-    #{$site-max-width} - #{$page-content-sidebar-width}
-);
-$page-content-height: calc(100vh - #{$header-height});
