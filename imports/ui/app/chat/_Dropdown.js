@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 // React Components
 import ManageTagsModal from "./_ManageTagsModal";
 
-export class Dropdown extends React.Component {
+export class ChatDropdown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -58,6 +58,7 @@ export class Dropdown extends React.Component {
                             ? "Manage Group Tags"
                             : "View Group Tags"}
                     </div>
+
                     <div className="dropdown__item">Leave Group</div>
                 </div>
 
@@ -98,4 +99,4 @@ export class Dropdown extends React.Component {
     }
 }
 
-export default Dropdown;
+export default ChatDropdown;

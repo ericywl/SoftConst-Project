@@ -15,9 +15,9 @@ export class PrivateTab extends React.Component {
     renderTabs() {
         return (
             <ul ref="tabs">
-                {TAB_TEXT_ARR.map((tabText, index) => {
+                {TAB_TEXT_ARR.map(tabText => {
                     let tabSelectedClass = "";
-                    if (index === 0) {
+                    if (tabText === this.props.selectedTab) {
                         tabSelectedClass = " tab__box--selected";
                     }
 
@@ -57,5 +57,10 @@ export class PrivateTab extends React.Component {
 }
 
 export default withTracker(() => {
-    return { session: Session };
+    const selectedTab = Session.get("selectedTab");
+
+    return {
+        session: Session,
+        selectedTab
+    };
 })(PrivateTab);

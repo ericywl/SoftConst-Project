@@ -17,17 +17,27 @@ export class GroupListHeader extends React.Component {
         };
     }
 
+    componentDidUpdate(prevProps, prevState, prevContext) {
+        if (prevProps.selectedTab !== this.props.selectedTab) {
+            this.setState({ search: "" });
+        }
+    }
+
     render() {
+        const selectedTab = this.props.selectedTab;
+        const slicedTabText = selectedTab.slice(0, selectedTab.length - 1);
+
         return (
             <div className="item-list__header">
                 <button
                     className="button"
                     onClick={() => this.modalChild.toggleModal()}
                 >
-                    Create group
+                    Create {slicedTabText}
                 </button>
 
                 <AddGroupModal
+                    selectedTab={this.props.selectedTab}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
                         this.modalChild = ref;
@@ -37,7 +47,7 @@ export class GroupListHeader extends React.Component {
                 <input
                     type="search"
                     value={this.state.search}
-                    placeholder="Search for groups"
+                    placeholder={"Search for " + selectedTab}
                     onChange={this.handleSearchChange.bind(this)}
                 />
             </div>

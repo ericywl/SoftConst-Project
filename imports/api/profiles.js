@@ -2,6 +2,8 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
+// API
+import { GroupsDB } from "./groups";
 import { checkUserExist } from "../misc/methods";
 
 export const ProfilesDB = new Mongo.Collection("profiles");
@@ -32,11 +34,31 @@ Meteor.methods({
         if (!this.userId) {
             throw new Meteor.Error("not-logged-in");
         }
-
         checkUserExist(this.userId);
+
         return ProfilesDB.update(
             { _id: this.userId },
             { $push: { groups: groupId } }
+        );
+    },
+
+    profilesLeaveGroup(groupId) {
+        if (!this.userId) {
+            throw new Meteor.Error("not-logged-in");
+        }
+        checkUserExist(this.userId);
+
+        const group = GroupsDB.findOne({ _id: groupId });
+        if (!group) throw new Meteor.Error("group-does-not-exist");
+        if (group.ownedBy === this.userId)
+            throw new Meteor.Error("owner-cannot-leave-group");
+
+        if (group.moderators.includes(this.userId)) {
+        }
+
+        return ProfilesDB.update(
+            { _id: this.userId },
+            { $pull: { groups: groupId } }
         );
     },
 

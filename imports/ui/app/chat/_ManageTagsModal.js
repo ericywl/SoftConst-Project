@@ -103,7 +103,7 @@ export default class ManageTagsModal extends React.Component {
         const tagName = event.target.parentElement.children[1].innerHTML;
 
         this.props.meteorCall(
-            "groupsRemoveTag",
+            "groupsTagRemove",
             this.props.selectedGroup._id,
             tagName
         );
@@ -114,7 +114,7 @@ export default class ManageTagsModal extends React.Component {
         if (this.state.newTag === "") return;
 
         this.props.meteorCall(
-            "groupsAddTag",
+            "groupsTagAdd",
             this.props.selectedGroup._id,
             this.state.newTag,
             (err, res) => {

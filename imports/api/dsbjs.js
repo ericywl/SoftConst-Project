@@ -31,14 +31,16 @@ Meteor.methods({
         if (!this.userId) throw new Meteor.Error("not-logged-in");
 
         validateDsbj(partialDsbj);
+        const now = moment().valueOf();
+        const timeoutAt = now + partialDsbj.timeout;
 
         return DsbjsDB.insert({
             name: partialDsbj.name,
             description: partialDsbj.description,
             tags: [],
-            lastMessageAt: moment().valueOf(),
-            timeout: partialDsbj.timeout,
-            createdAt: moment().valueOf(),
+            lastMessageAt: now,
+            timeoutAt: timeoutAt,
+            createdAt: now,
             createdBy: this.userId,
             numberReq: partialDsbj.numberReq,
             attendees: []
@@ -139,14 +141,20 @@ Meteor.methods({
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
 
+        const dsbj = DsbjsDB.findOne({ _id: dsbjId });
+        const dsbjCreatedAt = dsbj.createdAt;
+        const newTimeoutAt = dsbjCreatedAt + newTimeout;
+        if (newTimeoutAt <= moment().valueOf())
+            throw new Meteor.Error("timeout-in-past");
+
         return DsbjsDB.update(
             { _id: dsbjId },
-            { set: { timeout: newTimeout } }
+            { set: { timeoutAt: newTimeoutAt } }
         );
     },
 
     /**
-     *
+     * Update the required number of people for the DSBJ event
      * @param {String} dsbjId : id of DSBJ to be updated
      * @param {String} newNumberReq : the new number of attendees required
      */
@@ -154,23 +162,14 @@ Meteor.methods({
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
 
+        const dsbj = DsbjsDB.findOne({ _id: dsbjId });
+        const numOfAttendees = dsbj.attendees.length;
+        if (numOfAttendees > newNumberReq)
+            throw new Meteor.Error("more-attendees-than-numreq");
+
         return DsbjsDB.update(
             { _id: dsbjId },
             { set: { numberReq: newNumberReq } }
-        );
-    },
-
-    /**
-     * Update last message at, called only when messages are inserted
-     * @param {String} dsbjId : id of the group
-     * @param {Number} time : time of last message
-     */
-    dsbjsUpdateLastMessageAt(dsbjId, time) {
-        if (!this.userId) throw new Meteor.Error("not-logged-in");
-
-        return DsbjsDB.update(
-            { _id: dsbjId },
-            { $set: { lastMessageAt: time } }
         );
     }
 });

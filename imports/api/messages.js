@@ -43,13 +43,25 @@ Meteor.methods({
         validateUserDisplayName(userDisplayName);
 
         const now = moment().valueOf();
-        return (result = MessagesDB.insert({
-            groupId: partialMsg.groupId,
-            room: partialMsg.room,
-            content: partialMsg.content,
-            userId: this.userId,
-            userDisplayName,
-            sentAt: now
-        }));
+        const result = MessagesDB.insert(
+            {
+                groupId: partialMsg.groupId,
+                room: partialMsg.room,
+                content: partialMsg.content,
+                userId: this.userId,
+                userDisplayName,
+                sentAt: now
+            },
+            err => {
+                if (!err) {
+                    GroupsDB.update(
+                        { _id: partialMsg.groupId },
+                        { $set: { lastMessageAt: now } }
+                    );
+                }
+            }
+        );
+
+        return result;
     }
 });

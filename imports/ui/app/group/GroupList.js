@@ -22,7 +22,7 @@ import { join } from "path";
 
 const SHOWN_GROUPS_LIMIT = 20;
 export class GroupList extends React.Component {
-    renderGroupList() {
+    renderList() {
         return this.props.groups.map(group => {
             return <GroupListItem key={group._id} group={group} />;
         });
@@ -40,7 +40,7 @@ export class GroupList extends React.Component {
                 <div className={"item-list" + itemListClass}>
                     <GroupListHeader selectedTab={this.props.selectedTab} />
                     <FlipMove maintainContainerHeight="true">
-                        {this.renderGroupList()}
+                        {this.renderList()}
                     </FlipMove>
                 </div>
 

@@ -51,7 +51,7 @@ Meteor.methods({
             tags: [],
             lastMessageAt: moment().valueOf(),
             createdAt: moment().valueOf(),
-            createdBy: Meteor.userId(),
+            ownedBy: Meteor.userId(),
             moderators: [Meteor.userId()]
         });
     },
@@ -62,7 +62,9 @@ Meteor.methods({
      */
     groupsRemove(groupId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(groupId, GroupsDB);
+        const accessLevel = checkAccess(groupdId, GroupsDB);
+        if (accessLevel !== "high")
+            throw new Meteor.Error("high-level-access-required");
 
         return GroupsDB.remove({ _id: groupId });
     },
@@ -72,7 +74,7 @@ Meteor.methods({
      * @param {String} groupId : id of the group
      * @param {String} tag : tag to be inserted
      */
-    groupsAddTag(groupId, tag) {
+    groupsTagAdd(groupId, tag) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(groupId, GroupsDB);
         const formattedTag = tagFilter(tag);
@@ -88,7 +90,7 @@ Meteor.methods({
      * @param {String} groupId : id of the group
      * @param {String} tag : tag to be removed
      */
-    groupsRemoveTag(groupId, tag) {
+    groupsTagRemove(groupId, tag) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(groupId, GroupsDB);
         const formattedTag = tagFilter(tag);
@@ -105,13 +107,16 @@ Meteor.methods({
 
     /**
      * Add userId to the list of group moderators
+     * Only the owner can add moderators
      * @param {String} groupdId : id of the group
      * @param {String} userId : id of the user
      */
-    groupsAddModerator(groupdId, userId) {
+    groupsModeratorAdd(groupdId, userId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkUserExist(userId);
-        checkAccess(groupdId, GroupsDB);
+        const accessLevel = checkAccess(groupdId, GroupsDB);
+        if (accessLevel !== "high")
+            throw new Meteor.Error("high-level-access-required");
 
         return GroupsDB.update(
             { _id: groupdId },
@@ -120,24 +125,34 @@ Meteor.methods({
     },
 
     /**
+     * Remove userId from the list of group moderators
+     * Only the owner can remove moderators
+     * @param {String} groupId: id of the group
+     * @param {String} userId: id of the user
+     */
+    groupsModeratorRemove(groupdId, userId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkUserExist(userId);
+        const accessLevel = checkAccess(groupdId, GroupsDB);
+        if (accessLevel !== "high")
+            throw new Meteor.Error("high-level-access-required");
+
+        return GroupsDB.update(
+            { _id: groupdId },
+            { $pull: { moderators: userId } }
+        );
+    },
+
+    /**
      * Change the group name
      * @param {String} groupdId : id of the group
      * @param {String} newName : the group's new name
      */
-    groupsChangeName(groupdId, newName) {
+    groupsNameChange(groupdId, newName) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         validateGroupName(newName);
         checkAccess(groupdId, GroupsDB);
 
         return GroupsDB.update({ _id: groupdId }, { $set: { name: newName } });
-    },
-
-    /**
-     * Update last message at, called only when messages are inserted
-     * @param {String} _id : id of the group
-     * @param {Number} time : time of last message
-     */
-    groupsUpdateLastMessageAt(_id, time) {
-        return GroupsDB.update({ _id }, { $set: { lastMessageAt: time } });
     }
 });

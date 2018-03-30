@@ -80,18 +80,7 @@ export class ChatAreaFooter extends React.Component {
             if (err) this.setState({ error: err.reason });
 
             if (res) {
-                try {
-                    this.props.meteorCall(
-                        "groupsUpdateLastMessageAt",
-                        partialMsg.groupId,
-                        moment().valueOf()
-                    );
-                    Session.set("sentToGroup", this.props.selectedGroupId);
-                } catch (err) {
-                    // TODO: remove message from db
-                    throw new Meteor.Error(err.reason);
-                }
-
+                Session.set("sentToGroup", this.props.selectedGroupId);
                 this.setState({ input: "" });
             }
         });

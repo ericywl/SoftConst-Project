@@ -9,6 +9,8 @@ if (Meteor.isServer) {
         const userId = "testId";
         beforeEach(function() {
             MessagesDB.remove({});
+            GroupsDB.remove({});
+            GroupsDB.insert({ _id: "groupId1", lastMessageAt: 0 });
         });
 
         describe("messagesInsert", function() {
@@ -26,6 +28,11 @@ if (Meteor.isServer) {
                 );
 
                 expect(MessagesDB.findOne({ _id, userId })).toBeTruthy();
+
+                const groupLastMessageAt = GroupsDB.findOne({
+                    _id: partialMsg.groupId
+                }).lastMessageAt;
+                expect(groupLastMessageAt).toBeGreaterThan(0);
             });
 
             it("should throw error if invalid groupId", function() {
