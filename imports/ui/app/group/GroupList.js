@@ -11,6 +11,7 @@ import GroupListSidebar from "./_RoomBar";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";
+import { DsbjsDB } from "../../../api/dsbjs";
 import { ProfilesDB } from "../../../api/profiles";
 import {
     searchFilterBeforeSet,
@@ -28,19 +29,26 @@ export class GroupList extends React.Component {
     }
 
     render() {
+        const itemListClass =
+            this.props.selectedTab === "groups" ? "" : " item-list--dsbj";
+
         return (
             <div
-                className="item-list__wrapper"
+                className="page-content__sidebar-wrapper"
                 ref={this.setWrapperRef.bind(this)}
             >
-                <div className="item-list__main">
-                    <GroupListHeader />
+                <div className={"item-list" + itemListClass}>
+                    <GroupListHeader selectedTab={this.props.selectedTab} />
                     <FlipMove maintainContainerHeight="true">
                         {this.renderGroupList()}
                     </FlipMove>
                 </div>
 
-                <GroupListSidebar notInGroup={this.props.notInGroup} />
+                {this.props.selectedTab === "groups" ? (
+                    <GroupListSidebar notInGroup={this.props.notInGroup} />
+                ) : (
+                    undefined
+                )}
             </div>
         );
     }
@@ -71,7 +79,7 @@ export class GroupList extends React.Component {
 
         if (
             inWrapperRef &&
-            !this.props.session.get("isGroupModalOpen") &&
+            !this.props.session.get("isAddModalOpen") &&
             event.target.className !== "header__nav-toggle"
         ) {
             this.props.session.set("isNavOpen", false);
@@ -86,14 +94,16 @@ GroupList.propTypes = {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
+    const selectedDsbjId = Session.get("selectedDsbjId");
     const searchQuery = Session.get("searchQuery");
+
     const profilesHandle = Meteor.subscribe("profiles");
     const groupsHandle = Meteor.subscribe("groups");
 
     const userProfile = ProfilesDB.find().fetch()[0];
     const userGroups = userProfile ? userProfile.groups : [];
 
-    const fetchedGroups = fetchGroupsFromDB(selectedGroupId, searchQuery);
+    const fetchedGroups = fetchItemsFromDB(selectedGroupId, searchQuery);
     const queriedGroups = filterItemsByQuery(fetchedGroups, searchQuery);
     return {
         ready: profilesHandle.ready() && groupsHandle.ready(),
@@ -103,7 +113,8 @@ export default withTracker(() => {
     };
 })(GroupList);
 
-const fetchGroupsFromDB = (selectedGroupId, query) => {
+/* HELPER METHODS */
+const fetchItemsFromDB = (selectedItemId, query) => {
     let groups = [];
     const userProfile = ProfilesDB.find().fetch()[0];
     const userGroups = userProfile ? userProfile.groups : [];
@@ -128,7 +139,7 @@ const fetchGroupsFromDB = (selectedGroupId, query) => {
     groups = groups.map(group => {
         return {
             ...group,
-            selected: group._id === selectedGroupId
+            selected: group._id === selectedItemId
         };
     });
 

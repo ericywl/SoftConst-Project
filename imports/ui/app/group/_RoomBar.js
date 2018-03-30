@@ -11,10 +11,7 @@ export class GroupListRoomBar extends React.Component {
     render() {
         return (
             <div className="room-bar">
-                <div
-                    ref="sidebarContent"
-                    className="room-bar__content"
-                >
+                <div ref="sidebarContent" className="room-bar__content">
                     {this.renderButtons()}
                 </div>
             </div>
@@ -45,13 +42,16 @@ export class GroupListRoomBar extends React.Component {
     }
 
     handleOnClick(event) {
-        if (this.props.session.get("selectedRoom") !== event.target.name) {
+        event.preventDefault();
+        const name = event.target.getAttribute("name");
+
+        if (this.props.session.get("selectedRoom") !== name) {
             Array.from(this.refs.sidebarContent.children).forEach(child => {
                 child.classList.remove("button--room-bar-selected");
             });
 
             event.target.classList.add("button--room-bar-selected");
-            this.props.session.set("selectedRoom", event.target.name);
+            this.props.session.set("selectedRoom", name);
             this.props.session.set("isNavOpen", false);
         }
     }

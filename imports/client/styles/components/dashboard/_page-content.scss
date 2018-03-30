@@ -31,6 +31,24 @@
     }
 }
 
+.page-content__sidebar-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 35rem;
+    border-right: 3px solid $dark-grey;
+
+    @include desktop() {
+        border-right: none;
+    }
+}
+
+.page-content__sidebar--dsbj {
+    @include desktop() {
+        max-width: $page-content-sidebar-width-dsbj;
+    }
+}
+
 .nav-open .page-content__sidebar {
     left: 0;
 }
@@ -42,5 +60,12 @@
     @include desktop() {
         width: 100%;
         max-width: $page-content-main-width;
+    }
+}
+
+.page-content__main--dsbj {
+    @include desktop() {
+        width: 100%;
+        max-width: $page-content-main-width-dsbj;
     }
 }

@@ -102,38 +102,7 @@
 
     &:hover {
         cursor: pointer;
-        border: 2px solid;
-        animation: border-dance 4s infinite ease;
-    }
-
-    @keyframes border-dance {
-        0% {
-            border-color: lighten($brand-primary, 25%);
-        }
-        13% {
-            border-color: lighten($brand-primary, 15%);
-        }
-        25% {
-            border-color: lighten($brand-primary, 5%);
-        }
-        37% {
-            border-color: $brand-primary;
-        }
-        50% {
-            border-color: darken($brand-primary, 5%);
-        }
-        63% {
-            border-color: $brand-primary;
-        }
-        75% {
-            border-color: lighten($brand-primary, 5%);
-        }
-        88% {
-            border-color: lighten($brand-primary, 15%);
-        }
-        100% {
-            border-color: lighten($brand-primary, 25%);
-        }
+        border-color: lighten($brand-primary, 35%);
     }
 
     &:active {

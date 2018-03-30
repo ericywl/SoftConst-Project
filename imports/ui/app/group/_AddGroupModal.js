@@ -147,7 +147,7 @@ export default class AddGroupModal extends React.Component {
     }
 
     toggleModal() {
-        Session.set("isGroupModalOpen", !this.state.modalIsOpen);
+        Session.set("isAddModalOpen", !this.state.modalIsOpen);
 
         this.setState({
             modalIsOpen: !this.state.modalIsOpen,

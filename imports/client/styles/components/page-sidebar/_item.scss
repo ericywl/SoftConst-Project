@@ -1,17 +1,5 @@
 /* ITEM LIST */
-.item-list__wrapper {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    max-width: 35rem;
-    border-right: 3px solid $dark-grey;
-
-    @include desktop() {
-        border-right: none;
-    }
-}
-
-.item-list__main {
+.item-list {
     background-color: white;
     border: 2px solid $grey;
     width: 85%;
@@ -32,7 +20,11 @@
     }
 }
 
-.item-list__main-header {
+.item-list--dsbj {
+    width: 100%;
+}
+
+.item-list__header {
     display: flex;
     flex-direction: column;
     padding: $space;

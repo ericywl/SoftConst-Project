@@ -5,6 +5,7 @@ import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
 import PrivateHeader from "./PrivateHeader";
+import PrivateTab from "./PrivateTab";
 import GroupList from "./group/GroupList";
 import ChatArea from "./chat/ChatArea";
 
@@ -17,42 +18,24 @@ export class Dashboard extends React.Component {
     }
 
     renderPage() {
-        return (
-            <div className="page">
-                <div className="tab-container__wrapper">
-                    <div className="tab-container">
-                        <ul>
-                            <li className="tab">
-                                <a
-                                    href="#"
-                                    className="tab__box"
-                                    onClick={e => e.preventDefault()}
-                                >
-                                    Groups
-                                </a>
-                            </li>
+        const sidebarClass =
+            this.props.selectedTab === "groups"
+                ? ""
+                : " page-content__sidebar--dsbj";
 
-                            <li className="tab">
-                                <a
-                                    href="#"
-                                    className="tab__box"
-                                    onClick={e => e.preventDefault()}
-                                >
-                                    DSBJs
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+        const mainClass =
+            this.props.selectedTab === "groups"
+                ? ""
+                : " page-content__main--dsbj";
+
+        return (
+            <div className="page-content">
+                <div className={"page-content__sidebar" + sidebarClass}>
+                    <GroupList selectedTab={this.props.selectedTab} />
                 </div>
 
-                <div className="page-content">
-                    <div className="page-content__sidebar">
-                        <GroupList />
-                    </div>
-
-                    <div className="page-content__main">
-                        <ChatArea />
-                    </div>
+                <div className={"page-content__main" + mainClass}>
+                    <ChatArea />
                 </div>
             </div>
         );
@@ -62,10 +45,17 @@ export class Dashboard extends React.Component {
         return (
             <div>
                 <PrivateHeader title="STUD Chat" />
+                <PrivateTab />
                 {this.renderPage()}
             </div>
         );
     }
 }
 
-export default Dashboard;
+export default withTracker(() => {
+    const selectedTab = Session.get("selectedTab");
+
+    return {
+        selectedTab
+    };
+})(Dashboard);

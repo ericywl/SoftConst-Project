@@ -19,7 +19,7 @@ export class GroupListHeader extends React.Component {
 
     render() {
         return (
-            <div className="item-list__main-header">
+            <div className="item-list__header">
                 <button
                     className="button"
                     onClick={() => this.modalChild.toggleModal()}

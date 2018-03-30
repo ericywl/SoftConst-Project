@@ -28,7 +28,8 @@
 }
 
 .tab__box {
-    background: white;
+    background: $grey;
+    cursor: pointer;
     border: 2px solid $grey;
     display: inline-block;
     position: relative;
@@ -72,4 +73,13 @@
     width: 20px;
     transform: skewX(10deg);
     z-index: 1;
+}
+
+.tab__box--selected {
+    background: white;
+    cursor: default;
+}
+
+.tab__box--selected:before {
+    z-index: 2;
 }

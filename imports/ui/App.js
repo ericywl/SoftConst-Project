@@ -18,12 +18,14 @@ if (Meteor.isClient) {
         Meteor.subscribe("pwn3d");
         Meteor.call("adminsInsert");
 
+        Session.setDefault("selectedTab", "groups");
+        Session.setDefault("selectedDsbjId", "");
         Session.setDefault("selectedGroupId", "");
         Session.setDefault("selectedRoom", "messages");
         Session.setDefault("searchQuery", "");
         Session.setDefault("sentToGroup", "");
         Session.setDefault("isNavOpen", false);
-        Session.setDefault("isGroupModalOpen", false);
+        Session.setDefault("isAddModalOpen", false);
         Session.setDefault("sessionTime", moment().valueOf());
 
         Tracker.autorun(() => {
