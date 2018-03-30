@@ -103,7 +103,7 @@ export default withTracker(() => {
     const userProfile = ProfilesDB.find().fetch()[0];
     const userGroups = userProfile ? userProfile.groups : [];
 
-    const fetchedGroups = fetchItemsFromDB(selectedGroupId, searchQuery);
+    const fetchedGroups = fetchGroupsFromDB(selectedGroupId, searchQuery);
     const queriedGroups = filterItemsByQuery(fetchedGroups, searchQuery);
     return {
         ready: profilesHandle.ready() && groupsHandle.ready(),
@@ -114,7 +114,7 @@ export default withTracker(() => {
 })(GroupList);
 
 /* HELPER METHODS */
-const fetchItemsFromDB = (selectedItemId, query) => {
+const fetchGroupsFromDB = (selectedGroupId, query) => {
     let groups = [];
     const userProfile = ProfilesDB.find().fetch()[0];
     const userGroups = userProfile ? userProfile.groups : [];
@@ -139,7 +139,7 @@ const fetchItemsFromDB = (selectedItemId, query) => {
     groups = groups.map(group => {
         return {
             ...group,
-            selected: group._id === selectedItemId
+            selected: group._id === selectedGroupId
         };
     });
 
