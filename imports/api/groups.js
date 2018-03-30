@@ -35,7 +35,10 @@ Meteor.methods({
      * @param {Object} partialGroup : includes name, description and isPrivate
      */
     groupsInsert(partialGroup) {
-        checkUserExist(Meteor.userId());
+        if (!this.userId) {
+            throw new Meteor.Error("not-logged-in");
+        }
+        //validateGroup(partialGroup);
 
         return GroupsDB.insert({
             name: partialGroup.name,
@@ -109,7 +112,7 @@ Meteor.methods({
     }
 });
 
-const validateNewGroup = partialGroup => {
+export const validateNewGroup = partialGroup => {
     new SimpleSchema({
         name: {
             type: String,
