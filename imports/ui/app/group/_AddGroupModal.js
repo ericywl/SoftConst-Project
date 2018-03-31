@@ -21,8 +21,7 @@ export default class AddGroupModal extends React.Component {
             itemDesc: "",
             itemNumOfPeople: "",
             itemTimeout: "",
-            error: "",
-            dropdownIsOpen: false
+            error: ""
         };
     }
 
@@ -135,17 +134,11 @@ export default class AddGroupModal extends React.Component {
             };
 
             this.props.meteorCall("groupsInsert", partialGroup, (err, res) => {
-                if (err) this.setState({ error: err.reason });
-
-                if (res) {
-                    try {
-                        this.props.meteorCall("profilesJoinGroup", res);
-                    } catch (newErr) {
-                        // remove group from db
-                        throw new Meteor.Error("profiles-join-group-failed");
-                    }
-
-                    this.toggleModal();
+                if (err) {
+                    this.setState({ error: err.reason });
+                    setTimeout(() => {
+                        this.setState({ error: "" });
+                    }, 10000);
                 }
             });
         } else {
@@ -214,5 +207,6 @@ export default class AddGroupModal extends React.Component {
 }
 
 AddGroupModal.propTypes = {
+    selectedTab: PropTypes.string.isRequired,
     meteorCall: PropTypes.func.isRequired
 };

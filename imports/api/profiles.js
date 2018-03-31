@@ -37,6 +37,11 @@ Meteor.methods({
         }
         checkUserExist(this.userId);
 
+        const profile = ProfilesDB.findOne({ _id: this.userId });
+        if (profile.groups.includes(groupId)) {
+            throw new Meteor.Error("already-in-group");
+        }
+
         return ProfilesDB.update(
             { _id: this.userId },
             { $push: { groups: groupId } }
@@ -48,6 +53,11 @@ Meteor.methods({
             throw new Meteor.Error("not-logged-in");
         }
         checkUserExist(this.userId);
+
+        const profile = ProfilesDB.findOne({ _id: this.userId });
+        if (!profile.groups.includes(groupId)) {
+            throw new Meteor.Error("not-in-group");
+        }
 
         const group = GroupsDB.findOne({ _id: groupId });
         if (!group) throw new Meteor.Error("group-does-not-exist");

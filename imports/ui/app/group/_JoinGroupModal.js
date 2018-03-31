@@ -12,17 +12,13 @@ import {
     spaceFilter
 } from "../../../misc/methods";
 
-export default class AddGroupModal extends React.Component {
+export default class JoinGroupModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             modalIsOpen: false,
-            itemName: "",
-            itemDesc: "",
-            itemNumOfPeople: "",
-            itemTimeout: "",
-            error: "",
-            dropdownIsOpen: false
+            itemId: "",
+            error: ""
         };
     }
 
@@ -41,8 +37,8 @@ export default class AddGroupModal extends React.Component {
         return (
             <Modal
                 isOpen={this.state.modalIsOpen}
-                contentLabel={"Create New " + formattedTabText}
-                onAfterOpen={() => this.refs.itemName.focus()}
+                contentLabel={"Join " + formattedTabText + " via Invite"}
+                onAfterOpen={() => this.refs.itemId.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
                 className="boxed-view__large-box"
                 overlayClassName="boxed-view modal"
@@ -50,9 +46,7 @@ export default class AddGroupModal extends React.Component {
                 style={modalStyles}
             >
                 <h1 className="modal__title">
-                    {this.state.itemName
-                        ? this.state.itemName
-                        : "New " + formattedTabText}
+                    {"Join " + formattedTabText + " via Invite"}
                 </h1>
 
                 {this.state.error ? <p>{this.state.error}</p> : undefined}
@@ -62,55 +56,20 @@ export default class AddGroupModal extends React.Component {
                     className="boxed-view__form"
                 >
                     <input
-                        name="itemName"
-                        ref="itemName"
+                        name="itemId"
+                        ref="itemId"
                         type="text"
-                        placeholder="Name"
-                        value={this.state.itemName}
-                        onChange={this.handleNameChange.bind(this)}
+                        placeholder="Invitation ID"
+                        value={this.state.itemId}
+                        onChange={this.handleIdChange.bind(this)}
                     />
-
-                    <textarea
-                        name="itemDesc"
-                        ref="itemDesc"
-                        type="text"
-                        placeholder="Description"
-                        value={this.state.itemDesc}
-                        onChange={this.handleDescChange.bind(this)}
-                    />
-
-                    {isGroupTab ? (
-                        undefined
-                    ) : (
-                        <input
-                            name="itemNumOfPpl"
-                            ref="itemNumOfPpl"
-                            type="text"
-                            placeholder="Required No. of people (0 for unlimited)"
-                            value={this.state.itemNumOfPeople}
-                            onChange={this.handlePeopleChange.bind(this)}
-                        />
-                    )}
-
-                    {isGroupTab ? (
-                        undefined
-                    ) : (
-                        <input
-                            name="itemTimeout"
-                            ref="itemTimeout"
-                            type="text"
-                            placeholder="Timeout in hours"
-                            value={this.state.itemTimeout}
-                            onChange={this.handleTimeoutChange.bind(this)}
-                        />
-                    )}
 
                     <button
                         type="button"
                         className="button"
                         onClick={this.handleSubmit.bind(this)}
                     >
-                        Create {formattedTabText}
+                        Join {formattedTabText}
                     </button>
 
                     <button
@@ -127,75 +86,24 @@ export default class AddGroupModal extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        const isGroupTab = this.props.selectedTab === "groups";
-        if (isGroupTab) {
-            const partialGroup = {
-                name: this.state.itemName,
-                description: this.state.itemDesc
-            };
-
-            this.props.meteorCall("groupsInsert", partialGroup, (err, res) => {
-                if (err) this.setState({ error: err.reason });
-
-                if (res) {
-                    try {
-                        this.props.meteorCall("profilesJoinGroup", res);
-                    } catch (newErr) {
-                        // remove group from db
-                        throw new Meteor.Error("profiles-join-group-failed");
-                    }
-
-                    this.toggleModal();
-                }
-            });
-        } else {
-            const partialDsbj = {
-                name: this.state.itemName,
-                description: this.state.itemDesc,
-                timeout: Number(this.state.itemTimeout),
-                numberReq: Number(this.state.itemNumOfPeople)
-            };
+        const itemId = this.state.itemId.trim();
+        if (itemId.match(/[^a-z0-9]/gi)) {
+            this.setState({ error: "Invalid invitation ID" });
+            return;
         }
+
+        console.log(itemId);
     }
 
-    handleNameChange(event) {
+    handleIdChange(event) {
         event.preventDefault();
-        const inputValue = spaceFilter(event.target.value);
-        const inputLength = inputValue.trim().length;
+        const inputValue = event.target.value.replace(/\s/gi, "");
+        const inputLength = inputValue.length;
         if (inputValue[0] === " ") return;
         if (inputLength > 30) return;
-        if (inputLength === 0 && this.state.itemName.length === 0) return;
+        if (inputLength === 0 && this.state.itemId.length === 0) return;
 
-        this.setState({ itemName: inputValue });
-    }
-
-    handleDescChange(event) {
-        event.preventDefault();
-        const inputValue = spaceFilter(event.target.value);
-        const inputLength = inputValue.trim().length;
-        if (inputValue[0] === " ") return;
-        if (inputLength > 50) return;
-        if (inputLength === 0 && this.state.itemDesc.length === 0) return;
-
-        this.setState({ itemDesc: inputValue });
-    }
-
-    handleTimeoutChange(event) {
-        event.preventDefault();
-        const inputValue = numberFilter(event.target.value);
-        if (inputValue[0] === "0") return;
-        if (inputValue.length > 3) return;
-
-        this.setState({ itemTimeout: inputValue });
-    }
-
-    handlePeopleChange(event) {
-        event.preventDefault();
-        const inputValue = numberFilter(event.target.value);
-        if (inputValue === "00") return;
-        if (inputValue.length > 2) return;
-
-        this.setState({ itemNumOfPeople: inputValue });
+        this.setState({ itemId: inputValue });
     }
 
     toggleModal() {
@@ -203,16 +111,13 @@ export default class AddGroupModal extends React.Component {
 
         this.setState({
             modalIsOpen: !this.state.modalIsOpen,
-            itemName: "",
-            itemDesc: "",
-            itemNumOfPpl: "",
-            itemTimeout: "",
-            itemPrivate: false,
+            itemId: "",
             error: ""
         });
     }
 }
 
-AddGroupModal.propTypes = {
+JoinGroupModal.propTypes = {
+    selectedTab: PropTypes.string.isRequired,
     meteorCall: PropTypes.func.isRequired
 };

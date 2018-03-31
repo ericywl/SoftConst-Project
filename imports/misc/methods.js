@@ -243,3 +243,17 @@ export const validateUserDisplayName = userDisplayName => {
 
     return true;
 };
+
+export const validateGroupId = groupId => {
+    new SimpleSchema({
+        groupId: {
+            type: String,
+            min: 1,
+            max: 20
+        }
+    }).validate({
+        groupId
+    });
+
+    return true;
+};

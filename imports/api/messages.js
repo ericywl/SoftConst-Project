@@ -53,10 +53,14 @@ Meteor.methods({
             },
             err => {
                 if (!err) {
-                    GroupsDB.update(
-                        { _id: partialMsg.groupId },
-                        { $set: { lastMessageAt: now } }
-                    );
+                    try {
+                        GroupsDB.update(
+                            { _id: partialMsg.groupId },
+                            { $set: { lastMessageAt: now } }
+                        );
+                    } catch (err) {
+                        throw err;
+                    }
                 }
             }
         );

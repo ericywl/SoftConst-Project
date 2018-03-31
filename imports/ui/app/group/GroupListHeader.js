@@ -5,6 +5,7 @@ import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
 import AddGroupModal from "./_AddGroupModal";
+import JoinGroupModal from "./_JoinGroupModal";
 
 // APIs
 import { searchFilterBeforeSet } from "../../../misc/methods";
@@ -30,12 +31,15 @@ export class GroupListHeader extends React.Component {
         return (
             <div className="item-list__header">
                 <div className="item-list__buttons">
-                    <button className="button item-list__button--join">
+                    <button
+                        className="button item-list__button--join"
+                        onClick={() => this.joinModalChild.toggleModal()}
+                    >
                         Join {slicedTabText}
                     </button>
                     <button
                         className="button button--greyed item-list__button--create"
-                        onClick={() => this.modalChild.toggleModal()}
+                        onClick={() => this.addModalChild.toggleModal()}
                     >
                         +
                     </button>
@@ -45,7 +49,15 @@ export class GroupListHeader extends React.Component {
                     selectedTab={this.props.selectedTab}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
-                        this.modalChild = ref;
+                        this.addModalChild = ref;
+                    }}
+                />
+
+                <JoinGroupModal
+                    selectedTab={this.props.selectedTab}
+                    meteorCall={this.props.meteorCall}
+                    ref={ref => {
+                        this.joinModalChild = ref;
                     }}
                 />
 

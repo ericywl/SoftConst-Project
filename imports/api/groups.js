@@ -2,6 +2,8 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
+// APIs
+import { ProfilesDB } from "./profiles";
 import {
     checkAccess,
     checkUserExist,
@@ -44,15 +46,27 @@ Meteor.methods({
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         validateGroup(partialGroup);
 
-        return GroupsDB.insert({
-            name: partialGroup.name,
-            description: partialGroup.description,
-            tags: [],
-            lastMessageAt: moment().valueOf(),
-            createdAt: moment().valueOf(),
-            ownedBy: Meteor.userId(),
-            moderators: [Meteor.userId()]
-        });
+        const res = GroupsDB.insert(
+            {
+                name: partialGroup.name,
+                description: partialGroup.description,
+                tags: [],
+                lastMessageAt: moment().valueOf(),
+                createdAt: moment().valueOf(),
+                ownedBy: this.userId,
+                moderators: [this.userId]
+            },
+            (err, groupId) => {
+                if (!err) {
+                    ProfilesDB.update(
+                        { _id: this.userId },
+                        { $push: { groups: groupId } }
+                    );
+                }
+            }
+        );
+
+        return res;
     },
 
     /**
