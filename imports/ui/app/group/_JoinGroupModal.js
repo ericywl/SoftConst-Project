@@ -45,7 +45,7 @@ export default class JoinGroupModal extends React.Component {
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <h1 className="modal__title--ellipsis">
+                <h1 className="boxed-view__modal-title ellipsis">
                     {"Join " + formattedTabText + " via Invite"}
                 </h1>
 

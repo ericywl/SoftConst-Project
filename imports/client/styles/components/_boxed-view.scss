@@ -44,12 +44,7 @@
     bottom: 0;
 }
 
-.boxed-view__modal-title--ellipsis {
+.boxed-view__modal-title {
     margin-left: $space;
     margin-right: $space;
-
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }

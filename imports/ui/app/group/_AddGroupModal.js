@@ -53,7 +53,7 @@ export default class AddGroupModal extends React.Component {
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <h1 className="boxed-view__modal-title--ellipsis">
+                <h1 className="boxed-view__modal-title ellipsis">
                     {this.state.itemName
                         ? this.state.itemName
                         : "New " + formattedTabText}

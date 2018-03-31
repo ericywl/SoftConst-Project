@@ -98,3 +98,10 @@ textarea {
     user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome and Opera */
 }
+
+.ellipsis {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

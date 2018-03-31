@@ -27,6 +27,7 @@
         position: static;
         width: 100%;
         max-width: $page-content-sidebar-width;
+        margin-left: 1rem;
         margin-right: 0.5rem;
     }
 }
@@ -60,6 +61,7 @@
     @include desktop() {
         width: 100%;
         max-width: $page-content-main-width;
+        margin-right: 1rem;
     }
 }
 

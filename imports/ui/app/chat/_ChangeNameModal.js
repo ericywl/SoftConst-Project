@@ -36,7 +36,7 @@ export default class ChangeNameModal extends React.Component {
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <h2 className="modal__title">Change Name</h2>
+                <h2 className="boxed-view__modal-title">Change Name</h2>
 
                 {this.state.error ? <p>{this.state.error}</p> : undefined}
 

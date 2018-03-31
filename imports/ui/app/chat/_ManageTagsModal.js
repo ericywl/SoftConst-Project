@@ -32,9 +32,13 @@ export default class ManageTagsModal extends React.Component {
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <h2 className="tags__title">
-                    {this.props.selectedGroupPartial.name} Tags
-                </h2>
+                <div className="boxed-view__modal-title tags__title">
+                    <h2 className="ellipsis tags__title-part">
+                        {this.props.selectedGroupPartial.name}
+                    </h2>
+                    <h2 className="tags__title-part"> Tags</h2>
+                </div>
+
                 <FlipMove
                     className="tags"
                     duration={100}
