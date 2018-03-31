@@ -44,6 +44,7 @@ export class ChatArea extends React.Component {
 
                 <ChatAreaFooter
                     notInGroup={this.props.notInGroup}
+                    isOwner={this.props.isOwner}
                     isModerator={this.props.isModerator}
                 />
             </div>

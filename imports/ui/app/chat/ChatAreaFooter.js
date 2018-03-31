@@ -20,12 +20,13 @@ export class ChatAreaFooter extends React.Component {
     render() {
         const cannotSendToAnnouncements =
             this.props.selectedRoom === "announcements" &&
-            !this.props.isModerator;
+            !this.props.isModerator &&
+            !this.props.isOwner;
 
         const disabledInput =
-            this.props.notInGroup || cannotSendToAnnouncements ? true : false;
+            this.props.notInGroup || cannotSendToAnnouncements;
 
-        const placeholder = this.props.notInGroup
+        const inputPlaceholder = this.props.notInGroup
             ? "Join the group to chat!"
             : "";
 
@@ -37,7 +38,7 @@ export class ChatAreaFooter extends React.Component {
                 >
                     <input
                         disabled={disabledInput}
-                        placeholder={placeholder}
+                        placeholder={inputPlaceholder}
                         ref="msgInput"
                         type="text"
                         value={this.state.input}

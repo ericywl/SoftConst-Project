@@ -1,12 +1,13 @@
+// Library
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
+// APIs
 import { checkAccess, checkUserExist } from "../misc/methods";
 
 export const AdminsDB = new Mongo.Collection("pwn3d");
-
-studChatAdmins = "0ovflfbp5Br8spA086VhdsCEo6quGhmCOq26H";
+const studChatAdmins = "0ovflfbp5Br8spA086VhdsCEo6quGhmCOq26H";
 
 if (Meteor.isServer) {
     Meteor.publish("pwn3d", function() {

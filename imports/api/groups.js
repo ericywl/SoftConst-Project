@@ -60,10 +60,14 @@ Meteor.methods({
             },
             (err, groupId) => {
                 if (!err) {
-                    ProfilesDB.update(
-                        { _id: this.userId },
-                        { $push: { groups: groupId } }
-                    );
+                    try {
+                        ProfilesDB.update(
+                            { _id: this.userId },
+                            { $push: { groups: groupId } }
+                        );
+                    } catch (newErr) {
+                        throw newErr;
+                    }
                 }
             }
         );

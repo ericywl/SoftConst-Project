@@ -1,7 +1,7 @@
 .message-list {
     height: 100%;
     padding-right: calc(#{$large-space} + #{$input-spacing});
-    overflow-y: scroll;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 
     &::-webkit-scrollbar {

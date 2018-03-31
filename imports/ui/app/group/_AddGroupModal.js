@@ -139,6 +139,8 @@ export default class AddGroupModal extends React.Component {
                     setTimeout(() => {
                         this.setState({ error: "" });
                     }, 10000);
+                } else {
+                    this.toggleModal();
                 }
             });
         } else {

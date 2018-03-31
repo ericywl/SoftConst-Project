@@ -5,7 +5,8 @@ import moment from "moment";
 
 // APIs
 import { GroupsDB } from "./groups";
-import { checkUserExist } from "../misc/methods";
+import { checkUserExist, validateUserDisplayName } from "../misc/methods";
+import { ROOM_TEXT_ARR, USERNAME_MIN_LENGTH } from "../misc/constants";
 
 export const ProfilesDB = new Mongo.Collection("profiles");
 
@@ -40,9 +41,23 @@ Meteor.methods({
         const group = GroupsDB.findOne({ _id: groupId });
         if (!group)
             throw new Meteor.Error(
-                "invite-does-not-exist",
-                "The invitation ID specified does not exist"
+                "group-does-not-exist",
+                "The group specified does not exist"
             );
+
+        if (group.ownedBy === this.userId) {
+            throw new Meteor.Error(
+                "already-in-group",
+                "You are already the owner of that group"
+            );
+        }
+
+        if (group.members.includes(this.userId)) {
+            throw new Meteor.Error(
+                "already-in-group",
+                "You are already in that group"
+            );
+        }
 
         const profile = ProfilesDB.findOne({ _id: this.userId });
         if (profile.groups.includes(groupId)) {
@@ -60,7 +75,7 @@ Meteor.methods({
                     try {
                         GroupsDB.update(
                             { _id: groupId },
-                            { $push: { members: this.userId } }
+                            { $addToSet: { members: this.userId } }
                         );
                     } catch (newErr) {
                         throw newErr;
@@ -85,26 +100,22 @@ Meteor.methods({
                 "The group specified does not exist"
             );
 
-        const profile = ProfilesDB.findOne({ _id: this.userId });
-        if (!profile.groups.includes(groupId)) {
-            throw new Meteor.Error("not-in-group", "You are not in that group");
-        }
-
         if (group.ownedBy === this.userId)
             throw new Meteor.Error(
                 "owner-cannot-leave-group",
                 "Owner cannot leave his/her group"
             );
 
-        if (group.moderators.includes(this.userId)) {
-            try {
-                GroupsDB.update(
-                    { _id: groupId },
-                    { $pull: { moderators: this.userId } }
-                );
-            } catch (err) {
-                throw err;
-            }
+        if (
+            !group.members.includes(this.userId) &&
+            !group.moderators.includes(this.userId)
+        ) {
+            throw new Meteor.Error("not-in-group", "You are not in that group");
+        }
+
+        const profile = ProfilesDB.findOne({ _id: this.userId });
+        if (!profile.groups.includes(groupId)) {
+            throw new Meteor.Error("not-in-group", "You are not in that group");
         }
 
         const result = ProfilesDB.update(
@@ -113,6 +124,11 @@ Meteor.methods({
             err => {
                 if (!err) {
                     try {
+                        GroupsDB.update(
+                            { _id: groupId },
+                            { $pull: { moderators: this.userId } }
+                        );
+
                         GroupsDB.update(
                             { _id: groupId },
                             { $pull: { members: this.userId } }
@@ -171,6 +187,8 @@ Meteor.methods({
      * @param {String} displayName
      */
     profilesInsert(_id, displayName) {
+        validateUserDisplayName(displayName);
+
         return ProfilesDB.insert({
             _id: _id,
             displayName: displayName,

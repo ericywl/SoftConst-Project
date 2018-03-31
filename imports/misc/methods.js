@@ -6,7 +6,6 @@ import { GroupsDB } from "../api/groups";
 import { AdminsDB } from "../api/admins";
 import { ProfilesDB } from "../api/profiles";
 import { DsbjsDB } from "../api/dsbjs";
-import { ROOM_TEXT_ARR } from "../misc/constants";
 
 /**
  * Check if current user has owner/moderator/admin access to the collection object
@@ -145,13 +144,43 @@ export const capitalizeFirstLetter = str => {
 };
 
 // SIMPLE SCHEMA VALIDATION
+import {
+    ROOM_TEXT_ARR,
+    USERNAME_MIN_LENGTH,
+    USERNAME_MAX_LENGTH,
+    ITEMNAME_MIN_LENGTH,
+    ITEMNAME_MAX_LENGTH,
+    GROUPDESC_MAX_LENGTH,
+    DSBJ_MAX_TIMEOUT,
+    DSBJ_MAX_NUMREQ
+} from "../misc/constants";
+
 /* GROUPS */
+export const validateGroup = partialGroup => {
+    new SimpleSchema({
+        name: {
+            type: String,
+            min: ITEMNAME_MIN_LENGTH,
+            max: ITEMNAME_MAX_LENGTH
+        },
+        description: {
+            type: String,
+            max: GROUPDESC_MAX_LENGTH
+        }
+    }).validate({
+        name: partialGroup.name,
+        description: partialGroup.description
+    });
+
+    return true;
+};
+
 export const validateGroupName = groupName => {
     new SimpleSchema({
         name: {
             type: String,
-            min: 5,
-            max: 40
+            min: ITEMNAME_MIN_LENGTH,
+            max: ITEMNAME_MAX_LENGTH
         }
     }).validate({
         name: groupName
@@ -160,20 +189,15 @@ export const validateGroupName = groupName => {
     return true;
 };
 
-export const validateGroup = partialGroup => {
+export const validateGroupId = groupId => {
     new SimpleSchema({
-        name: {
+        groupId: {
             type: String,
-            min: 3,
-            max: 30
-        },
-        description: {
-            type: String,
-            max: 50
+            min: 1,
+            max: 20
         }
     }).validate({
-        name: partialGroup.name,
-        description: partialGroup.description
+        groupId
     });
 
     return true;
@@ -184,22 +208,22 @@ export const validateDsbj = partialDsbj => {
     new SimpleSchema({
         name: {
             type: String,
-            min: 3,
-            max: 30
+            min: ITEMNAME_MIN_LENGTH,
+            max: ITEMNAME_MAX_LENGTH
         },
         description: {
             type: String,
-            max: 50
+            max: DSBJDESC_MAX_LENGTH
         },
         timeout: {
             type: SimpleSchema.Integer,
             min: 1,
-            max: 168 // 1 week
+            max: DSBJ_MAX_TIMEOUT
         },
         numberReq: {
             type: SimpleSchema.Integer,
             min: 0,
-            max: 99
+            max: DSBJ_MAX_NUMREQ
         }
     }).validate({
         name: partialDsbj.name,
@@ -238,25 +262,11 @@ export const validateUserDisplayName = userDisplayName => {
     new SimpleSchema({
         userDisplayName: {
             type: String,
-            min: 5,
-            max: 30
+            min: USERNAME_MIN_LENGTH,
+            max: USERNAME_MAX_LENGTH
         }
     }).validate({
         userDisplayName
-    });
-
-    return true;
-};
-
-export const validateGroupId = groupId => {
-    new SimpleSchema({
-        groupId: {
-            type: String,
-            min: 1,
-            max: 20
-        }
-    }).validate({
-        groupId
     });
 
     return true;
