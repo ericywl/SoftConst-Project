@@ -100,7 +100,7 @@ export default withTracker(() => {
     const profilesHandle = Meteor.subscribe("profiles");
     const groupsHandle = Meteor.subscribe("groups");
 
-    const userProfile = ProfilesDB.find().fetch()[0];
+    const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
     const userGroups = userProfile ? userProfile.groups : [];
 
     const fetchedGroups = fetchGroupsFromDB(selectedGroupId, searchQuery);

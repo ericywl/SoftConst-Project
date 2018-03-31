@@ -18,7 +18,7 @@ if (Meteor.isServer) {
         }
 
         return ProfilesDB.find(
-            { _id: this.userId },
+            {},
             {
                 fields: {
                     displayName: 1,

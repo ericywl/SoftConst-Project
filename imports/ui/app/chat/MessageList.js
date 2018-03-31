@@ -49,27 +49,53 @@ export class MessageList extends React.Component {
 
     componentWillUpdate(nextProps, nextState, nextContext) {
         const currGroupId = this.props.selectedGroupId;
+        const currRoom = this.props.selectedRoom;
         const nextGroupId = nextProps.selectedGroupId;
         const { messageList } = this.refs;
+
+        if (this.scrollPositions[currGroupId] === undefined) {
+            this.scrollPositions[currGroupId] = {};
+        }
 
         // If user has changed group, save current scroll position
         if (nextGroupId !== currGroupId) {
             this.changedGroup = true;
             this.autoScroll = false;
-            this.scrollPositions[currGroupId] = Math.round(
+
+            this.scrollPositions[currGroupId][currRoom] = Math.round(
                 messageList.scrollTop
             );
             return;
+        }
+
+        // If user has changed room, save current scroll position
+        const nextRoom = nextProps.selectedRoom;
+        if (currRoom !== nextRoom) {
+            this.changedGroup = true;
+            this.autoScroll = false;
+
+            this.scrollPositions[currGroupId][currRoom] = Math.round(
+                messageList.scrollTop
+            );
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
         const { messageList } = this.refs;
         const groupId = this.props.selectedGroupId;
+        const room = this.props.selectedRoom;
+        console.log(groupId, room);
 
         if (messageList && this.props.ready) {
-            const scrollPos = this.scrollPositions[groupId];
-            /* If user came from another group, 
+            let scrollPos;
+            const scrollPosObj = this.scrollPositions[groupId];
+            if (!scrollPosObj) {
+                scrollPos = undefined;
+            } else {
+                scrollPos = scrollPosObj[room];
+            }
+
+            /* If user came from another group or room, 
             move scroll to its previous position */
             if (this.changedGroup) {
                 if (scrollPos !== undefined) {
@@ -116,6 +142,7 @@ export default withTracker(() => {
 
     return {
         selectedGroupId,
+        selectedRoom,
         ready: handle.ready(),
         messages: MessagesDB.find({ room: selectedRoom }).fetch()
     };

@@ -15,6 +15,8 @@ export class ChatDropdown extends React.Component {
     }
 
     render() {
+        const haveAccess = this.props.isModerator || this.props.isOwner;
+
         return (
             <div
                 className="dropdown noselect"
@@ -45,7 +47,7 @@ export class ChatDropdown extends React.Component {
                     ref="menu"
                     hidden={!this.state.dropdownIsOpen}
                 >
-                    {this.props.isModerator ? (
+                    {haveAccess ? (
                         <div className="dropdown__item">Change Group Name</div>
                     ) : (
                         undefined
@@ -55,9 +57,7 @@ export class ChatDropdown extends React.Component {
                         className="dropdown__item"
                         onClick={() => this.child.toggleModal()}
                     >
-                        {this.props.isModerator
-                            ? "Manage Group Tags"
-                            : "View Group Tags"}
+                        {haveAccess ? "Manage Group Tags" : "View Group Tags"}
                     </div>
 
                     {this.props.isOwner ? (
@@ -75,7 +75,7 @@ export class ChatDropdown extends React.Component {
                 </div>
 
                 <ManageTagsModal
-                    isModerator={this.props.isModerator}
+                    haveAccess={this.props.isModerator || this.props.isOwner}
                     selectedGroup={this.props.selectedGroup}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {

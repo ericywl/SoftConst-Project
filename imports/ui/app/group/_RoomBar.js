@@ -70,8 +70,9 @@ export class GroupListRoomBar extends React.Component {
 
             event.target.classList.add("button--room-bar-selected");
             this.props.session.set("selectedRoom", name);
-            this.props.session.set("isNavOpen", false);
         }
+
+        this.props.session.set("isNavOpen", false);
     }
 }
 

@@ -44,7 +44,7 @@ export default class ManageTagsModal extends React.Component {
                     {this.renderTags()}
                 </FlipMove>
 
-                {this.props.isModerator ? (
+                {this.props.haveAccess ? (
                     <form
                         className="boxed-view__form--row"
                         onSubmit={this.handleSubmit.bind(this)}
@@ -77,7 +77,7 @@ export default class ManageTagsModal extends React.Component {
             <span className="tags__tag" key={`tag${index}`}>
                 <span className="tags__tag--hash"># </span>
                 <span>{tag}</span>
-                {this.props.isModerator ? (
+                {this.props.haveAccess ? (
                     <img
                         className="tags__tag--cross"
                         src="/images/round_x.svg"
@@ -137,7 +137,7 @@ export default class ManageTagsModal extends React.Component {
 }
 
 ManageTagsModal.propTypes = {
-    isModerator: PropTypes.bool.isRequired,
+    haveAccess: PropTypes.bool.isRequired,
     selectedGroup: PropTypes.object.isRequired,
     meteorCall: PropTypes.func.isRequired
 };
