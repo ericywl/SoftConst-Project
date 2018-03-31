@@ -24,16 +24,28 @@
 }
 
 .dropdown__item {
+    cursor: pointer;
     box-sizing: border-box;
     border: 1px solid transparent;
     padding: $input-spacing;
 }
 
 .dropdown__item:hover {
-    cursor: pointer;
     color: white;
     background-color: $brand-primary;
     border: 1px solid $brand-primary;
+}
+
+.dropdown__item--disabled {
+    cursor: not-allowed;
+    color: $grey;
+    background: transparent;
+}
+
+.dropdown__item--disabled:hover {
+    color: $grey;
+    background: transparent;
+    border: 1px solid transparent;
 }
 
 .dropdown__trigger {

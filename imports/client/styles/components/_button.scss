@@ -8,6 +8,11 @@
     margin-bottom: $space;
     padding: $input-spacing;
     text-transform: uppercase;
+    transition: transform 0.2s ease;
+}
+
+.button:active {
+    transform: scale(0.98);
 }
 
 .button--tag {
@@ -107,11 +112,12 @@
 
     &:active {
         background: $light-grey;
-        transform: scale(0.99);
+        border: 2px solid $brand-primary;
+        transform: scale(0.98);
     }
 
     &:focus {
-        border: 2px solid $brand-primary;
+        border: 2px solid $grey;
         animation: none;
     }
 
@@ -136,6 +142,11 @@
     &:active {
         background: white;
         transform: none;
+    }
+
+    &:focus {
+        border: 2px solid $brand-primary;
+        animation: none;
     }
 
     &:disabled {

@@ -26,8 +26,8 @@ if (Meteor.isServer) {
                     name: 1,
                     lastMessageAt: 1,
                     tags: 1,
-                    moderators: 1,
-                    isPrivate: 1
+                    ownedBy: 1,
+                    moderators: 1
                 },
                 $limit: 100
             }
@@ -38,7 +38,7 @@ if (Meteor.isServer) {
 Meteor.methods({
     /**
      * Add group to database with a partialGroup object
-     * @param {Object} partialGroup : includes name, description and isPrivate
+     * @param {Object} partialGroup : includes name, description
      */
     groupsInsert(partialGroup) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
@@ -47,7 +47,6 @@ Meteor.methods({
         return GroupsDB.insert({
             name: partialGroup.name,
             description: partialGroup.description,
-            isPrivate: partialGroup.isPrivate,
             tags: [],
             lastMessageAt: moment().valueOf(),
             createdAt: moment().valueOf(),

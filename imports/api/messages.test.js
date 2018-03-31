@@ -7,10 +7,18 @@ import { ProfilesDB } from "./profiles";
 if (Meteor.isServer) {
     describe("messages", function() {
         const userId = "testId";
+        const userDisplayName = "someName";
+        const userId2 = "testId2";
+        const userDisplayName2 = "abcdefghijklmnopqrstuvwxyz1234567890";
+
         beforeEach(function() {
             MessagesDB.remove({});
             GroupsDB.remove({});
+            ProfilesDB.remove({});
+
             GroupsDB.insert({ _id: "groupId1", lastMessageAt: 0 });
+            ProfilesDB.insert({ _id: userId, displayName: userDisplayName });
+            ProfilesDB.insert({ _id: userId2, displayName: userDisplayName2 });
         });
 
         describe("messagesInsert", function() {
@@ -20,11 +28,10 @@ if (Meteor.isServer) {
                     room: "announcements",
                     content: "Hello this is bob"
                 };
-                const userDisplayName = "someName";
 
                 const _id = Meteor.server.method_handlers.messagesInsert.apply(
                     { userId },
-                    [partialMsg, userDisplayName]
+                    [partialMsg]
                 );
 
                 expect(MessagesDB.findOne({ _id, userId })).toBeTruthy();
@@ -41,12 +48,11 @@ if (Meteor.isServer) {
                     room: "messages",
                     content: "Hello this is bob"
                 };
-                const userDisplayName = "someName";
 
                 expect(() =>
                     Meteor.server.method_handlers.messagesInsert.apply(
                         { userId },
-                        [partialMsg, userDisplayName]
+                        [partialMsg]
                     )
                 ).toThrow();
             });
@@ -62,7 +68,7 @@ if (Meteor.isServer) {
                 expect(() =>
                     Meteor.server.method_handlers.messagesInsert.apply(
                         { userId },
-                        [partialMsg, userDisplayName]
+                        [partialMsg]
                     )
                 ).toThrow();
 
@@ -70,7 +76,7 @@ if (Meteor.isServer) {
                 expect(() =>
                     Meteor.server.method_handlers.messagesInsert.apply(
                         { userId },
-                        [partialMsg, userDisplayName]
+                        [partialMsg]
                     )
                 ).toThrow();
             });
@@ -81,12 +87,11 @@ if (Meteor.isServer) {
                     room: "messages",
                     content: []
                 };
-                const userDisplayName = "someName";
 
                 expect(() =>
                     Meteor.server.method_handlers.messagesInsert.apply(
                         { userId },
-                        [partialMsg, userDisplayName]
+                        [partialMsg]
                     )
                 ).toThrow();
             });
@@ -97,12 +102,11 @@ if (Meteor.isServer) {
                     room: "announcements",
                     content: "my body"
                 };
-                const userDisplayName = "abcdefghijklmnopqrstuvwxyz1234567890";
 
                 expect(() =>
                     Meteor.server.method_handlers.messagesInsert.apply(
-                        { userId },
-                        [partialMsg, userDisplayName]
+                        { userId: userId2 },
+                        [partialMsg]
                     )
                 ).toThrow();
             });

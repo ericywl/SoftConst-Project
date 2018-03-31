@@ -160,18 +160,16 @@ export const validateGroup = partialGroup => {
     new SimpleSchema({
         name: {
             type: String,
-            min: 5,
+            min: 3,
             max: 30
         },
         description: {
             type: String,
             max: 50
-        },
-        isPrivate: { type: Boolean }
+        }
     }).validate({
         name: partialGroup.name,
-        description: partialGroup.description,
-        isPrivate: partialGroup.isPrivate
+        description: partialGroup.description
     });
 
     return true;

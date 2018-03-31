@@ -1,6 +1,7 @@
 // Library
 import React from "react";
 import PropTypes from "prop-types";
+import moment from "moment";
 
 // React Components
 import ManageTagsModal from "./_ManageTagsModal";
@@ -59,7 +60,18 @@ export class ChatDropdown extends React.Component {
                             : "View Group Tags"}
                     </div>
 
-                    <div className="dropdown__item">Leave Group</div>
+                    {this.props.isOwner ? (
+                        <div className="dropdown__item dropdown__item--disabled">
+                            Leave Group
+                        </div>
+                    ) : (
+                        <div
+                            className="dropdown__item"
+                            onClick={this.handleLeaveOnClick.bind(this)}
+                        >
+                            Leave Group
+                        </div>
+                    )}
                 </div>
 
                 <ManageTagsModal
@@ -96,6 +108,20 @@ export class ChatDropdown extends React.Component {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
             this.setState({ dropdownIsOpen: false });
         }
+    }
+
+    handleLeaveOnClick(event) {
+        if (this.props.isOwner) {
+            throw new Meteor.Error("owner-cannot-leave-group");
+        }
+
+        this.props.meteorCall(
+            "profilesLeaveGroup",
+            this.props.selectedGroup._id
+        );
+
+        this.props.session.set("selectedGroupId", "");
+        this.props.session.set("sessionTime", moment().valueOf());
     }
 }
 

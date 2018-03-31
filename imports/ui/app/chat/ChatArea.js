@@ -33,6 +33,7 @@ export class ChatArea extends React.Component {
             <div className="chat-area">
                 <ChatAreaHeader
                     selectedGroup={this.props.selectedGroup}
+                    isOwner={this.props.isOwner}
                     isModerator={this.props.isModerator}
                 />
 
@@ -65,11 +66,15 @@ export default withTracker(() => {
     const userGroups = userProfile ? userProfile.groups : [];
 
     const selectedGroup = GroupsDB.findOne({ _id: selectedGroupId });
+    const isOwner = selectedGroup
+        ? selectedGroup.ownedBy === Meteor.userId()
+        : false;
     const isModerator = selectedGroup
         ? selectedGroup.moderators.includes(Meteor.userId())
         : false;
 
     return {
+        isOwner,
         isModerator,
         selectedGroup,
         notInGroup: !userGroups.includes(selectedGroupId)

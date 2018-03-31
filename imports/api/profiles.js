@@ -1,8 +1,9 @@
+// Library
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-// API
+// APIs
 import { GroupsDB } from "./groups";
 import { checkUserExist } from "../misc/methods";
 
@@ -54,6 +55,10 @@ Meteor.methods({
             throw new Meteor.Error("owner-cannot-leave-group");
 
         if (group.moderators.includes(this.userId)) {
+            GroupsDB.update(
+                { _id: groupId },
+                { $pull: { moderators: this.userId } }
+            );
         }
 
         return ProfilesDB.update(

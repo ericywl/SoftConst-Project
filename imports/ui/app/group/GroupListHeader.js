@@ -29,12 +29,17 @@ export class GroupListHeader extends React.Component {
 
         return (
             <div className="item-list__header">
-                <button
-                    className="button"
-                    onClick={() => this.modalChild.toggleModal()}
-                >
-                    Create {slicedTabText}
-                </button>
+                <div className="item-list__buttons">
+                    <button className="button item-list__button--join">
+                        Join {slicedTabText}
+                    </button>
+                    <button
+                        className="button button--greyed item-list__button--create"
+                        onClick={() => this.modalChild.toggleModal()}
+                    >
+                        +
+                    </button>
+                </div>
 
                 <AddGroupModal
                     selectedTab={this.props.selectedTab}

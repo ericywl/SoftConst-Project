@@ -79,7 +79,7 @@ export class GroupList extends React.Component {
 
         if (
             inWrapperRef &&
-            !this.props.session.get("isAddModalOpen") &&
+            !this.props.session.get("isModalOpen") &&
             event.target.className !== "header__nav-toggle"
         ) {
             this.props.session.set("isNavOpen", false);
@@ -120,9 +120,9 @@ const fetchGroupsFromDB = (selectedGroupId, query) => {
     const userGroups = userProfile ? userProfile.groups : [];
     if (searchFilterBeforeFetch(query)[0] === "#") {
         groups = GroupsDB.find(
-            { isPrivate: false },
+            { tags: { $exists: true, $not: { $size: 0 } } },
             {
-                sort: {},
+                sort: { lastMessageAt: -1 },
                 $limit: SHOWN_GROUPS_LIMIT
             }
         ).fetch();

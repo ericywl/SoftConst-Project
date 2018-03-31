@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
-import Dropdown from "./_Dropdown";
+import ChatDropdown from "./_ChatDropdown";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";
@@ -22,10 +22,12 @@ export class ChatAreaHeader extends React.Component {
                     </h1>
 
                     <div className="chat-area__header-dots">
-                        <Dropdown
+                        <ChatDropdown
+                            isOwner={this.props.isOwner}
                             isModerator={this.props.isModerator}
                             selectedGroup={this.props.selectedGroup}
                             meteorCall={this.props.meteorCall}
+                            session={this.props.session}
                         />
                     </div>
                 </div>
@@ -45,6 +47,7 @@ export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
 
     return {
-        meteorCall: Meteor.call
+        meteorCall: Meteor.call,
+        session: Session
     };
 })(ChatAreaHeader);

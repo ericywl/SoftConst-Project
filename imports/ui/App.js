@@ -25,7 +25,7 @@ if (Meteor.isClient) {
         Session.setDefault("searchQuery", "");
         Session.setDefault("sentToGroup", "");
         Session.setDefault("isNavOpen", false);
-        Session.setDefault("isAddModalOpen", false);
+        Session.setDefault("isModalOpen", false);
         Session.setDefault("sessionTime", moment().valueOf());
 
         Tracker.autorun(() => {

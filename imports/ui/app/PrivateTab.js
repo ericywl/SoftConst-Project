@@ -51,7 +51,7 @@ export class PrivateTab extends React.Component {
             this.props.session.set("searchQuery", "");
             this.props.session.set("sentToGroup", "");
             this.props.session.set("isNavOpen", false);
-            this.props.session.set("isAddModalOpen", false);
+            this.props.session.set("isModalOpen", false);
         }
     }
 }

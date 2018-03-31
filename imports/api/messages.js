@@ -7,6 +7,7 @@ import moment from "moment";
 import { ProfilesDB } from "./profiles";
 import { GroupsDB } from "./groups";
 import {
+    checkUserExist,
     checkAccess,
     validateMessage,
     validateUserDisplayName
@@ -30,14 +31,12 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-    messagesInsert(partialMsg, userDisplayName = undefined) {
+    messagesInsert(partialMsg) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkUserExist(this.userId);
 
-        // For API tests only
-        if (!userDisplayName) {
-            userDisplayName = ProfilesDB.findOne({ _id: this.userId })
-                .displayName;
-        }
+        const userDisplayName = ProfilesDB.findOne({ _id: this.userId })
+            .displayName;
 
         validateMessage(partialMsg);
         validateUserDisplayName(userDisplayName);
