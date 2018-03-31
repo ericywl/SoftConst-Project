@@ -58,8 +58,8 @@ Meteor.methods({
                             { _id: partialMsg.groupId },
                             { $set: { lastMessageAt: now } }
                         );
-                    } catch (err) {
-                        throw err;
+                    } catch (newErr) {
+                        throw newErr;
                     }
                 }
             }

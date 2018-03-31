@@ -89,10 +89,23 @@ export default class JoinGroupModal extends React.Component {
         const itemId = this.state.itemId.trim();
         if (itemId.match(/[^a-z0-9]/gi)) {
             this.setState({ error: "Invalid invitation ID" });
+            setTimeout(() => {
+                this.setState({ error: "" });
+            }, 10000);
             return;
         }
 
-        console.log(itemId);
+        this.props.meteorCall("profilesJoinGroup", itemId, err => {
+            if (err) {
+                this.setState({ error: err.reason });
+                setTimeout(() => {
+                    this.setState({ error: "" });
+                }, 10000);
+            } else {
+                this.props.session.set("selectedGroupId", itemId);
+                this.toggleModal();
+            }
+        });
     }
 
     handleIdChange(event) {

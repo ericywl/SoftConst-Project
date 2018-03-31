@@ -29,7 +29,8 @@ if (Meteor.isServer) {
                     lastMessageAt: 1,
                     tags: 1,
                     ownedBy: 1,
-                    moderators: 1
+                    moderators: 1,
+                    members: 1
                 },
                 $limit: 100
             }
@@ -54,7 +55,8 @@ Meteor.methods({
                 lastMessageAt: moment().valueOf(),
                 createdAt: moment().valueOf(),
                 ownedBy: this.userId,
-                moderators: [this.userId]
+                moderators: [],
+                members: []
             },
             (err, groupId) => {
                 if (!err) {
@@ -78,6 +80,13 @@ Meteor.methods({
         const accessLevel = checkAccess(groupdId, GroupsDB);
         if (accessLevel !== "high")
             throw new Meteor.Error("high-level-access-required");
+
+        const group = GroupsDB.findOne({ _id: groupId });
+        const canRemoveGroup =
+            group.members.length === 1 && group.members.includes(this.userId);
+
+        if (!canRemoveGroup)
+            throw new Meteor.Error("cannot-remove-group-with-members");
 
         return GroupsDB.remove({ _id: groupId });
     },

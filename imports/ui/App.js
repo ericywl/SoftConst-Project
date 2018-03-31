@@ -21,7 +21,7 @@ if (Meteor.isClient) {
         Session.setDefault("selectedTab", "groups");
         Session.setDefault("selectedDsbjId", "");
         Session.setDefault("selectedGroupId", "");
-        Session.setDefault("selectedRoom", "messages");
+        Session.setDefault("selectedRoom", "announcements");
         Session.setDefault("searchQuery", "");
         Session.setDefault("sentToGroup", "");
         Session.setDefault("isNavOpen", false);

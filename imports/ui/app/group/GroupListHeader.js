@@ -35,7 +35,7 @@ export class GroupListHeader extends React.Component {
                         className="button item-list__button--join"
                         onClick={() => this.joinModalChild.toggleModal()}
                     >
-                        Join {slicedTabText}
+                        Join A {slicedTabText}
                     </button>
                     <button
                         className="button button--greyed item-list__button--create"
@@ -47,6 +47,7 @@ export class GroupListHeader extends React.Component {
 
                 <AddGroupModal
                     selectedTab={this.props.selectedTab}
+                    session={this.props.session}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
                         this.addModalChild = ref;
@@ -55,6 +56,7 @@ export class GroupListHeader extends React.Component {
 
                 <JoinGroupModal
                     selectedTab={this.props.selectedTab}
+                    session={this.props.session}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
                         this.joinModalChild = ref;

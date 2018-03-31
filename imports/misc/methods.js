@@ -6,7 +6,7 @@ import { GroupsDB } from "../api/groups";
 import { AdminsDB } from "../api/admins";
 import { ProfilesDB } from "../api/profiles";
 import { DsbjsDB } from "../api/dsbjs";
-import { BUTTON_TEXT_ARR } from "../misc/constants";
+import { ROOM_TEXT_ARR } from "../misc/constants";
 
 /**
  * Check if current user has owner/moderator/admin access to the collection object
@@ -19,24 +19,28 @@ export const checkAccess = (itemId, db) => {
         const dbObj = db.findOne({ _id: itemId });
         if (!dbObj) throw new Meteor.Error("object-not-found");
 
-        let accessLevel = "high";
+        let accessLevel = "low";
         if (AdminsDB.findOne().h4x0rs.includes(Meteor.userId())) {
             return accessLevel;
         }
 
         switch (db) {
             case GroupsDB:
-                if (!dbObj.moderators.includes(Meteor.userId()))
+                if (dbObj.ownedBy === Meteor.userId()) {
+                    accessLevel = "high";
+                } else if (!dbObj.moderators.includes(Meteor.userId())) {
                     throw new Meteor.Error("not-authorized");
-
-                if (dbObj.ownedBy !== Meteor.userId()) {
-                    accessLevel = "low";
                 }
+
                 break;
 
             case DsbjsDB:
-                if (dbObj.createdBy !== Meteor.userId())
+                if (dbObj.createdBy === Meteor.userId()) {
+                    accessLevel = "high";
+                } else {
                     throw new Meteor.Error("not-authorized");
+                }
+
                 break;
 
             default:
@@ -214,7 +218,7 @@ export const validateMessage = partialMsg => {
         room: {
             type: String,
             custom() {
-                if (!BUTTON_TEXT_ARR.includes(this.value)) {
+                if (!ROOM_TEXT_ARR.includes(this.value)) {
                     return "invalidRoom";
                 }
             }

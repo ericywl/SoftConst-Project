@@ -19,9 +19,11 @@ export class MessageList extends React.Component {
     }
 
     render() {
+        const notReady = !this.props.ready || this.props.messages.length == 0;
+
         return (
             <div className="message-list" ref="messageList">
-                {this.props.messages.length == 0 ? (
+                {notReady ? (
                     <div className="empty-message-list">
                         Nothing to see here.
                     </div>

@@ -5,9 +5,27 @@ import { withTracker } from "meteor/react-meteor-data";
 
 // API
 import { capitalizeFirstLetter } from "../../../misc/methods";
-import { BUTTON_TEXT_ARR } from "../../../misc/constants";
+import { ROOM_TEXT_ARR } from "../../../misc/constants";
 
 export class GroupListRoomBar extends React.Component {
+    constructor(props) {
+        super(props);
+        this.selectedRooms = {};
+    }
+
+    componentWillUpdate(nextProps, nextState, nextContext) {
+        const sessionSelectedRoom = this.props.selectedRoom;
+        const currGroupId = this.props.selectedGroupId;
+        const nextGroupId = nextProps.selectedGroupId;
+        if (currGroupId !== nextGroupId) {
+            this.selectedRooms[currGroupId] = sessionSelectedRoom;
+            const room = this.selectedRooms[nextGroupId];
+            if (ROOM_TEXT_ARR.includes(room)) {
+                this.props.session.set("selectedRoom", room);
+            }
+        }
+    }
+
     render() {
         return (
             <div className="room-bar">
@@ -21,9 +39,9 @@ export class GroupListRoomBar extends React.Component {
     renderButtons() {
         const isDisabled = !this.props.selectedGroupId || this.props.notInGroup;
 
-        return BUTTON_TEXT_ARR.map(text => {
+        return ROOM_TEXT_ARR.map(text => {
             let selected = "";
-            if (this.props.session.get("selectedRoom") === text) {
+            if (this.props.selectedRoom === text) {
                 selected = " button--room-bar-selected";
             }
 
@@ -45,7 +63,7 @@ export class GroupListRoomBar extends React.Component {
         event.preventDefault();
         const name = event.target.getAttribute("name");
 
-        if (this.props.session.get("selectedRoom") !== name) {
+        if (this.props.selectedRoom !== name) {
             Array.from(this.refs.sidebarContent.children).forEach(child => {
                 child.classList.remove("button--room-bar-selected");
             });
@@ -65,10 +83,11 @@ GroupListRoomBar.propTypes = {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Session.set("selectedRoom", "messages");
+    const selectedRoom = Session.get("selectedRoom");
 
     return {
         selectedGroupId,
+        selectedRoom,
         session: Session
     };
 })(GroupListRoomBar);
