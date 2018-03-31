@@ -25,16 +25,16 @@ export default class ManageTagsModal extends React.Component {
             <Modal
                 isOpen={this.state.modalIsOpen}
                 contentLabel="Create New Group"
-                onAfterOpen={() => {}}
+                onAfterOpen={() => this.refs.newTag.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
                 className="boxed-view__large-box"
-                overlayClassName="boxed-view modal"
+                overlayClassName="boxed-view boxed-view__modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <h3 className="tags__title">
-                    {this.props.selectedGroup.name} Tags
-                </h3>
+                <h2 className="tags__title">
+                    {this.props.selectedGroupPartial.name} Tags
+                </h2>
                 <FlipMove
                     className="tags"
                     duration={100}
@@ -67,13 +67,13 @@ export default class ManageTagsModal extends React.Component {
     }
 
     renderTags() {
-        if (this.props.selectedGroup.tags.length === 0) {
+        if (this.props.selectedGroupPartial.tags.length === 0) {
             return (
                 <div className="empty-tags">There are no tags currently.</div>
             );
         }
 
-        return this.props.selectedGroup.tags.map((tag, index) => (
+        return this.props.selectedGroupPartial.tags.map((tag, index) => (
             <span className="tags__tag" key={`tag${index}`}>
                 <span className="tags__tag--hash"># </span>
                 <span>{tag}</span>
@@ -104,7 +104,7 @@ export default class ManageTagsModal extends React.Component {
 
         this.props.meteorCall(
             "groupsTagRemove",
-            this.props.selectedGroup._id,
+            this.props.selectedGroupPartial._id,
             tagName
         );
     }
@@ -115,7 +115,7 @@ export default class ManageTagsModal extends React.Component {
 
         this.props.meteorCall(
             "groupsTagAdd",
-            this.props.selectedGroup._id,
+            this.props.selectedGroupPartial._id,
             this.state.newTag,
             (err, res) => {
                 if (err) {
@@ -138,6 +138,6 @@ export default class ManageTagsModal extends React.Component {
 
 ManageTagsModal.propTypes = {
     haveAccess: PropTypes.bool.isRequired,
-    selectedGroup: PropTypes.object.isRequired,
+    selectedGroupPartial: PropTypes.object.isRequired,
     meteorCall: PropTypes.func.isRequired
 };

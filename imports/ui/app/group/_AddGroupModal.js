@@ -11,6 +11,11 @@ import {
     numberFilter,
     spaceFilter
 } from "../../../misc/methods";
+import {
+    ITEMNAME_MAX_LENGTH,
+    GROUPDESC_MAX_LENGTH,
+    DSBJDESC_MAX_LENGTH
+} from "../../../misc/constants";
 
 export default class AddGroupModal extends React.Component {
     constructor(props) {
@@ -44,11 +49,11 @@ export default class AddGroupModal extends React.Component {
                 onAfterOpen={() => this.refs.itemName.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
                 className="boxed-view__large-box"
-                overlayClassName="boxed-view modal"
+                overlayClassName="boxed-view boxed-view__modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <h1 className="modal__title">
+                <h1 className="boxed-view__modal-title--ellipsis">
                     {this.state.itemName
                         ? this.state.itemName
                         : "New " + formattedTabText}
@@ -158,7 +163,7 @@ export default class AddGroupModal extends React.Component {
         const inputValue = spaceFilter(event.target.value);
         const inputLength = inputValue.trim().length;
         if (inputValue[0] === " ") return;
-        if (inputLength > 30) return;
+        if (inputLength > ITEMNAME_MAX_LENGTH) return;
         if (inputLength === 0 && this.state.itemName.length === 0) return;
 
         this.setState({ itemName: inputValue });
@@ -169,7 +174,12 @@ export default class AddGroupModal extends React.Component {
         const inputValue = spaceFilter(event.target.value);
         const inputLength = inputValue.trim().length;
         if (inputValue[0] === " ") return;
-        if (inputLength > 50) return;
+
+        const maxLen =
+            this.props.selectedTab === "groups"
+                ? GROUPDESC_MAX_LENGTH
+                : DSBJDESC_MAX_LENGTH;
+        if (inputLength > maxLen) return;
         if (inputLength === 0 && this.state.itemDesc.length === 0) return;
 
         this.setState({ itemDesc: inputValue });

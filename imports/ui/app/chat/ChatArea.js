@@ -33,6 +33,7 @@ export class ChatArea extends React.Component {
             <div className="chat-area">
                 <ChatAreaHeader
                     selectedGroup={this.props.selectedGroup}
+                    selectedTab={this.props.selectedTab}
                     isOwner={this.props.isOwner}
                     isModerator={this.props.isModerator}
                 />
@@ -60,6 +61,7 @@ ChatArea.propTypes = {
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
+    const selectedTab = Session.get("selectedTab");
     Meteor.subscribe("profiles");
     Meteor.subscribe("groups");
 
@@ -78,6 +80,7 @@ export default withTracker(() => {
         isOwner,
         isModerator,
         selectedGroup,
+        selectedTab,
         notInGroup: !userGroups.includes(selectedGroupId)
     };
 })(ChatArea);

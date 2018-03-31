@@ -41,11 +41,11 @@ export default class JoinGroupModal extends React.Component {
                 onAfterOpen={() => this.refs.itemId.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
                 className="boxed-view__large-box"
-                overlayClassName="boxed-view modal"
+                overlayClassName="boxed-view boxed-view__modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <h1 className="modal__title">
+                <h1 className="modal__title--ellipsis">
                     {"Join " + formattedTabText + " via Invite"}
                 </h1>
 

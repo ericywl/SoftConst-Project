@@ -5,8 +5,9 @@ import moment from "moment";
 
 // React Components
 import ManageTagsModal from "./_ManageTagsModal";
+import ChangeNameModal from "./_ChangeNameModal";
 
-export class ChatDropdown extends React.Component {
+export default class ChatDropdown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -15,6 +16,11 @@ export class ChatDropdown extends React.Component {
     }
 
     render() {
+        const selectedGroupPartial = {
+            _id: this.props.selectedGroup._id,
+            name: this.props.selectedGroup.name,
+            tags: this.props.selectedGroup.tags
+        };
         const haveAccess = this.props.isModerator || this.props.isOwner;
 
         return (
@@ -48,14 +54,25 @@ export class ChatDropdown extends React.Component {
                     hidden={!this.state.dropdownIsOpen}
                 >
                     {haveAccess ? (
-                        <div className="dropdown__item">Change Group Name</div>
+                        <div
+                            className="dropdown__item"
+                            onClick={() => {
+                                this.childNameModal.toggleModal();
+                                this.setState({ dropdownIsOpen: false });
+                            }}
+                        >
+                            Change Group Name
+                        </div>
                     ) : (
                         undefined
                     )}
 
                     <div
                         className="dropdown__item"
-                        onClick={() => this.child.toggleModal()}
+                        onClick={() => {
+                            this.childTagsModal.toggleModal();
+                            this.setState({ dropdownIsOpen: false });
+                        }}
                     >
                         {haveAccess ? "Manage Group Tags" : "View Group Tags"}
                     </div>
@@ -74,12 +91,23 @@ export class ChatDropdown extends React.Component {
                     )}
                 </div>
 
-                <ManageTagsModal
-                    haveAccess={this.props.isModerator || this.props.isOwner}
-                    selectedGroup={this.props.selectedGroup}
+                <ChangeNameModal
+                    haveAccess={haveAccess}
+                    selectedTab={this.props.selectedTab}
+                    selectedGroupPartial={selectedGroupPartial}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
-                        this.child = ref;
+                        this.childNameModal = ref;
+                    }}
+                />
+
+                <ManageTagsModal
+                    haveAccess={haveAccess}
+                    selectedTab={this.props.selectedTab}
+                    selectedGroupPartial={selectedGroupPartial}
+                    meteorCall={this.props.meteorCall}
+                    ref={ref => {
+                        this.childTagsModal = ref;
                     }}
                 />
             </div>
@@ -120,9 +148,8 @@ export class ChatDropdown extends React.Component {
             this.props.selectedGroup._id
         );
 
+        this.setState({ dropdownIsOpen: false });
         this.props.session.set("selectedGroupId", "");
         this.props.session.set("sessionTime", moment().valueOf());
     }
 }
-
-export default ChatDropdown;

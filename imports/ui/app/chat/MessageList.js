@@ -84,7 +84,6 @@ export class MessageList extends React.Component {
         const { messageList } = this.refs;
         const groupId = this.props.selectedGroupId;
         const room = this.props.selectedRoom;
-        console.log(groupId, room);
 
         if (messageList && this.props.ready) {
             let scrollPos;

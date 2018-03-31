@@ -26,6 +26,7 @@ export class ChatAreaHeader extends React.Component {
                             isOwner={this.props.isOwner}
                             isModerator={this.props.isModerator}
                             selectedGroup={this.props.selectedGroup}
+                            selectedTab={this.props.selectedTab}
                             meteorCall={this.props.meteorCall}
                             session={this.props.session}
                         />
@@ -40,12 +41,12 @@ export class ChatAreaHeader extends React.Component {
 
 ChatAreaHeader.propTypes = {
     meteorCall: PropTypes.func.isRequired,
-    selectedGroup: PropTypes.object.isRequired
+    session: PropTypes.object.isRequired,
+    selectedGroup: PropTypes.object.isRequired,
+    selectedTab: PropTypes.string.isRequired
 };
 
 export default withTracker(() => {
-    const selectedGroupId = Session.get("selectedGroupId");
-
     return {
         meteorCall: Meteor.call,
         session: Session
