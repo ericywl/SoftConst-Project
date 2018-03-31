@@ -18,7 +18,7 @@ export const checkAccess = (itemId, db) => {
         const dbObj = db.findOne({ _id: itemId });
         if (!dbObj) throw new Meteor.Error("object-not-found");
 
-        let accessLevel = "low";
+        let accessLevel;
         if (AdminsDB.findOne().h4x0rs.includes(Meteor.userId())) {
             return accessLevel;
         }
@@ -27,7 +27,9 @@ export const checkAccess = (itemId, db) => {
             case GroupsDB:
                 if (dbObj.ownedBy === Meteor.userId()) {
                     accessLevel = "high";
-                } else if (!dbObj.moderators.includes(Meteor.userId())) {
+                } else if (dbObj.moderators.includes(Meteor.userId())) {
+                    accessLevel = "low";
+                } else {
                     throw new Meteor.Error("not-authorized");
                 }
 
