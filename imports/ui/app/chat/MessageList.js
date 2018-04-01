@@ -57,7 +57,7 @@ export class MessageList extends React.Component {
             this.scrollPositions[currGroupId] = {};
         }
 
-        // If user has changed group, save current scroll position
+        // If user has changed list, save current scroll position
         if (nextGroupId !== currGroupId) {
             this.changedGroup = true;
             this.autoScroll = false;
@@ -94,7 +94,7 @@ export class MessageList extends React.Component {
                 scrollPos = scrollPosObj[room];
             }
 
-            /* If user came from another group or room, 
+            /* If user came from another list or room,
             move scroll to its previous position */
             if (this.changedGroup) {
                 if (scrollPos !== undefined) {

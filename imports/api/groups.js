@@ -40,7 +40,7 @@ if (Meteor.isServer) {
 
 Meteor.methods({
     /**
-     * Add group to database with a partialGroup object
+     * Add list to database with a partialGroup object
      * @param {Object} partialGroup : includes name, description
      */
     groupsInsert(partialGroup) {
@@ -68,6 +68,8 @@ Meteor.methods({
                     } catch (newErr) {
                         throw newErr;
                     }
+                } else {
+                    throw err;
                 }
             }
         );
@@ -76,8 +78,8 @@ Meteor.methods({
     },
 
     /**
-     * Remove group from database
-     * @param {String} groupId : id of the group to be removed
+     * Remove list from database
+     * @param {String} groupId : id of the list to be removed
      */
     groupsRemove(groupId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
@@ -90,14 +92,14 @@ Meteor.methods({
             group.members.length === 1 && group.members.includes(this.userId);
 
         if (!canRemoveGroup)
-            throw new Meteor.Error("cannot-remove-group-with-members");
+            throw new Meteor.Error("cannot-remove-list-with-members");
 
         return GroupsDB.remove({ _id: groupId });
     },
 
     /**
-     * Add tag to a group
-     * @param {String} groupId : id of the group
+     * Add tag to a list
+     * @param {String} groupId : id of the list
      * @param {String} tag : tag to be inserted
      */
     groupsTagAdd(groupId, tag) {
@@ -112,8 +114,8 @@ Meteor.methods({
     },
 
     /**
-     * Remove tag from the group identified by id if exists
-     * @param {String} groupId : id of the group
+     * Remove tag from the list identified by id if exists
+     * @param {String} groupId : id of the list
      * @param {String} tag : tag to be removed
      */
     groupsTagRemove(groupId, tag) {
@@ -132,9 +134,9 @@ Meteor.methods({
     },
 
     /**
-     * Add userId to the list of group moderators
+     * Add userId to the list of list moderators
      * Only the owner can add moderators
-     * @param {String} groupdId : id of the group
+     * @param {String} groupdId : id of the list
      * @param {String} userId : id of the user
      */
     groupsModeratorAdd(groupdId, userId) {
@@ -151,9 +153,9 @@ Meteor.methods({
     },
 
     /**
-     * Remove userId from the list of group moderators
+     * Remove userId from the list of list moderators
      * Only the owner can remove moderators
-     * @param {String} groupId: id of the group
+     * @param {String} groupId: id of the list
      * @param {String} userId: id of the user
      */
     groupsModeratorRemove(groupdId, userId) {
@@ -170,9 +172,9 @@ Meteor.methods({
     },
 
     /**
-     * Change the group name
-     * @param {String} groupdId : id of the group
-     * @param {String} newName : the group's new name
+     * Change the list name
+     * @param {String} groupdId : id of the list
+     * @param {String} newName : the list's new name
      */
     groupsNameChange(groupdId, newName) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");

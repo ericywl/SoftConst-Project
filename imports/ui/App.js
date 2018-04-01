@@ -40,7 +40,7 @@ if (Meteor.isClient) {
 Meteor.setInterval(updateSessionTime, 20000);
 
 /**
- * Update the session time to refresh fromNow value in group list
+ * Update the session time to refresh fromNow value in list list
  */
 function updateSessionTime() {
     Session.set("sessionTime", moment().valueOf());

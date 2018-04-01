@@ -7,7 +7,7 @@ import { GroupsDB } from "../../../api/groups";
 import GroupListHeader from "./GroupListHeader";
 import GroupListItem from "./GroupListItem";
 
-export class GroupList extends React.Component {
+export class List extends React.Component {
     renderGroupList() {
         return this.props.groups.map(group => {
             return <GroupListItem key={group._id} group={group} />;
@@ -26,7 +26,7 @@ export class GroupList extends React.Component {
     }
 }
 
-GroupList.propTypes = {
+List.propTypes = {
     groups: PropTypes.array.isRequired,
     session: PropTypes.object.isRequired
 };
@@ -46,4 +46,4 @@ export default withTracker(() => {
             }),
         session: Session
     };
-})(GroupList);
+})(List);

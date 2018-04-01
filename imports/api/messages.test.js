@@ -22,7 +22,7 @@ if (Meteor.isServer) {
         });
 
         describe("messagesInsert", function() {
-            it("should insert new message", function() {
+            it("should insert new message and update groupLastMessageAt", function() {
                 const partialMsg = {
                     groupId: "groupId1",
                     room: "announcements",

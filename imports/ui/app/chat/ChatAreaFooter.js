@@ -27,7 +27,7 @@ export class ChatAreaFooter extends React.Component {
             this.props.notInGroup || cannotSendToAnnouncements;
 
         const inputPlaceholder = this.props.notInGroup
-            ? "Join the group to chat!"
+            ? "Join the list to chat!"
             : "";
 
         return (
@@ -57,7 +57,7 @@ export class ChatAreaFooter extends React.Component {
         const currGroupId = this.props.selectedGroupId;
         const prevGroupId = prevProps.selectedGroupId;
 
-        // Save and reload the message input field if user change group
+        // Save and reload the message input field if user change list
         if (!!currGroupId && currGroupId !== prevGroupId) {
             this.groupInputs[prevGroupId] = prevState.input;
             const oldCurrGroupInput = this.groupInputs[currGroupId];

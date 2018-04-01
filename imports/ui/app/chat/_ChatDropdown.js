@@ -140,7 +140,7 @@ export default class ChatDropdown extends React.Component {
 
     handleLeaveOnClick(event) {
         if (this.props.isOwner) {
-            throw new Meteor.Error("owner-cannot-leave-group");
+            throw new Meteor.Error("owner-cannot-leave-list");
         }
 
         this.props.meteorCall(

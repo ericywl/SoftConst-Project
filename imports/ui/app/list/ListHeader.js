@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
-import AddGroupModal from "./_AddGroupModal";
-import JoinGroupModal from "./_JoinGroupModal";
+import AddGroupModal from "./_AddItemModal";
+import JoinGroupModal from "./_JoinItemModal";
 
 // APIs
 import { searchFilterBeforeSet } from "../../../misc/methods";

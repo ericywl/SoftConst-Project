@@ -6,7 +6,7 @@ import { withTracker } from "meteor/react-meteor-data";
 // React Components
 import PrivateHeader from "./PrivateHeader";
 import PrivateTab from "./PrivateTab";
-import GroupList from "./group/GroupList";
+import List from "./list/List";
 import ChatArea from "./chat/ChatArea";
 
 export class Dashboard extends React.Component {
@@ -31,7 +31,7 @@ export class Dashboard extends React.Component {
         return (
             <div className="page-content">
                 <div className={"page-content__sidebar" + sidebarClass}>
-                    <GroupList selectedTab={this.props.selectedTab} />
+                    <List selectedTab={this.props.selectedTab} />
                 </div>
 
                 <div className={"page-content__main" + mainClass}>

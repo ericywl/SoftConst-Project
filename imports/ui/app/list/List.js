@@ -1,13 +1,14 @@
 // Library
 import React from "react";
 import PropTypes from "prop-types";
-import { withTracker } from "meteor/react-meteor-data";
 import FlipMove from "react-flip-move";
+import moment from "moment";
+import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
-import GroupListHeader from "./GroupListHeader";
-import GroupListItem from "./GroupListItem";
-import GroupListSidebar from "./_RoomBar";
+import ListHeader from "./ListHeader";
+import ListItem from "./ListItem";
+import ListRoombar from "./_RoomBar";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";
@@ -18,13 +19,12 @@ import {
     searchFilterBeforeFetch,
     filterItemsByQuery
 } from "../../../misc/methods";
-import { join } from "path";
+import { SHOWN_ITEMS_LIMIT } from "../../../misc/constants";
 
-const SHOWN_GROUPS_LIMIT = 20;
-export class GroupList extends React.Component {
+export class List extends React.Component {
     renderList() {
         return this.props.groups.map(group => {
-            return <GroupListItem key={group._id} group={group} />;
+            return <ListItem key={group._id} group={group} />;
         });
     }
 
@@ -38,14 +38,15 @@ export class GroupList extends React.Component {
                 ref={this.setWrapperRef.bind(this)}
             >
                 <div className={"item-list" + itemListClass}>
-                    <GroupListHeader selectedTab={this.props.selectedTab} />
+                    <ListHeader selectedTab={this.props.selectedTab} />
                     <FlipMove maintainContainerHeight="true">
                         {this.renderList()}
                     </FlipMove>
                 </div>
 
-                {this.props.selectedTab === "groups" ? (
-                    <GroupListSidebar notInGroup={this.props.notInGroup} />
+                {// Render roombar
+                this.props.selectedTab === "groups" ? (
+                    <ListRoombar notInGroup={this.props.notInGroup} />
                 ) : (
                     undefined
                 )}
@@ -74,6 +75,7 @@ export class GroupList extends React.Component {
     }
 
     handleClickOutside(event) {
+        // Close nav if click outside is detected
         const inWrapperRef =
             this.wrapperRef && !this.wrapperRef.contains(event.target);
 
@@ -87,7 +89,7 @@ export class GroupList extends React.Component {
     }
 }
 
-GroupList.propTypes = {
+List.propTypes = {
     groups: PropTypes.array.isRequired,
     session: PropTypes.object.isRequired
 };
@@ -111,19 +113,21 @@ export default withTracker(() => {
         notInGroup: !userGroups.includes(selectedGroupId),
         session: Session
     };
-})(GroupList);
+})(List);
 
 /* HELPER METHODS */
 const fetchGroupsFromDB = (selectedGroupId, query) => {
+    const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
+    if (!userProfile) return [];
+
     let groups = [];
-    const userProfile = ProfilesDB.find().fetch()[0];
-    const userGroups = userProfile ? userProfile.groups : [];
+    const userGroups = userProfile.groups;
     if (searchFilterBeforeFetch(query)[0] === "#") {
         groups = GroupsDB.find(
             { tags: { $exists: true, $not: { $size: 0 } } },
             {
                 sort: { lastMessageAt: -1 },
-                $limit: SHOWN_GROUPS_LIMIT
+                $limit: SHOWN_ITEMS_LIMIT
             }
         ).fetch();
     } else {
@@ -131,7 +135,7 @@ const fetchGroupsFromDB = (selectedGroupId, query) => {
             { _id: { $in: userGroups } },
             {
                 sort: { lastMessageAt: -1 },
-                $limit: SHOWN_GROUPS_LIMIT
+                $limit: SHOWN_ITEMS_LIMIT
             }
         ).fetch();
     }
@@ -144,4 +148,41 @@ const fetchGroupsFromDB = (selectedGroupId, query) => {
     });
 
     return groups;
+};
+
+const fetchDsbjsFromDB = (selectedDsbjId, query) => {
+    const userProfile = ProfilesDB.find({ _id: Meteor.userId() });
+    if (!userProfile) return [];
+
+    let dsbjs = [];
+    const userDsbjs = userProfile.dsbjs;
+    if (searchFilterBeforeFetch(query)[0] === "#") {
+        dsbjs = DsbjsDB.find(
+            {
+                tags: { $exists: true, $not: { $size: 0 } },
+                timeoutAt: { $exists: true, $gt: moment().valueOf() }
+            },
+            {
+                sort: { createdAt: -1 },
+                $limit: SHOWN_ITEMS_LIMIT
+            }
+        ).fetch();
+    } else {
+        dsbjs = DsbjsDB.find(
+            { _id: { $in: userDsbjs } },
+            {
+                sort: { lastMessageAt: -1 },
+                $limit: SHOWN_ITEMS_LIMIT
+            }
+        ).fetch();
+    }
+
+    dsbjs = dsbjs.map(dsbj => {
+        return {
+            ...dsbj,
+            selected: dsbj._id === selectedDsbjId
+        };
+    });
+
+    return dsbjs;
 };

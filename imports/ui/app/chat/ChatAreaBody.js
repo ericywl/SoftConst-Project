@@ -36,8 +36,8 @@ export class ChatAreaBody extends React.Component {
             (err, res) => {
                 if (err) this.setState({ error: err.reason });
                 if (res) {
-                    // TODO: Add joined group message
-                    console.log("you have joined the group!");
+                    // TODO: Add joined list message
+                    console.log("you have joined the list!");
                 }
             }
         );

@@ -41,35 +41,30 @@ Meteor.methods({
         const group = GroupsDB.findOne({ _id: groupId });
         if (!group)
             throw new Meteor.Error(
-                "group-does-not-exist",
-                "The group specified does not exist"
+                "list-does-not-exist",
+                "The list specified does not exist"
             );
 
-        if (group.ownedBy === this.userId) {
+        if (group.ownedBy === this.userId)
             throw new Meteor.Error(
-                "already-in-group",
-                "You are already the owner of that group"
+                "already-in-list",
+                "You are already the owner of that list"
             );
-        }
-
-        if (group.members.includes(this.userId)) {
-            throw new Meteor.Error(
-                "already-in-group",
-                "You are already in that group"
-            );
-        }
 
         const profile = ProfilesDB.findOne({ _id: this.userId });
-        if (profile.groups.includes(groupId)) {
+        if (
+            group.members.includes(this.userId) ||
+            profile.groups.includes(groupId)
+        ) {
             throw new Meteor.Error(
-                "already-in-group",
-                "You are already in that group"
+                "already-in-list",
+                "You are already in that list"
             );
         }
 
         const result = ProfilesDB.update(
             { _id: this.userId },
-            { $push: { groups: groupId } },
+            { $addToSet: { groups: groupId } },
             err => {
                 if (!err) {
                     try {
@@ -80,6 +75,8 @@ Meteor.methods({
                     } catch (newErr) {
                         throw newErr;
                     }
+                } else {
+                    throw err;
                 }
             }
         );
@@ -96,26 +93,26 @@ Meteor.methods({
         const group = GroupsDB.findOne({ _id: groupId });
         if (!group)
             throw new Meteor.Error(
-                "group-does-not-exist",
-                "The group specified does not exist"
+                "list-does-not-exist",
+                "The list specified does not exist"
             );
 
         if (group.ownedBy === this.userId)
             throw new Meteor.Error(
-                "owner-cannot-leave-group",
-                "Owner cannot leave his/her group"
+                "owner-cannot-leave-list",
+                "Owner cannot leave his/her list"
             );
 
         if (
             !group.members.includes(this.userId) &&
             !group.moderators.includes(this.userId)
         ) {
-            throw new Meteor.Error("not-in-group", "You are not in that group");
+            throw new Meteor.Error("not-in-list", "You are not in that list");
         }
 
         const profile = ProfilesDB.findOne({ _id: this.userId });
         if (!profile.groups.includes(groupId)) {
-            throw new Meteor.Error("not-in-group", "You are not in that group");
+            throw new Meteor.Error("not-in-list", "You are not in that list");
         }
 
         const result = ProfilesDB.update(
@@ -136,6 +133,60 @@ Meteor.methods({
                     } catch (newErr) {
                         throw newErr;
                     }
+                } else {
+                    throw err;
+                }
+            }
+        );
+
+        return result;
+    },
+
+    profilesJoinDsbj(dsbjId) {
+        if (!this.userId) {
+            throw new Meteor.Error("not-logged-in");
+        }
+        checkUserExist(this.userId);
+
+        const dsbj = DsbjsDB.findOne({ _id: dsbjId });
+        if (!dsbj)
+            throw new Meteor.Error(
+                "dsbj-does-not-exist",
+                "The DSBJ event specified does not exists"
+            );
+
+        if (dsbj.createdBy === this.userId)
+            throw new Meteor.Error(
+                "already-in-dsbj",
+                "You are the creator of that DSBJ"
+            );
+
+        const profile = ProfilesDB.findOne({ _id: this.userId });
+        if (
+            dsbj.attendees.includes(this.userId) &&
+            profile.dsbjs.includes(dsbjId)
+        ) {
+            throw new Meteor.Error(
+                "already-in-dsbj",
+                "You are already in that DSBJ"
+            );
+        }
+
+        const result = ProfilesDB.update(
+            { _id: this.userId },
+            { $addToSet: { dsbjs: dsbjId } },
+            err => {
+                if (!err) {
+                    try {
+                        DsbjsDB.update(
+                            { _id: dsbjId },
+                            { $addToSet: { attendees: this.userId } }
+                        );
+                    } catch (newErr) {
+                        throw newErr;
+                    }
+                } else {
+                    throw err;
                 }
             }
         );
@@ -193,6 +244,7 @@ Meteor.methods({
             _id: _id,
             displayName: displayName,
             groups: [],
+            dsbjs: [],
             tags: [],
             bio: "",
             createdAt: moment().valueOf()

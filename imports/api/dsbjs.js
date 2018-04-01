@@ -29,20 +29,20 @@ Meteor.methods({
      */
     dsbjsInsert(partialDsbj) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
-
         validateDsbj(partialDsbj);
+
         const now = moment().valueOf();
         const timeoutAt = now + partialDsbj.timeout;
 
         return DsbjsDB.insert({
             name: partialDsbj.name,
             description: partialDsbj.description,
-            tags: [],
-            lastMessageAt: now,
+            numberReq: partialDsbj.numberReq,
             timeoutAt: timeoutAt,
+            lastMessageAt: now,
             createdAt: now,
             createdBy: this.userId,
-            numberReq: partialDsbj.numberReq,
+            tags: [],
             attendees: []
         });
     },
@@ -59,44 +59,8 @@ Meteor.methods({
     },
 
     /**
-     * Add a new attendee to a DSBJ event
-     * @param {String} dsbjId : id of the DSBJ event
-     * @param {String} addedUserId : user id to be added
-     */
-    dsbjsAddAttendee(dsbjId, addedUserId) {
-        if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(dsbjId, DsbjsDB);
-
-        if (DsbjsDB.findOne({ dsbjId }).attendees.includes(removedUserId))
-            throw new Meteor.Error("user-already-in-dsbj");
-
-        return DsbjsDB.update(
-            { _id: dsbjId },
-            { $addToSet: { attendees: addedUserId } }
-        );
-    },
-
-    /**
-     * Remove specified userId from DSBJ event
-     * @param {String} dsbjId : id of the DSBJ event
-     * @param {String} removedUserId : user id to be removed
-     */
-    dsbjsRemoveAttendee(dsbjId, removedUserId) {
-        if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(dsbjId, DsbjsDB);
-
-        if (!DsbjsDB.findOne({ dsbjId }).attendees.includes(removedUserId))
-            throw new Meteor.Error("user-not-in-dsbj");
-
-        return DsbjsDB.update(
-            { _id: dsbjId },
-            { $pull: { attendees: removedUserId } }
-        );
-    },
-
-    /**
      * Add tag to a DSBJ event
-     * @param {String} dsbjId : id of the group
+     * @param {String} dsbjId : id of the list
      * @param {String} addedTag : tag to be inserted
      */
     dsbjsAddTag(dsbjId, addedTag) {
@@ -115,7 +79,7 @@ Meteor.methods({
 
     /**
      * Remove tag from the DSBJ event identified by id if exists
-     * @param {String} dsbjId : id of the group
+     * @param {String} dsbjId : id of the list
      * @param {String} removedTag : tag to be removed
      */
     dsbjsRemoveTag(dsbjId, removedTag) {
@@ -170,6 +134,43 @@ Meteor.methods({
         return DsbjsDB.update(
             { _id: dsbjId },
             { set: { numberReq: newNumberReq } }
+        );
+    },
+
+    /* DEPRECATED */
+    /**
+     * Add a new attendee to a DSBJ event
+     * @param {String} dsbjId : id of the DSBJ event
+     * @param {String} addedUserId : user id to be added
+     */
+    dsbjsAddAttendee(dsbjId, addedUserId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkAccess(dsbjId, DsbjsDB);
+
+        if (DsbjsDB.findOne({ dsbjId }).attendees.includes(removedUserId))
+            throw new Meteor.Error("user-already-in-dsbj");
+
+        return DsbjsDB.update(
+            { _id: dsbjId },
+            { $addToSet: { attendees: addedUserId } }
+        );
+    },
+
+    /**
+     * Remove specified userId from DSBJ event
+     * @param {String} dsbjId : id of the DSBJ event
+     * @param {String} removedUserId : user id to be removed
+     */
+    dsbjsRemoveAttendee(dsbjId, removedUserId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkAccess(dsbjId, DsbjsDB);
+
+        if (!DsbjsDB.findOne({ dsbjId }).attendees.includes(removedUserId))
+            throw new Meteor.Error("user-not-in-dsbj");
+
+        return DsbjsDB.update(
+            { _id: dsbjId },
+            { $pull: { attendees: removedUserId } }
         );
     }
 });
