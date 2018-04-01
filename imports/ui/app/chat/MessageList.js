@@ -8,7 +8,7 @@ import moment from "moment";
 import { Message } from "./Message";
 
 // APIs
-import { GroupMessagesDB } from "../../../api/groupsMessages";
+import { GroupsMessagesDB } from "../../../api/groupsMessages";
 
 export class MessageList extends React.Component {
     constructor(props) {
@@ -143,6 +143,6 @@ export default withTracker(() => {
         selectedGroupId,
         selectedRoom,
         ready: handle.ready(),
-        messages: GroupMessagesDB.find({ room: selectedRoom }).fetch()
+        messages: GroupsMessagesDB.find({ room: selectedRoom }).fetch()
     };
 })(MessageList);

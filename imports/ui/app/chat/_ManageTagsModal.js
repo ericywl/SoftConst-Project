@@ -24,7 +24,7 @@ export default class ManageTagsModal extends React.Component {
         return (
             <Modal
                 isOpen={this.state.modalIsOpen}
-                contentLabel="Create New Group"
+                contentLabel="Manage Tags"
                 onAfterOpen={() => this.refs.newTag.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
                 className="boxed-view__large-box"
@@ -34,7 +34,7 @@ export default class ManageTagsModal extends React.Component {
             >
                 <div className="boxed-view__modal-title tags__title">
                     <h2 className="ellipsis tags__title-part">
-                        {this.props.selectedGroupPartial.name}
+                        {this.props.selectedItemPartial.name}
                     </h2>
                     <h2 className="tags__title-part"> Tags</h2>
                 </div>
@@ -71,13 +71,13 @@ export default class ManageTagsModal extends React.Component {
     }
 
     renderTags() {
-        if (this.props.selectedGroupPartial.tags.length === 0) {
+        if (this.props.selectedItemPartial.tags.length === 0) {
             return (
                 <div className="empty-tags">There are no tags currently.</div>
             );
         }
 
-        return this.props.selectedGroupPartial.tags.map((tag, index) => (
+        return this.props.selectedItemPartial.tags.map((tag, index) => (
             <span className="tags__tag" key={`tag${index}`}>
                 <span className="tags__tag--hash"># </span>
                 <span>{tag}</span>
@@ -105,11 +105,19 @@ export default class ManageTagsModal extends React.Component {
     handleTagDelete(event) {
         event.preventDefault();
         const tagName = event.target.parentElement.children[1].innerHTML;
+        const tagRemove = this.props.isGroupTab
+            ? "groupsTagRemove"
+            : "dsbjsTagRemove";
 
         this.props.meteorCall(
-            "groupsTagRemove",
-            this.props.selectedGroupPartial._id,
-            tagName
+            tagRemove,
+            this.props.selectedItemPartial._id,
+            tagName,
+            (err, res) => {
+                if (err) {
+                    this.setState({ error: err.reason });
+                }
+            }
         );
     }
 
@@ -117,9 +125,10 @@ export default class ManageTagsModal extends React.Component {
         event.preventDefault();
         if (this.state.newTag === "") return;
 
+        const tagAdd = this.props.isGroupTab ? "groupsTagAdd" : "dsbjsTagAdd";
         this.props.meteorCall(
-            "groupsTagAdd",
-            this.props.selectedGroupPartial._id,
+            tagAdd,
+            this.props.selectedItemPartial._id,
             this.state.newTag,
             (err, res) => {
                 if (err) {
@@ -142,6 +151,7 @@ export default class ManageTagsModal extends React.Component {
 
 ManageTagsModal.propTypes = {
     haveAccess: PropTypes.bool.isRequired,
-    selectedGroupPartial: PropTypes.object.isRequired,
+    isGroupTab: PropTypes.bool.isRequired,
+    selectedItemPartial: PropTypes.object.isRequired,
     meteorCall: PropTypes.func.isRequired
 };

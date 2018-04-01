@@ -35,7 +35,7 @@ export class Dashboard extends React.Component {
                 </div>
 
                 <div className={"page-content__main" + mainClass}>
-                    <ChatArea />
+                    <ChatArea selectedTab={this.props.selectedTab} />
                 </div>
             </div>
         );

@@ -14,19 +14,20 @@ export class ChatAreaHeader extends React.Component {
         const options = ["one", "two", "bignummsdfsdnkw"];
         const defaultOption = options[0];
 
-        if (this.props.selectedGroup) {
+        if (this.props.selectedItem) {
             return (
                 <div className="chat-area__header">
                     <h1 className="chat-area__header-title">
-                        {this.props.selectedGroup.name}
+                        {this.props.selectedItem.name}
                     </h1>
 
                     <div className="chat-area__header-dots">
                         <ChatDropdown
+                            selectedItem={this.props.selectedItem}
+                            selectedTab={this.props.selectedTab}
+                            notInItem={this.props.notInItem}
                             isOwner={this.props.isOwner}
                             isModerator={this.props.isModerator}
-                            selectedGroup={this.props.selectedGroup}
-                            selectedTab={this.props.selectedTab}
                             meteorCall={this.props.meteorCall}
                             session={this.props.session}
                         />
@@ -35,14 +36,14 @@ export class ChatAreaHeader extends React.Component {
             );
         }
 
-        return undefined;
+        return <div className="chat-area__header" />;
     }
 }
 
 ChatAreaHeader.propTypes = {
     meteorCall: PropTypes.func.isRequired,
     session: PropTypes.object.isRequired,
-    selectedGroup: PropTypes.object.isRequired,
+    selectedItem: PropTypes.object.isRequired,
     selectedTab: PropTypes.string.isRequired
 };
 

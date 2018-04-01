@@ -229,23 +229,29 @@ export const validateDsbj = partialDsbj => {
 };
 
 /* MESSAGES */
-export const validateMessage = partialMsg => {
+export const validateMessage = (item, partialMsg) => {
+    const itemId = item === "groups" ? partialMsg.groupId : partialMsg.dsbjId;
+
     new SimpleSchema({
-        groupId: { type: String },
-        room: {
-            type: String,
-            custom() {
-                if (!c.ROOM_TEXT_ARR.includes(this.value)) {
-                    return "invalidRoom";
-                }
-            }
-        },
+        itemId: { type: String },
         content: { type: String }
     }).validate({
-        groupId: partialMsg.groupId,
-        room: partialMsg.room,
+        itemId,
         content: partialMsg.content
     });
+
+    if (item === "groups") {
+        new SimpleSchema({
+            room: {
+                type: String,
+                custom() {
+                    if (!c.ROOM_TEXT_ARR.includes(this.value)) {
+                        return "invalidRoom";
+                    }
+                }
+            }
+        }).validate({ room: partialMsg.room });
+    }
 
     return true;
 };

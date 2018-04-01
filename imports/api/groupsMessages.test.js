@@ -1,18 +1,18 @@
 import expect from "expect";
 
-import { GroupMessagesDB } from "./groupsMessages";
+import { GroupsMessagesDB } from "./groupsMessages";
 import { GroupsDB } from "./groups";
 import { ProfilesDB } from "./profiles";
 
 if (Meteor.isServer) {
-    describe("messages", function() {
+    describe("groupsMessages", function() {
         const userId = "testId";
         const userDisplayName = "someName";
         const userId2 = "testId2";
         const userDisplayName2 = "abcdefghijklmnopqrstuvwxyz1234567890";
 
         beforeEach(function() {
-            GroupMessagesDB.remove({});
+            GroupsMessagesDB.remove({});
             GroupsDB.remove({});
             ProfilesDB.remove({});
 
@@ -21,7 +21,7 @@ if (Meteor.isServer) {
             ProfilesDB.insert({ _id: userId2, displayName: userDisplayName2 });
         });
 
-        describe("messagesInsert", function() {
+        describe("groupsMessagesInsert", function() {
             it("should insert new message and update groupLastMessageAt", function() {
                 const partialMsg = {
                     groupId: "groupId1",
@@ -29,12 +29,12 @@ if (Meteor.isServer) {
                     content: "Hello this is bob"
                 };
 
-                const _id = Meteor.server.method_handlers.messagesInsert.apply(
+                const _id = Meteor.server.method_handlers.groupsMessagesInsert.apply(
                     { userId },
                     [partialMsg]
                 );
 
-                expect(GroupMessagesDB.findOne({ _id, userId })).toBeTruthy();
+                expect(GroupsMessagesDB.findOne({ _id, userId })).toBeTruthy();
 
                 const groupLastMessageAt = GroupsDB.findOne({
                     _id: partialMsg.groupId
@@ -45,12 +45,12 @@ if (Meteor.isServer) {
             it("should throw error if invalid groupId", function() {
                 const partialMsg = {
                     groupId: 321,
-                    room: "messages",
+                    room: "groupsMessages",
                     content: "Hello this is bob"
                 };
 
                 expect(() =>
-                    Meteor.server.method_handlers.messagesInsert.apply(
+                    Meteor.server.method_handlers.groupsMessagesInsert.apply(
                         { userId },
                         [partialMsg]
                     )
@@ -66,7 +66,7 @@ if (Meteor.isServer) {
                 const userDisplayName = "someName";
 
                 expect(() =>
-                    Meteor.server.method_handlers.messagesInsert.apply(
+                    Meteor.server.method_handlers.groupsMessagesInsert.apply(
                         { userId },
                         [partialMsg]
                     )
@@ -74,7 +74,7 @@ if (Meteor.isServer) {
 
                 partialMsg.room = 123;
                 expect(() =>
-                    Meteor.server.method_handlers.messagesInsert.apply(
+                    Meteor.server.method_handlers.groupsMessagesInsert.apply(
                         { userId },
                         [partialMsg]
                     )
@@ -84,12 +84,12 @@ if (Meteor.isServer) {
             it("should throw error if invalid content", function() {
                 const partialMsg = {
                     groupId: "validGid",
-                    room: "messages",
+                    room: "groupsMessages",
                     content: []
                 };
 
                 expect(() =>
-                    Meteor.server.method_handlers.messagesInsert.apply(
+                    Meteor.server.method_handlers.groupsMessagesInsert.apply(
                         { userId },
                         [partialMsg]
                     )
@@ -104,7 +104,7 @@ if (Meteor.isServer) {
                 };
 
                 expect(() =>
-                    Meteor.server.method_handlers.messagesInsert.apply(
+                    Meteor.server.method_handlers.groupsMessagesInsert.apply(
                         { userId: userId2 },
                         [partialMsg]
                     )

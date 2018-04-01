@@ -23,11 +23,11 @@ export default class ChangeNameModal extends React.Component {
         return (
             <Modal
                 isOpen={this.state.modalIsOpen}
-                contentLabel="Create New Group"
+                contentLabel="Change Name"
                 onAfterOpen={() => {
                     this.refs.newName.focus();
                     this.setState({
-                        newName: this.props.selectedGroupPartial.name
+                        newName: this.props.selectedItemPartial.name
                     });
                 }}
                 onRequestClose={this.toggleModal.bind(this)}
@@ -58,16 +58,22 @@ export default class ChangeNameModal extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        const isGroupTab = this.props.selectedTab === "groups";
-        if (isGroupTab) {
-            this.props.meteorCall(
-                "groupsNameChange",
-                this.props.selectedGroupPartial._id,
-                this.state.newName
-            );
-        }
+        const meteorMethod = this.props.isGroupTab
+            ? "groupsNameChange"
+            : "dsbjsNameChange";
 
-        this.toggleModal();
+        this.props.meteorCall(
+            meteorMethod,
+            this.props.selectedItemPartial._id,
+            this.state.newName,
+            err => {
+                if (err) {
+                    this.setState({ error: err.reason });
+                } else {
+                    this.toggleModal();
+                }
+            }
+        );
     }
 
     handleOnChange(event) {
@@ -91,6 +97,7 @@ export default class ChangeNameModal extends React.Component {
 
 ChangeNameModal.propTypes = {
     haveAccess: PropTypes.bool.isRequired,
-    selectedGroupPartial: PropTypes.object.isRequired,
+    isGroupTab: PropTypes.bool.isRequired,
+    selectedItemPartial: PropTypes.object.isRequired,
     meteorCall: PropTypes.func.isRequired
 };

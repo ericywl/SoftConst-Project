@@ -6,6 +6,7 @@ import moment from "moment";
 // React Components
 import ManageTagsModal from "./_ManageTagsModal";
 import ChangeNameModal from "./_ChangeNameModal";
+import { capitalizeFirstLetter } from "../../../misc/methods";
 
 export default class ChatDropdown extends React.Component {
     constructor(props) {
@@ -16,12 +17,22 @@ export default class ChatDropdown extends React.Component {
     }
 
     render() {
-        const selectedGroupPartial = {
-            _id: this.props.selectedGroup._id,
-            name: this.props.selectedGroup.name,
-            tags: this.props.selectedGroup.tags
+        const tabText = capitalizeFirstLetter(
+            this.props.selectedTab.slice(0, this.props.selectedTab.length)
+        );
+
+        const selectedItemPartial = {
+            _id: this.props.selectedItem._id,
+            name: this.props.selectedItem.name,
+            tags: this.props.selectedItem.tags
         };
-        const haveAccess = this.props.isModerator || this.props.isOwner;
+
+        let haveAccess;
+        if (this.props.selectedTab === "groups") {
+            haveAccess = this.props.isModerator || this.props.isOwner;
+        } else {
+            haveAccess = this.props.isOwner;
+        }
 
         return (
             <div
@@ -61,7 +72,7 @@ export default class ChatDropdown extends React.Component {
                                 this.setState({ dropdownIsOpen: false });
                             }}
                         >
-                            Change Group Name
+                            Change {tabText} Name
                         </div>
                     ) : (
                         undefined
@@ -74,27 +85,29 @@ export default class ChatDropdown extends React.Component {
                             this.setState({ dropdownIsOpen: false });
                         }}
                     >
-                        {haveAccess ? "Manage Group Tags" : "View Group Tags"}
+                        {haveAccess
+                            ? "Manage " + tabText + " Tags"
+                            : "View " + tabText + " Tags"}
                     </div>
 
                     {this.props.isOwner ? (
                         <div className="dropdown__item dropdown__item--disabled">
-                            Leave Group
+                            Leave {tabText}
                         </div>
                     ) : (
                         <div
                             className="dropdown__item"
                             onClick={this.handleLeaveOnClick.bind(this)}
                         >
-                            Leave Group
+                            Leave {tabText}
                         </div>
                     )}
                 </div>
 
                 <ChangeNameModal
                     haveAccess={haveAccess}
-                    selectedTab={this.props.selectedTab}
-                    selectedGroupPartial={selectedGroupPartial}
+                    isGroupTab={this.props.selectedTab === "groups"}
+                    selectedItemPartial={selectedItemPartial}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
                         this.childNameModal = ref;
@@ -103,8 +116,8 @@ export default class ChatDropdown extends React.Component {
 
                 <ManageTagsModal
                     haveAccess={haveAccess}
-                    selectedTab={this.props.selectedTab}
-                    selectedGroupPartial={selectedGroupPartial}
+                    isGroupTab={this.props.selectedTab === "groups"}
+                    selectedItemPartial={selectedItemPartial}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
                         this.childTagsModal = ref;
@@ -140,16 +153,33 @@ export default class ChatDropdown extends React.Component {
 
     handleLeaveOnClick(event) {
         if (this.props.isOwner) {
-            throw new Meteor.Error("owner-cannot-leave-list");
+            throw new Meteor.Error("owner-cannot-leave");
         }
 
-        this.props.meteorCall(
-            "profilesLeaveGroup",
-            this.props.selectedGroup._id
-        );
+        const meteorMethod =
+            this.props.selectedTab === "groups"
+                ? "profilesLeaveGroup"
+                : "profilesLeaveDsbj";
+
+        this.props.meteorCall(meteorMethod, this.props.selectedItem._id);
+
+        const sessionItemStr =
+            this.props.selectedTab === "groups"
+                ? "selectedGroupId"
+                : "selectedDsbjId";
 
         this.setState({ dropdownIsOpen: false });
-        this.props.session.set("selectedGroupId", "");
+        this.props.session.set(sessionItemStr, "");
         this.props.session.set("sessionTime", moment().valueOf());
     }
 }
+
+ChatDropdown.propTypes = {
+    selectedItem: PropTypes.object.isRequired,
+    selectedTab: PropTypes.string.isRequired,
+    notInItem: PropTypes.bool.isRequired,
+    isOwner: PropTypes.bool.isRequired,
+    isModerator: PropTypes.bool.isRequired,
+    meteorCall: PropTypes.func.isRequired,
+    session: PropTypes.object.isRequired
+};

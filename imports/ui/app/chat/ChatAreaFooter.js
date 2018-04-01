@@ -4,9 +4,6 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { withTracker } from "meteor/react-meteor-data";
 
-// API
-import { validateMessage } from "../../../misc/methods";
-
 export class ChatAreaFooter extends React.Component {
     constructor(props) {
         super(props);
@@ -18,15 +15,16 @@ export class ChatAreaFooter extends React.Component {
     }
 
     render() {
-        const cannotSendToAnnouncements =
-            this.props.selectedRoom === "announcements" &&
-            !this.props.isModerator &&
-            !this.props.isOwner;
+        let cannotSendToAnnouncements =
+            this.props.selectedRoom === "announcements" && !this.props.isOwner;
 
-        const disabledInput =
-            this.props.notInGroup || cannotSendToAnnouncements;
+        if (this.props.selectedTab === "groups") {
+            connanotSenToAnnouncements =
+                cannotSendToAnnouncements && !this.props.isModerator;
+        }
 
-        const inputPlaceholder = this.props.notInGroup
+        const disabledInput = this.props.notInItem || cannotSendToAnnouncements;
+        const inputPlaceholder = this.props.notInItem
             ? "Join the list to chat!"
             : "";
 
@@ -54,15 +52,26 @@ export class ChatAreaFooter extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, prevContext) {
-        const currGroupId = this.props.selectedGroupId;
-        const prevGroupId = prevProps.selectedGroupId;
+        const currGroupId = this.props.selectedItemId;
+        const prevGroupId = prevProps.selectedItemId;
+
+        const currRoom = this.props.selectedRoom;
+        const prevRoom = prevProps.selectedRoom;
 
         // Save and reload the message input field if user change list
         if (!!currGroupId && currGroupId !== prevGroupId) {
-            this.groupInputs[prevGroupId] = prevState.input;
-            const oldCurrGroupInput = this.groupInputs[currGroupId];
+            if (this.groupInputs[prevGroupId] === undefined) {
+                this.groupInputs[prevGroupId] = {};
+            }
+
+            this.groupInputs[prevGroupId][prevRoom] = prevState.input;
+            const reloadedCurrGroupInput =
+                this.groupInputs[currGroupId] === undefined
+                    ? ""
+                    : this.groupInputs[currGroupId][currRoom];
+
             this.setState({
-                input: oldCurrGroupInput ? oldCurrGroupInput : ""
+                input: reloadedCurrGroupInput ? reloadedCurrGroupInput : ""
             });
         }
     }
@@ -72,16 +81,21 @@ export class ChatAreaFooter extends React.Component {
         if (this.state.input.trim() === "") return;
 
         const partialMsg = {
-            groupId: this.props.selectedGroupId,
+            groupId: this.props.selectedItemId,
             room: this.props.selectedRoom,
             content: this.state.input.trim()
         };
 
-        this.props.meteorCall("messagesInsert", partialMsg, (err, res) => {
+        const messagesInsert =
+            this.props.selectedTab === "groups"
+                ? "groupsMessagesInsert"
+                : "dsbjsMessagesInsert";
+
+        this.props.meteorCall(messagesInsert, partialMsg, (err, res) => {
             if (err) this.setState({ error: err.reason });
 
             if (res) {
-                Session.set("sentToGroup", this.props.selectedGroupId);
+                Session.set("sentToGroup", this.props.selectedItemId);
                 this.setState({ input: "" });
             }
         });
@@ -107,18 +121,16 @@ export class ChatAreaFooter extends React.Component {
 }
 
 ChatAreaFooter.propTypes = {
-    notInGroup: PropTypes.bool.isRequired,
-    selectedGroupId: PropTypes.string.isRequired,
+    notInItem: PropTypes.bool.isRequired,
+    selectedItemId: PropTypes.string.isRequired,
     selectedRoom: PropTypes.string.isRequired,
     meteorCall: PropTypes.func.isRequired
 };
 
 export default withTracker(() => {
-    const selectedGroupId = Session.get("selectedGroupId");
     const selectedRoom = Session.get("selectedRoom");
 
     return {
-        selectedGroupId,
         selectedRoom,
         meteorCall: Meteor.call
     };
