@@ -23,8 +23,26 @@ import { SHOWN_ITEMS_LIMIT } from "../../../misc/constants";
 
 export class List extends React.Component {
     renderList() {
-        return this.props.groups.map(group => {
-            return <ListItem key={group._id} group={group} />;
+        if (this.props.selectedTab === "groups") {
+            return this.props.groups.map(group => {
+                return (
+                    <ListItem
+                        key={group._id}
+                        item={group}
+                        selectedTab={this.props.selectedTab}
+                    />
+                );
+            });
+        }
+
+        return this.props.dsbjs.map(dsbj => {
+            return (
+                <ListItem
+                    key={dsbj._id}
+                    item={dsbj}
+                    selectedTab={this.props.selectedTab}
+                />
+            );
         });
     }
 
@@ -39,12 +57,16 @@ export class List extends React.Component {
             >
                 <div className={"item-list" + itemListClass}>
                     <ListHeader selectedTab={this.props.selectedTab} />
-                    <FlipMove maintainContainerHeight="true">
+                    <FlipMove
+                        enterAnimation="none"
+                        leaveAnimation="none"
+                        maintainContainerHeight="true"
+                    >
                         {this.renderList()}
                     </FlipMove>
                 </div>
 
-                {// Render roombar
+                {// Render roombar if groups
                 this.props.selectedTab === "groups" ? (
                     <ListRoombar notInGroup={this.props.notInGroup} />
                 ) : (
@@ -101,88 +123,84 @@ export default withTracker(() => {
 
     const profilesHandle = Meteor.subscribe("profiles");
     const groupsHandle = Meteor.subscribe("groups");
+    const dsbjsHandle = Meteor.subscribe("dsbjs");
 
     const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
     const userGroups = userProfile ? userProfile.groups : [];
+    const userDsbjs = userProfile ? userProfile.dsbjs : [];
 
-    const fetchedGroups = fetchGroupsFromDB(selectedGroupId, searchQuery);
-    const queriedGroups = filterItemsByQuery(fetchedGroups, searchQuery);
+    const fetchedGroups = fetchItemsFromDB(
+        "groups",
+        selectedGroupId,
+        searchQuery,
+        userGroups
+    );
+
+    const fetchedDsbjs = fetchItemsFromDB(
+        "dsbjs",
+        selectedDsbjId,
+        searchQuery,
+        userDsbjs
+    );
+
+    const queriedDsbjs = filterItemsByQuery(fetchedDsbjs, searchQuery);
+
     return {
-        ready: profilesHandle.ready() && groupsHandle.ready(),
-        groups: queriedGroups,
+        ready:
+            profilesHandle.ready() &&
+            groupsHandle.ready() &&
+            dsbjsHandle.ready(),
+        groups: filterItemsByQuery(fetchedGroups, searchQuery),
+        dsbjs: queriedDsbjs,
         notInGroup: !userGroups.includes(selectedGroupId),
         session: Session
     };
 })(List);
 
 /* HELPER METHODS */
-const fetchGroupsFromDB = (selectedGroupId, query) => {
-    const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
-    if (!userProfile) return [];
-
-    let groups = [];
-    const userGroups = userProfile.groups;
+const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
+    let items = [];
     if (searchFilterBeforeFetch(query)[0] === "#") {
-        groups = GroupsDB.find(
-            { tags: { $exists: true, $not: { $size: 0 } } },
-            {
-                sort: { lastMessageAt: -1 },
-                $limit: SHOWN_ITEMS_LIMIT
-            }
-        ).fetch();
+        if (item === "groups") {
+            items = GroupsDB.find(
+                { tags: { $exists: true, $not: { $size: 0 } } },
+                {
+                    sort: { lastMessageAt: -1 },
+                    $limit: SHOWN_ITEMS_LIMIT
+                }
+            ).fetch();
+        } else {
+            items = DsbjsDB.find(
+                {
+                    tags: { $exists: true, $not: { $size: 0 } },
+                    timeoutAt: { $exists: true, $gt: moment().valueOf() }
+                },
+                {
+                    sort: { createdAt: -1 },
+                    $limit: SHOWN_ITEMS_LIMIT
+                }
+            ).fetch();
+        }
     } else {
-        groups = GroupsDB.find(
-            { _id: { $in: userGroups } },
-            {
-                sort: { lastMessageAt: -1 },
-                $limit: SHOWN_ITEMS_LIMIT
-            }
-        ).fetch();
+        const db = item === "groups" ? GroupsDB : DsbjsDB;
+
+        items = db
+            .find(
+                { _id: { $in: userItems } },
+                {
+                    sort: { lastMessageAt: -1 },
+                    $limit: SHOWN_ITEMS_LIMIT
+                }
+            )
+            .fetch();
     }
 
-    groups = groups.map(group => {
+    items = items.map(item => {
         return {
-            ...group,
-            selected: group._id === selectedGroupId
+            ...item,
+            selected: item._id === selectedItemId
         };
     });
 
-    return groups;
-};
-
-const fetchDsbjsFromDB = (selectedDsbjId, query) => {
-    const userProfile = ProfilesDB.find({ _id: Meteor.userId() });
-    if (!userProfile) return [];
-
-    let dsbjs = [];
-    const userDsbjs = userProfile.dsbjs;
-    if (searchFilterBeforeFetch(query)[0] === "#") {
-        dsbjs = DsbjsDB.find(
-            {
-                tags: { $exists: true, $not: { $size: 0 } },
-                timeoutAt: { $exists: true, $gt: moment().valueOf() }
-            },
-            {
-                sort: { createdAt: -1 },
-                $limit: SHOWN_ITEMS_LIMIT
-            }
-        ).fetch();
-    } else {
-        dsbjs = DsbjsDB.find(
-            { _id: { $in: userDsbjs } },
-            {
-                sort: { lastMessageAt: -1 },
-                $limit: SHOWN_ITEMS_LIMIT
-            }
-        ).fetch();
-    }
-
-    dsbjs = dsbjs.map(dsbj => {
-        return {
-            ...dsbj,
-            selected: dsbj._id === selectedDsbjId
-        };
-    });
-
-    return dsbjs;
+    return items;
 };

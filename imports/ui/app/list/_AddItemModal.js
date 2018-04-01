@@ -132,30 +132,33 @@ export default class AddGroupModal extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         const isGroupTab = this.props.selectedTab === "groups";
+        let partialItem, meteorMethod;
         if (isGroupTab) {
-            const partialGroup = {
+            meteorMethod = "groupsInsert";
+            partialItem = {
                 name: this.state.itemName,
                 description: this.state.itemDesc
             };
-
-            this.props.meteorCall("groupsInsert", partialGroup, (err, res) => {
-                if (err) {
-                    this.setState({ error: err.reason });
-                    setTimeout(() => {
-                        this.setState({ error: "" });
-                    }, 10000);
-                } else {
-                    this.toggleModal();
-                }
-            });
         } else {
-            const partialDsbj = {
+            meteorMethod = "dsbjsInsert";
+            partialItem = {
                 name: this.state.itemName,
                 description: this.state.itemDesc,
                 timeout: Number(this.state.itemTimeout),
                 numberReq: Number(this.state.itemNumOfPeople)
             };
         }
+
+        this.props.meteorCall(meteorMethod, partialItem, (err, res) => {
+            if (err) {
+                this.setState({ error: err.reason });
+                setTimeout(() => {
+                    this.setState({ error: "" });
+                }, 10000);
+            } else {
+                this.toggleModal();
+            }
+        });
     }
 
     handleNameChange(event) {

@@ -13,7 +13,7 @@ import {
     validateUserDisplayName
 } from "../misc/methods";
 
-export const MessagesDB = new Mongo.Collection("messages");
+export const GroupMessagesDB = new Mongo.Collection("messages");
 
 if (Meteor.isServer) {
     Meteor.publish("messagesByGroup", function(groupId) {
@@ -26,7 +26,7 @@ if (Meteor.isServer) {
             groupId: { type: String }
         }).validate({ groupId });
 
-        return MessagesDB.find({ groupId }, { limit: 500 });
+        return GroupMessagesDB.find({ groupId }, { limit: 500 });
     });
 }
 
@@ -42,7 +42,7 @@ Meteor.methods({
         validateUserDisplayName(userDisplayName);
 
         const now = moment().valueOf();
-        const result = MessagesDB.insert(
+        const result = GroupMessagesDB.insert(
             {
                 groupId: partialMsg.groupId,
                 room: partialMsg.room,
@@ -71,13 +71,13 @@ Meteor.methods({
     messagesRemove(messageId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
 
-        const message = MessagesDB.findOne({ _id: messageId });
+        const message = GroupMessagesDB.findOne({ _id: messageId });
         if (!message) throw new Meteor.Error("message-does-not-exist");
 
         if (message.userId !== this.userId) {
             checkAccess(message.groupId, GroupsDB);
         }
 
-        return MessagesDB.remove({ _id: messageId });
+        return GroupMessagesDB.remove({ _id: messageId });
     }
 });

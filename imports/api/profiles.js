@@ -23,6 +23,7 @@ if (Meteor.isServer) {
                 fields: {
                     displayName: 1,
                     groups: 1,
+                    dsbjs: 1,
                     tags: 1,
                     bio: 1
                 }

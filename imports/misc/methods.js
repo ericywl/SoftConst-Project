@@ -146,28 +146,19 @@ export const capitalizeFirstLetter = str => {
 };
 
 // SIMPLE SCHEMA VALIDATION
-import {
-    ROOM_TEXT_ARR,
-    USERNAME_MIN_LENGTH,
-    USERNAME_MAX_LENGTH,
-    ITEMNAME_MIN_LENGTH,
-    ITEMNAME_MAX_LENGTH,
-    GROUPDESC_MAX_LENGTH,
-    DSBJ_MAX_TIMEOUT,
-    DSBJ_MAX_NUMREQ
-} from "../misc/constants";
+import * as c from "../misc/constants";
 
 /* GROUPS */
 export const validateGroup = partialGroup => {
     new SimpleSchema({
         name: {
             type: String,
-            min: ITEMNAME_MIN_LENGTH,
-            max: ITEMNAME_MAX_LENGTH
+            min: c.ITEMNAME_MIN_LENGTH,
+            max: c.ITEMNAME_MAX_LENGTH
         },
         description: {
             type: String,
-            max: GROUPDESC_MAX_LENGTH
+            max: c.GROUPDESC_MAX_LENGTH
         }
     }).validate({
         name: partialGroup.name,
@@ -181,8 +172,8 @@ export const validateGroupName = groupName => {
     new SimpleSchema({
         name: {
             type: String,
-            min: ITEMNAME_MIN_LENGTH,
-            max: ITEMNAME_MAX_LENGTH
+            min: c.ITEMNAME_MIN_LENGTH,
+            max: c.ITEMNAME_MAX_LENGTH
         }
     }).validate({
         name: groupName
@@ -210,22 +201,22 @@ export const validateDsbj = partialDsbj => {
     new SimpleSchema({
         name: {
             type: String,
-            min: ITEMNAME_MIN_LENGTH,
-            max: ITEMNAME_MAX_LENGTH
+            min: c.ITEMNAME_MIN_LENGTH,
+            max: c.ITEMNAME_MAX_LENGTH
         },
         description: {
             type: String,
-            max: DSBJDESC_MAX_LENGTH
+            max: c.DSBJDESC_MAX_LENGTH
         },
         timeout: {
             type: SimpleSchema.Integer,
             min: 1,
-            max: DSBJ_MAX_TIMEOUT
+            max: c.DSBJ_MAX_TIMEOUT
         },
         numberReq: {
             type: SimpleSchema.Integer,
             min: 0,
-            max: DSBJ_MAX_NUMREQ
+            max: c.DSBJ_MAX_NUMREQ
         }
     }).validate({
         name: partialDsbj.name,
@@ -244,7 +235,7 @@ export const validateMessage = partialMsg => {
         room: {
             type: String,
             custom() {
-                if (!ROOM_TEXT_ARR.includes(this.value)) {
+                if (!c.ROOM_TEXT_ARR.includes(this.value)) {
                     return "invalidRoom";
                 }
             }
@@ -264,8 +255,8 @@ export const validateUserDisplayName = userDisplayName => {
     new SimpleSchema({
         userDisplayName: {
             type: String,
-            min: USERNAME_MIN_LENGTH,
-            max: USERNAME_MAX_LENGTH
+            min: c.USERNAME_MIN_LENGTH,
+            max: c.USERNAME_MAX_LENGTH
         }
     }).validate({
         userDisplayName

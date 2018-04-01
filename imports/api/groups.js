@@ -21,20 +21,7 @@ if (Meteor.isServer) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        return GroupsDB.find(
-            {},
-            {
-                fields: {
-                    name: 1,
-                    lastMessageAt: 1,
-                    tags: 1,
-                    ownedBy: 1,
-                    moderators: 1,
-                    members: 1
-                },
-                $limit: 100
-            }
-        );
+        return GroupsDB.find({}, { $limit: 100 });
     });
 }
 

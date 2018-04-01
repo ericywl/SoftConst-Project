@@ -18,7 +18,7 @@ if (Meteor.isServer) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        return DsbjsDB.find();
+        return DsbjsDB.find({}, { $limit: 100 });
     });
 }
 
@@ -34,17 +34,33 @@ Meteor.methods({
         const now = moment().valueOf();
         const timeoutAt = now + partialDsbj.timeout;
 
-        return DsbjsDB.insert({
-            name: partialDsbj.name,
-            description: partialDsbj.description,
-            numberReq: partialDsbj.numberReq,
-            timeoutAt: timeoutAt,
-            lastMessageAt: now,
-            createdAt: now,
-            createdBy: this.userId,
-            tags: [],
-            attendees: []
-        });
+        const res = DsbjsDB.insert(
+            {
+                name: partialDsbj.name,
+                description: partialDsbj.description,
+                numberReq: partialDsbj.numberReq,
+                timeoutAt: timeoutAt,
+                lastMessageAt: now,
+                createdAt: now,
+                createdBy: this.userId,
+                tags: [],
+                attendees: []
+            },
+            (err, dsbjId) => {
+                if (!err) {
+                    try {
+                        ProfilesDB.update(
+                            { _id: this.userId },
+                            { $push: { dsbjs: dsbjId } }
+                        );
+                    } catch (newErr) {
+                        throw newErr;
+                    }
+                } else {
+                    throw err;
+                }
+            }
+        );
     },
 
     /**

@@ -1,6 +1,6 @@
 import expect from "expect";
 
-import { MessagesDB } from "./messages";
+import { GroupMessagesDB } from "./groupsMessages";
 import { GroupsDB } from "./groups";
 import { ProfilesDB } from "./profiles";
 
@@ -12,7 +12,7 @@ if (Meteor.isServer) {
         const userDisplayName2 = "abcdefghijklmnopqrstuvwxyz1234567890";
 
         beforeEach(function() {
-            MessagesDB.remove({});
+            GroupMessagesDB.remove({});
             GroupsDB.remove({});
             ProfilesDB.remove({});
 
@@ -34,7 +34,7 @@ if (Meteor.isServer) {
                     [partialMsg]
                 );
 
-                expect(MessagesDB.findOne({ _id, userId })).toBeTruthy();
+                expect(GroupMessagesDB.findOne({ _id, userId })).toBeTruthy();
 
                 const groupLastMessageAt = GroupsDB.findOne({
                     _id: partialMsg.groupId

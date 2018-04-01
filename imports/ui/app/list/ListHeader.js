@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
-import AddGroupModal from "./_AddItemModal";
-import JoinGroupModal from "./_JoinItemModal";
+import AddItemModal from "./_AddItemModal";
+import JoinItemModal from "./_JoinItemModal";
 
 // APIs
 import { searchFilterBeforeSet } from "../../../misc/methods";
@@ -45,7 +45,7 @@ export class GroupListHeader extends React.Component {
                     </button>
                 </div>
 
-                <AddGroupModal
+                <AddItemModal
                     selectedTab={this.props.selectedTab}
                     session={this.props.session}
                     meteorCall={this.props.meteorCall}
@@ -54,7 +54,7 @@ export class GroupListHeader extends React.Component {
                     }}
                 />
 
-                <JoinGroupModal
+                <JoinItemModal
                     selectedTab={this.props.selectedTab}
                     session={this.props.session}
                     meteorCall={this.props.meteorCall}
