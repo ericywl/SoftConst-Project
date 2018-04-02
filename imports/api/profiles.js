@@ -212,7 +212,17 @@ Meteor.methods({
         );
     },
 
-    profilesRemoveTag(_id, tag) {},
+    profilesRemoveTag(tag) {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error("not-logged-in");
+        }
+
+        checkUserExist(Meteor.userId());
+        return ProfilesDB.update(
+            {_id: Meteor.userId() },
+            { $pull: { tags: tag } }
+        );
+    },
 
     profilesUpdateDisplayName() {},
 

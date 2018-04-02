@@ -4,6 +4,7 @@ import { Redirect, Router, Route, Switch } from "react-router-dom";
 
 // React Components
 import Dashboard from "../ui/app/Dashboard";
+import ProfilePage from "../ui/app/ProfilePage";
 import Login from "../ui/auth/Login";
 import Signup from "../ui/auth/Signup";
 import NotFound from "../ui/NotFound";
@@ -38,6 +39,24 @@ export const getRoutes = isAuthenticated => {
                         component={Dashboard}
                     />
 
+                    <PrivateRoute
+                        path="/dashboard/:id"
+                        isAuth={isAuthenticated}
+                        component={Dashboard}
+                    />
+
+                    <PrivateRoute
+                        path="/profile"
+                        isAuth = {isAuthenticated} 
+                        component={ProfilePage}
+                    />
+					
+					<PrivateRoute
+                    	path="/finder"
+                    	isAuth={isAuthenticated}
+                    	component={Dashboard}
+					/>
+					
                     <Route component={NotFound} />
                 </Switch>
             </div>

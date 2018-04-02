@@ -2,68 +2,68 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
-import { ProfilesDB } from "../../../api/profiles.js";
+import { ProfilesDB } from "../../../api/profiles.js"
 
 export class ProfileTagsList extends React.Component {
     constructor(props) {
         super(props);
-    }
-    renderProfile() {
-        return this.props.bio == "" ? "Replace me" : this.props.bio;
+        this.state = {};
     }
 
-    onChangeBio(event) {
-        this.bio = event.target.value.trim();
-    }
+    handleTagDelete(event) {
+        event.preventDefault();
+        const tagName = event.target.parentElement.children[1].innerHTML;
 
-    onUpdateBio() {
-        Meteor.call(
-            "profilesUpdateBio",
+        this.props.meteorCall(
+            "profilesRemoveTag",
             Meteor.userId(),
-            this.bio,
-            (err, res) => {
-                err ? console.log({ error: err.reason }) : null;
-            }
+            tagName
         );
     }
 
-    render() {
-        this.currentUserId = Meteor.userId();
-        return (
-            <div className="profiles">
-                <div>
-                    <h6>{this.renderProfile()}</h6>
-                </div>
-                <div>
-                    <input
-                        ref="bio"
-                        type="text"
-                        placeholder="New Bio"
-                        onChange={this.onChangeBio.bind(this)}
+    renderTags() {
+        return (!this.props.tags) ? ["dummy text"] : this.props.tags.map((tag, index) => (
+            /*<span
+                style={{ float: "left", padding: "0 0.5rem" }}
+                key={`tag${index}`}
+            >
+                #{tag}
+            </span>*/
+            <span className="tags__tag" key={`tag${index}`}>
+                <span className="tags__tag--hash"># </span>
+                <span>{tag}</span>
+                {this.props.isModerator ? (
+                    <img
+                        className="tags__tag--cross"
+                        src="/images/round_x.svg"
+                        onClick={this.handleTagDelete.bind(this)}
                     />
-                    <button
-                        name="update-bio"
-                        onClick={this.onUpdateBio.bind(this)}
-                    >
-                        update
-                    </button>
-                </div>
+                ) : (
+                    undefined
+                )}
+            </span>
+        ));
+    }
+
+    render() {
+        return (
+            <div className="tags">
+                {this.renderTags()}
             </div>
         );
     }
 }
 
-Profile.propTypes = {
-    bio: PropTypes.string.isRequired,
-    meteorCall: PropTypes.func.isRequired
+ProfileTagsList.propTypes = {
+    //tags: PropTypes.arrayOf(String).isRequired,
 };
 
 export default withTracker(() => {
-    Meteor.subscribe("profiles", Meteor.userId());
-    const doc = ProfilesDB.find().fetch()[0];
-
+    //Meteor.subscribe("profiles");
+    //console.log("test");
+    //const doc = ProfilesDB.find({_id:Meteor.userId()}).fetch()[0];
+    //console.log(doc);
     return {
-        bio: !doc || !doc.bio ? "Replace me" : doc.bio,
-        meteorCall: Meteor.call
+        //tags: (doc && doc.tags) ? doc.tags : ["Tags dummy text"],
     };
-})(Profile);
+})(ProfileTagsList);

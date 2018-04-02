@@ -6,6 +6,22 @@ import SimpleSchema from "simpl-schema";
 import { ProfilesDB } from "./profiles.js";
 import { USERNAME_MIN_LENGTH } from "../misc/constants";
 
+if (Meteor.isServer) {
+    Meteor.publish("userProfile", function(_id) {
+        return Meteor.users.find(
+            {_id},
+            {
+                fields: {
+                    /*displayName: 1,
+                    groups: 1,
+                    tags: 1,
+                    bio: 1*/
+                }
+            }
+        );
+    });
+}
+
 export const validateNewUserClient = user => {
     const email = user.email;
     const password = user.password;
@@ -61,8 +77,16 @@ if (Meteor.isServer) {
         if (!options.username) {
             throw new Meteor.Error("username-not-provided");
         }
-
-        user.username = options.username;
+        /*ProfilesDB.insert({
+            _id: user._id,
+            displayName: user.displayName,
+            groups: [],
+            tags: [],
+            bio: ""
+        })*/
+    
         return user;
     });
 }
+
+    
