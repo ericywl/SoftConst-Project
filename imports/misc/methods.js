@@ -228,6 +228,18 @@ export const validateDsbj = partialDsbj => {
     return true;
 };
 
+export const validateDsbjName = dsbjName => {
+    new SimpleSchema({
+        name: {
+            type: String,
+            min: c.ITEMNAME_MIN_LENGTH,
+            max: c.ITEMNAME_MAX_LENGTH
+        }
+    }).validate({ name: dsbjName });
+
+    return true;
+};
+
 /* MESSAGES */
 export const validateMessage = (item, partialMsg) => {
     const itemId = item === "groups" ? partialMsg.groupId : partialMsg.dsbjId;

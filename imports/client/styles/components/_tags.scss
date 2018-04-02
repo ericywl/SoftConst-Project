@@ -5,10 +5,16 @@
 
 .tags__title {
     display: flex;
+    justify-content: space-evenly;
     margin-bottom: 0;
 }
 
 .tags__title-part {
+    margin-bottom: 0;
+}
+
+.tags__title-part-el {
+    padding-right: $input-spacing / 2;
     margin-bottom: 0;
 }
 

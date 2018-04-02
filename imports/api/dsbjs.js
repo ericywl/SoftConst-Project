@@ -6,7 +6,8 @@ import {
     checkAccess,
     checkUserExist,
     tagFilter,
-    validateDsbj
+    validateDsbj,
+    validateDsbjName
 } from "../misc/methods";
 
 export const DsbjsDB = new Mongo.Collection("dsbjs");
@@ -79,7 +80,7 @@ Meteor.methods({
      * @param {String} dsbjId : id of the list
      * @param {String} addedTag : tag to be inserted
      */
-    dsbjsAddTag(dsbjId, addedTag) {
+    dsbjsTagAdd(dsbjId, addedTag) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
         const formattedTag = tagFilter(addedTag);
@@ -98,7 +99,7 @@ Meteor.methods({
      * @param {String} dsbjId : id of the list
      * @param {String} removedTag : tag to be removed
      */
-    dsbjsRemoveTag(dsbjId, removedTag) {
+    dsbjsTagRemove(dsbjId, removedTag) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
         const formattedTag = tagFilter(removedTag);
@@ -113,11 +114,24 @@ Meteor.methods({
     },
 
     /**
+     * Change the list name
+     * @param {String} dsbjId : id of the list
+     * @param {String} newName : the list's new name
+     */
+    dsbjsNameChange(dsbjId, newName) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        validateDsbjName(newName);
+        checkAccess(dsbjId, DsbjsDB);
+
+        return DsbjsDB.update({ _id: dsbjId }, { $set: { name: newName } });
+    },
+
+    /**
      * Update the timeout, ie. shorten or extend DSBJ response deadline
      * @param {String} dsbjId : id of DSBJ to be updated
      * @param {String} newTimeout : the new timeout
      */
-    dsbjsUpdateTimeout(dsbjId, newTimeout) {
+    dsbjsTimeoutUpdate(dsbjId, newTimeout) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
 
@@ -138,7 +152,7 @@ Meteor.methods({
      * @param {String} dsbjId : id of DSBJ to be updated
      * @param {String} newNumberReq : the new number of attendees required
      */
-    dsbjsUpdateNumberReq(dsbjId, newNumberReq) {
+    dsbjsNumberReqUpdate(dsbjId, newNumberReq) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
 
@@ -159,7 +173,7 @@ Meteor.methods({
      * @param {String} dsbjId : id of the DSBJ event
      * @param {String} addedUserId : user id to be added
      */
-    dsbjsAddAttendee(dsbjId, addedUserId) {
+    dsbjsAttendeeAdd(dsbjId, addedUserId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
 
@@ -177,7 +191,7 @@ Meteor.methods({
      * @param {String} dsbjId : id of the DSBJ event
      * @param {String} removedUserId : user id to be removed
      */
-    dsbjsRemoveAttendee(dsbjId, removedUserId) {
+    dsbjsAttendeeRemove(dsbjId, removedUserId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
 

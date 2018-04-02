@@ -23,7 +23,7 @@ if (Meteor.isServer) {
         }
 
         new SimpleSchema({
-            groupId: { type: String }
+            dsbjId: { type: String }
         }).validate({ dsbjId });
 
         return DsbjsMessagesDB.find({ dsbjId }, { limit: 500 });

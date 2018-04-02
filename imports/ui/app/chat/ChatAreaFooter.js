@@ -81,7 +81,7 @@ export class ChatAreaFooter extends React.Component {
         if (this.state.input.trim() === "") return;
 
         const partialMsg = {
-            groupId: this.props.selectedItemId,
+            dsbjId: this.props.selectedItemId,
             room: this.props.selectedRoom,
             content: this.state.input.trim()
         };

@@ -159,9 +159,9 @@ Meteor.methods({
     },
 
     /**
-     * Change the list name
-     * @param {String} groupdId : id of the list
-     * @param {String} newName : the list's new name
+     * Change the group name
+     * @param {String} groupdId : id of the group
+     * @param {String} newName : the group's new name
      */
     groupsNameChange(groupdId, newName) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");

@@ -9,6 +9,7 @@ import { Message } from "./Message";
 
 // APIs
 import { GroupsMessagesDB } from "../../../api/groupsMessages";
+import { DsbjsMessagesDB } from "../../../api/dsbjsMessages";
 
 export class MessageList extends React.Component {
     constructor(props) {
@@ -135,14 +136,23 @@ export class MessageList extends React.Component {
 }
 
 export default withTracker(() => {
-    const selectedGroupId = Session.get("selectedGroupId");
     const selectedRoom = Session.get("selectedRoom");
-    const handle = Meteor.subscribe("messagesByGroup", selectedGroupId);
+    const selectedGroupId = Session.get("selectedGroupId");
+    const selectedDsbjId = Session.get("selectedDsbjId");
+
+    let handle, messages;
+    if (selectedRoom === "groups") {
+        handle = Meteor.subscribe("messagesByGroup", selectedGroupId);
+        messages = GroupsMessagesDB.find({ room: selectedRoom }).fetch();
+    } else {
+        handle = Meteor.subscribe("messagesByDsbj", selectedDsbjId);
+        messages = DsbjsMessagesDB.find().fetch();
+    }
 
     return {
         selectedGroupId,
         selectedRoom,
-        ready: handle.ready(),
-        messages: GroupsMessagesDB.find({ room: selectedRoom }).fetch()
+        messages,
+        ready: handle.ready()
     };
 })(MessageList);

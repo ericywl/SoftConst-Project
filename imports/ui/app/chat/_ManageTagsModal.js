@@ -33,11 +33,15 @@ export default class ManageTagsModal extends React.Component {
                 style={modalStyles}
             >
                 <div className="boxed-view__modal-title tags__title">
-                    <h2 className="ellipsis tags__title-part">
-                        {this.props.selectedItemPartial.name}
-                    </h2>
-                    <h2 className="tags__title-part"> Tags</h2>
+                    <div style={{ display: "flex" }}>
+                        <h2 className="ellipsis tags__title-part tags__title-part-el">
+                            {this.props.selectedItemPartial.name}
+                        </h2>
+                        <h2 className="tags__title-part">Tags</h2>
+                    </div>
                 </div>
+
+                {this.state.error ? <p>{this.state.error}</p> : undefined}
 
                 <FlipMove
                     className="tags"
