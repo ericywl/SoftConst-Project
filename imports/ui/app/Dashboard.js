@@ -1,12 +1,12 @@
 // Library
 import React from "react";
-import Modal from "react-modal";
 import { withTracker } from "meteor/react-meteor-data";
 
 
 // React Components
-import PrivateHeader2 from "./PrivateHeader2";
-import GroupList from "./group/GroupList";
+import PrivateHeader from "./PrivateHeader";
+import PrivateTab from "./PrivateTab";
+import List from "./list/List";
 import ChatArea from "./chat/ChatArea";
 
 export class Dashboard extends React.Component {
@@ -18,29 +18,44 @@ export class Dashboard extends React.Component {
     }
 
     renderPage() {
-        if (this.state.page === "chat") {
-            return (
-                <div className="page-content">
-                    <div className="page-content__sidebar">
-                        <GroupList />
-                    </div>
+        const sidebarClass =
+            this.props.selectedTab === "groups"
+                ? ""
+                : " page-content__sidebar--dsbj";
 
-                    <div className="page-content__main">
-                        <ChatArea />
-                    </div>
+        const mainClass =
+            this.props.selectedTab === "groups"
+                ? ""
+                : " page-content__main--dsbj";
+
+        return (
+            <div className="page-content">
+                <div className={"page-content__sidebar" + sidebarClass}>
+                    <List selectedTab={this.props.selectedTab} />
                 </div>
-            );
-        } 
+
+                <div className={"page-content__main" + mainClass}>
+                    <ChatArea selectedTab={this.props.selectedTab} />
+                </div>
+            </div>
+        );
     }
 
     render() {
         return (
             <div>
-                <PrivateHeader2 title="STUD Chat" />
+                <PrivateHeader title="STUD Chat" />
+                <PrivateTab />
                 {this.renderPage()}
             </div>
         );
     }
 }
 
-export default Dashboard;
+export default withTracker(() => {
+    const selectedTab = Session.get("selectedTab");
+
+    return {
+        selectedTab
+    };
+})(Dashboard);

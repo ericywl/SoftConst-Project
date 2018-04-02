@@ -12,8 +12,12 @@ export class Message extends React.Component {
         return (
             <div className="message">
                 <div className="message__header">
-                    {userDisplayName}{" "}
-                    <span className="message__time">{messageSentAt}</span>
+                    <span className="message__header-username">
+                        {userDisplayName}
+                    </span>{" "}
+                    <span className="message__header-time">
+                        {messageSentAt}
+                    </span>
                 </div>
                 <div className="message__body">
                     {this.props.message.content}

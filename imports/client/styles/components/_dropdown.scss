@@ -1,12 +1,14 @@
 .dropdown {
-    width: 20rem;
+    max-width: 20rem;
+    width: 100%;
     height: 2.5rem;
-    margin: 1.25rem;
+    margin-top: 1rem;
     outline: none;
     overflow: visible;
 }
 
 .dropdown__control {
+    width: inherit;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -14,24 +16,36 @@
 }
 
 .dropdown__menu {
-    width: inherit;
+    max-width: 20rem;
+    width: 100%;
     background-color: white;
     border: 1px solid $dropdown-greyed-border-color;
     position: relative;
-    z-index: 10;
 }
 
 .dropdown__item {
+    cursor: pointer;
     box-sizing: border-box;
     border: 1px solid transparent;
     padding: $input-spacing;
 }
 
 .dropdown__item:hover {
-    cursor: pointer;
     color: white;
     background-color: $brand-primary;
     border: 1px solid $brand-primary;
+}
+
+.dropdown__item--disabled {
+    cursor: not-allowed;
+    color: $grey;
+    background: transparent;
+}
+
+.dropdown__item--disabled:hover {
+    color: $grey;
+    background: transparent;
+    border: 1px solid transparent;
 }
 
 .dropdown__trigger {
