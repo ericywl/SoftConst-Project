@@ -1,0 +1,19 @@
+/* LIST SIDEBAR */
+.room-bar {
+    width: 15%;
+    position: relative;
+    padding-left: 0.5rem;
+    background-color: $grey;
+
+    @include desktop() {
+        background-color: transparent;
+    }
+}
+
+.room-bar__content {
+    display: table;
+    position: fixed;
+    transform: rotate(90deg) translateX(-4.9rem);
+    transform-origin: bottom left;
+    margin-right: $space;
+}

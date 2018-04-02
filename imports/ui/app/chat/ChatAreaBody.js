@@ -19,7 +19,7 @@ export class ChatAreaBody extends React.Component {
             <div className="chat-area__body">
                 {this.state.error ? <p>{this.state.error}</p> : undefined}
 
-                {this.props.notInGroup ? (
+                {this.props.notInItem ? (
                     <button onClick={this.onClickJoin.bind(this)}>Join</button>
                 ) : (
                     <MessageList />
@@ -30,14 +30,19 @@ export class ChatAreaBody extends React.Component {
 
     onClickJoin(event) {
         event.preventDefault();
+        const joinMethod =
+            this.props.selectedTab === "groups"
+                ? "profilesJoinGroup"
+                : "profilesJoinDsbj";
+
         this.props.meteorCall(
-            "profilesJoinGroup",
-            this.props.selectedGroupId,
+            joinMethod,
+            this.props.selectedItemId,
             (err, res) => {
                 if (err) this.setState({ error: err.reason });
                 if (res) {
-                    // TODO: Add joined group message
-                    console.log("you have joined the group!");
+                    // TODO: Add joined list message
+                    console.log("you have joined the list!");
                 }
             }
         );
@@ -45,6 +50,11 @@ export class ChatAreaBody extends React.Component {
 }
 
 ChatAreaBody.propTypes = {
+    selectedItemId: PropTypes.string.isRequired,
+    selectedTab: PropTypes.string.isRequired,
+    notInItem: PropTypes.bool.isRequired,
+    isOwner: PropTypes.bool.isRequired,
+    isModerator: PropTypes.bool.isRequired,
     meteorCall: PropTypes.func.isRequired
 };
 

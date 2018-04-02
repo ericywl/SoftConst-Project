@@ -8,7 +8,8 @@ import moment from "moment";
 import { Message } from "./Message";
 
 // APIs
-import { MessagesDB } from "../../../api/messages";
+import { GroupsMessagesDB } from "../../../api/groupsMessages";
+import { DsbjsMessagesDB } from "../../../api/dsbjsMessages";
 
 export class MessageList extends React.Component {
     constructor(props) {
@@ -19,10 +20,14 @@ export class MessageList extends React.Component {
     }
 
     render() {
+        const notReady = !this.props.ready || this.props.messages.length == 0;
+
         return (
             <div className="message-list" ref="messageList">
-                {this.props.messages.length == 0 ? (
-                    <div>Nothing to see here.</div>
+                {notReady ? (
+                    <div className="empty-message-list">
+                        Nothing to see here.
+                    </div>
                 ) : (
                     this.props.messages.map(message => {
                         return <Message key={message._id} message={message} />;
@@ -45,27 +50,52 @@ export class MessageList extends React.Component {
 
     componentWillUpdate(nextProps, nextState, nextContext) {
         const currGroupId = this.props.selectedGroupId;
+        const currRoom = this.props.selectedRoom;
         const nextGroupId = nextProps.selectedGroupId;
         const { messageList } = this.refs;
 
-        // If user has changed group, save current scroll position
+        if (this.scrollPositions[currGroupId] === undefined) {
+            this.scrollPositions[currGroupId] = {};
+        }
+
+        // If user has changed list, save current scroll position
         if (nextGroupId !== currGroupId) {
             this.changedGroup = true;
             this.autoScroll = false;
-            this.scrollPositions[currGroupId] = Math.round(
+
+            this.scrollPositions[currGroupId][currRoom] = Math.round(
                 messageList.scrollTop
             );
             return;
+        }
+
+        // If user has changed room, save current scroll position
+        const nextRoom = nextProps.selectedRoom;
+        if (currRoom !== nextRoom) {
+            this.changedGroup = true;
+            this.autoScroll = false;
+
+            this.scrollPositions[currGroupId][currRoom] = Math.round(
+                messageList.scrollTop
+            );
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
         const { messageList } = this.refs;
         const groupId = this.props.selectedGroupId;
+        const room = this.props.selectedRoom;
 
         if (messageList && this.props.ready) {
-            const scrollPos = this.scrollPositions[groupId];
-            /* If user came from another group, 
+            let scrollPos;
+            const scrollPosObj = this.scrollPositions[groupId];
+            if (!scrollPosObj) {
+                scrollPos = undefined;
+            } else {
+                scrollPos = scrollPosObj[room];
+            }
+
+            /* If user came from another list or room,
             move scroll to its previous position */
             if (this.changedGroup) {
                 if (scrollPos !== undefined) {
@@ -106,13 +136,23 @@ export class MessageList extends React.Component {
 }
 
 export default withTracker(() => {
-    const selectedGroupId = Session.get("selectedGroupId");
     const selectedRoom = Session.get("selectedRoom");
-    const handle = Meteor.subscribe("messagesByGroup", selectedGroupId);
+    const selectedGroupId = Session.get("selectedGroupId");
+    const selectedDsbjId = Session.get("selectedDsbjId");
+
+    let handle, messages;
+    if (selectedRoom === "groups") {
+        handle = Meteor.subscribe("messagesByGroup", selectedGroupId);
+        messages = GroupsMessagesDB.find({ room: selectedRoom }).fetch();
+    } else {
+        handle = Meteor.subscribe("messagesByDsbj", selectedDsbjId);
+        messages = DsbjsMessagesDB.find().fetch();
+    }
 
     return {
         selectedGroupId,
-        ready: handle.ready(),
-        messages: MessagesDB.find({ room: selectedRoom }).fetch()
+        selectedRoom,
+        messages,
+        ready: handle.ready()
     };
 })(MessageList);

@@ -18,11 +18,14 @@ if (Meteor.isClient) {
         Meteor.subscribe("pwn3d");
         Meteor.call("adminsInsert");
 
+        Session.setDefault("selectedTab", "groups");
+        Session.setDefault("selectedDsbjId", "");
         Session.setDefault("selectedGroupId", "");
-        Session.setDefault("selectedRoom", "messages");
+        Session.setDefault("selectedRoom", "announcements");
         Session.setDefault("searchQuery", "");
         Session.setDefault("sentToGroup", "");
         Session.setDefault("isNavOpen", false);
+        Session.setDefault("isModalOpen", false);
         Session.setDefault("sessionTime", moment().valueOf());
 
         Tracker.autorun(() => {
@@ -37,7 +40,7 @@ if (Meteor.isClient) {
 Meteor.setInterval(updateSessionTime, 20000);
 
 /**
- * Update the session time to refresh fromNow value in group list
+ * Update the session time to refresh fromNow value in list list
  */
 function updateSessionTime() {
     Session.set("sessionTime", moment().valueOf());

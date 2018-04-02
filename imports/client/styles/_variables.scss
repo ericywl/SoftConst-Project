@@ -14,12 +14,14 @@ $body-default-font: "Helvetica Neue", Helvetica, Arial, sans-serif;
 /* SPACING */
 $space: 1.4rem;
 $large-space: 2.7rem;
-$site-max-width: 102rem;
+$site-max-width: 110rem;
 
 /* FONT SIZES */
+$small-font-size: 1.2rem;
 $base-font-size: 1.6rem;
 $medium-font-size: 1.8rem;
 $large-font-size: 2rem;
+$extra-large-font-size: 3rem;
 
 /* FORM INPUTS */
 $input-border: $grey;
@@ -29,6 +31,21 @@ $input-spacing: 1rem;
 $header-bg: $brand-primary;
 $header-color: white;
 $header-height: 6rem;
+
+/* TAB */
+$tab-height: 6rem;
+
+/* PAGE CONTENT */
+$page-content-sidebar-width: 32rem;
+$page-content-main-width: calc(
+    #{$site-max-width} - #{$page-content-sidebar-width}
+);
+$page-content-sidebar-width-dsbj: 27.2rem;
+$page-content-main-width-dsbj: calc(
+    #{$site-max-width} - (#{$page-content-sidebar-width-dsbj})
+);
+$page-content-height-desktop: calc(99vh - #{$header-height} - #{$tab-height});
+$page-content-height-mobile: calc(100vh - #{$header-height});
 
 /* BUTTON */
 $button-bg: $brand-primary;
@@ -70,10 +87,3 @@ $tags-tag-bg-color: lighten($grey, 5%);
 $boxed-view-overlay-bg: $grey;
 $boxed-view-bg: white;
 $boxed-view-border-color: $grey;
-
-/* PAGE CONTENT */
-$page-content-sidebar-width: 32rem;
-$page-content-main-width: calc(
-    #{$site-max-width} - #{$page-content-sidebar-width}
-);
-$page-content-height: calc(100vh - #{$header-height});

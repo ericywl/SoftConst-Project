@@ -6,10 +6,10 @@
 }
 
 html {
-    font-size: 62.5%;
+    font-size: 55%;
 
-    @include phone() {
-        font-size: 55%;
+    @include desktop() {
+        font-size: 62.5%;
     }
 }
 
@@ -22,6 +22,7 @@ body {
 }
 
 h1 {
+    font-size: $extra-large-font-size;
     font-weight: 300;
     margin-bottom: $space;
 }
@@ -96,4 +97,11 @@ textarea {
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome and Opera */
+}
+
+.ellipsis {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

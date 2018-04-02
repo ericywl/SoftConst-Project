@@ -24,17 +24,25 @@ export default class ManageTagsModal extends React.Component {
         return (
             <Modal
                 isOpen={this.state.modalIsOpen}
-                contentLabel="Create New Group"
-                onAfterOpen={() => {}}
+                contentLabel="Manage Tags"
+                onAfterOpen={() => this.refs.newTag.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
                 className="boxed-view__large-box"
-                overlayClassName="boxed-view boxed-view--modal"
+                overlayClassName="boxed-view boxed-view__modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <h3 className="tags__title">
-                    {this.props.selectedGroup.name} Tags
-                </h3>
+                <div className="boxed-view__modal-title tags__title">
+                    <div style={{ display: "flex" }}>
+                        <h2 className="ellipsis tags__title-part tags__title-part-el">
+                            {this.props.selectedItemPartial.name}
+                        </h2>
+                        <h2 className="tags__title-part">Tags</h2>
+                    </div>
+                </div>
+
+                {this.state.error ? <p>{this.state.error}</p> : undefined}
+
                 <FlipMove
                     className="tags"
                     duration={100}
@@ -44,7 +52,7 @@ export default class ManageTagsModal extends React.Component {
                     {this.renderTags()}
                 </FlipMove>
 
-                {this.props.isModerator ? (
+                {this.props.haveAccess ? (
                     <form
                         className="boxed-view__form--row"
                         onSubmit={this.handleSubmit.bind(this)}
@@ -67,17 +75,17 @@ export default class ManageTagsModal extends React.Component {
     }
 
     renderTags() {
-        if (this.props.selectedGroup.tags.length === 0) {
+        if (this.props.selectedItemPartial.tags.length === 0) {
             return (
                 <div className="empty-tags">There are no tags currently.</div>
             );
         }
 
-        return this.props.selectedGroup.tags.map((tag, index) => (
+        return this.props.selectedItemPartial.tags.map((tag, index) => (
             <span className="tags__tag" key={`tag${index}`}>
                 <span className="tags__tag--hash"># </span>
                 <span>{tag}</span>
-                {this.props.isModerator ? (
+                {this.props.haveAccess ? (
                     <img
                         className="tags__tag--cross"
                         src="/images/round_x.svg"
@@ -101,11 +109,19 @@ export default class ManageTagsModal extends React.Component {
     handleTagDelete(event) {
         event.preventDefault();
         const tagName = event.target.parentElement.children[1].innerHTML;
+        const tagRemove = this.props.isGroupTab
+            ? "groupsTagRemove"
+            : "dsbjsTagRemove";
 
         this.props.meteorCall(
-            "groupsRemoveTag",
-            this.props.selectedGroup._id,
-            tagName
+            tagRemove,
+            this.props.selectedItemPartial._id,
+            tagName,
+            (err, res) => {
+                if (err) {
+                    this.setState({ error: err.reason });
+                }
+            }
         );
     }
 
@@ -113,9 +129,10 @@ export default class ManageTagsModal extends React.Component {
         event.preventDefault();
         if (this.state.newTag === "") return;
 
+        const tagAdd = this.props.isGroupTab ? "groupsTagAdd" : "dsbjsTagAdd";
         this.props.meteorCall(
-            "groupsAddTag",
-            this.props.selectedGroup._id,
+            tagAdd,
+            this.props.selectedItemPartial._id,
             this.state.newTag,
             (err, res) => {
                 if (err) {
@@ -137,7 +154,8 @@ export default class ManageTagsModal extends React.Component {
 }
 
 ManageTagsModal.propTypes = {
-    isModerator: PropTypes.bool.isRequired,
-    selectedGroup: PropTypes.object.isRequired,
+    haveAccess: PropTypes.bool.isRequired,
+    isGroupTab: PropTypes.bool.isRequired,
+    selectedItemPartial: PropTypes.object.isRequired,
     meteorCall: PropTypes.func.isRequired
 };
