@@ -18,7 +18,7 @@ export default class ChatDropdown extends React.Component {
 
     render() {
         const tabText = capitalizeFirstLetter(
-            this.props.selectedTab.slice(0, this.props.selectedTab.length)
+            this.props.selectedTab.slice(0, this.props.selectedTab.length - 1)
         );
 
         const selectedItemPartial = {
