@@ -2,20 +2,20 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
-import { ProfilesDB } from "../../../api/profiles.js"
+import { ProfilesDB } from "../../../api/profiles.js";
 
 export class ProfileTagsHeader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            newTag: "",
+            newTag: ""
         };
     }
 
     onChangeTag(event) {
         event.preventDefault();
         const input = event.target.value;
-        this.setState({newTag: input});
+        this.setState({ newTag: input });
     }
 
     onAddTag(event) {
@@ -23,27 +23,31 @@ export class ProfileTagsHeader extends React.Component {
         Meteor.call("profilesAddTag", this.state.newTag.trim(), (err, res) => {
             err ? console.log({ error: err.reason }) : null;
         });
-        console.log(this.newTag)
+        console.log(this.newTag);
         this.state.newTag = "";
     }
 
     render() {
         //this.currentUserId = Meteor.userId();
         return (
-            <div >
-                <form class="boxed-view__form--row" onSubmit={this.onAddTag.bind(this)}>
+            <div>
+                <form
+                    className="boxed-view__form--row"
+                    onSubmit={this.onAddTag.bind(this)}
+                >
                     <input
-                        class="tags__input"
+                        className="tags__input"
                         ref="new-tag"
                         type="text"
                         placeholder="New Tag"
                         value={this.state.newTag}
                         onChange={this.onChangeTag.bind(this)}
                     />
-                    <button 
-                        class="button button--tag"
+                    <button
+                        className="button button--tag"
                         name="add-tag"
-                        onClick={this.onAddTag.bind(this)}>
+                        onClick={this.onAddTag.bind(this)}
+                    >
                         add
                     </button>
                 </form>
@@ -52,8 +56,7 @@ export class ProfileTagsHeader extends React.Component {
     }
 }
 
-ProfileTagsHeader.propTypes = {
-};
+ProfileTagsHeader.propTypes = {};
 
 export default withTracker(() => {
     return {

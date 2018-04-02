@@ -10,7 +10,7 @@ import JoinItemModal from "./_JoinItemModal";
 // APIs
 import { searchFilterBeforeSet } from "../../../misc/methods";
 
-export class GroupListHeader extends React.Component {
+export class ListHeader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -84,7 +84,7 @@ export class GroupListHeader extends React.Component {
     }
 }
 
-GroupListHeader.propTypes = {
+ListHeader.propTypes = {
     meteorCall: PropTypes.func.isRequired,
     session: PropTypes.object.isRequired
 };
@@ -94,4 +94,4 @@ export default withTracker(() => {
         meteorCall: Meteor.call,
         session: Session
     };
-})(GroupListHeader);
+})(ListHeader);

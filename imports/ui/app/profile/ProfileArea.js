@@ -12,16 +12,12 @@ export class ProfileArea extends React.Component {
     }
 
     render() {
-        if (Meteor.userId()) {
-            return (
-                <div>
-                    <Profile/>
-                </div>
-            );
-        }
+        return (
+            <div>
+                <Profile />
+            </div>
+        );
     }
 }
 
 export default ProfileArea;
-
-

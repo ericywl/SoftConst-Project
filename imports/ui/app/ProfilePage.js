@@ -3,10 +3,9 @@ import React from "react";
 import Modal from "react-modal";
 import { withTracker } from "meteor/react-meteor-data";
 
-
 // React Components
 import PrivateHeader2 from "./PrivateHeader2";
-import GroupList from "./group/GroupList";
+import List from "./list/List";
 import ChatArea from "./chat/ChatArea";
 import ProfileArea from "./profile/ProfileArea";
 
@@ -23,7 +22,7 @@ export class ProfilePage extends React.Component {
             return (
                 <div className="page-content">
                     <div className="page-content__sidebar">
-                        <GroupList />
+                        <div>dummy</div>
                     </div>
 
                     <div className="page-content__main">
@@ -31,7 +30,7 @@ export class ProfilePage extends React.Component {
                     </div>
                 </div>
             );
-        } 
+        }
     }
 
     render() {
