@@ -19,8 +19,15 @@ export class Message extends React.Component {
                         {messageSentAt}
                     </span>
                 </div>
+
                 <div className="message__body">
-                    {this.props.message.content}
+                    <div className="message__body-content">
+                        {this.props.message.content}
+                    </div>
+
+                    <div className="message__body-option">
+                        <button>Hi</button>
+                    </div>
                 </div>
             </div>
         );

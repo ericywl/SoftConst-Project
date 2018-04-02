@@ -20,7 +20,6 @@
 
 .message {
     padding: $space $input-spacing;
-    padding-right: $large-space;
     border-bottom: 1px solid $grey;
 }
 
@@ -38,8 +37,29 @@
 }
 
 .message__body {
+    display: flex;
+    flex-direction: row;
     font-size: calc(#{$base-font-size} - 0.1rem);
     color: darken($dark-grey, 10%);
+}
+
+.message__body:hover .message__body-option {
+    visibility: visible;
+}
+
+.message__body-content {
+    margin-right: $space;
+    flex: 1;
+
+    word-wrap: break-word; /* IE 5.5-7 */
+    white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+    white-space: pre-wrap; /* current browsers */
+}
+
+.message__body-option {
+    float: right;
+    visibility: hidden;
+    padding: 0 $space;
 }
 
 /* EMPTY */
