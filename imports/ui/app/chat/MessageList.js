@@ -2,25 +2,32 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
+import moment from "moment";
 
 // React Components
 import { Message } from "./Message";
 
 // APIs
-import { MessagesDB } from "../../../api/messages";
+import { GroupsMessagesDB } from "../../../api/groupsMessages";
+import { DsbjsMessagesDB } from "../../../api/dsbjsMessages";
 
 export class MessageList extends React.Component {
     constructor(props) {
         super(props);
         this.changedGroup = true;
+        this.autoScroll = false;
         this.scrollPositions = {};
     }
 
     render() {
+        const notReady = !this.props.ready || this.props.messages.length == 0;
+
         return (
             <div className="message-list" ref="messageList">
-                {this.props.messages.length == 0 ? (
-                    <div>Nothing to see here.</div>
+                {notReady ? (
+                    <div className="empty-message-list">
+                        Nothing to see here.
+                    </div>
                 ) : (
                     this.props.messages.map(message => {
                         return <Message key={message._id} message={message} />;
@@ -42,54 +49,110 @@ export class MessageList extends React.Component {
     }
 
     componentWillUpdate(nextProps, nextState, nextContext) {
-        const newMessages = nextProps.messages;
+        const currGroupId = this.props.selectedGroupId;
+        const currRoom = this.props.selectedRoom;
+        const nextGroupId = nextProps.selectedGroupId;
         const { messageList } = this.refs;
-        const scrollPosition = messageList.scrollTop;
-        const scrollBottom =
-            messageList.scrollHeight - messageList.clientHeight;
 
-        if (this.props.selectedGroupId === nextProps.selectedGroupId) {
-            this.shouldScroll = Math.abs(scrollPosition - scrollBottom) < 1;
-            if (newMessages) {
-                const len = newMessages.length - 1;
-                this.shouldScroll = newMessages[len].userId === Meteor.userId();
-            }
-        } else {
-            this.shouldScroll = false;
+        if (this.scrollPositions[currGroupId] === undefined) {
+            this.scrollPositions[currGroupId] = {};
+        }
+
+        // If user has changed list, save current scroll position
+        if (nextGroupId !== currGroupId) {
             this.changedGroup = true;
-            this.scrollPositions[this.props.selectedGroupId] = Math.round(
-                scrollPosition
+            this.autoScroll = false;
+
+            this.scrollPositions[currGroupId][currRoom] = Math.round(
+                messageList.scrollTop
+            );
+            return;
+        }
+
+        // If user has changed room, save current scroll position
+        const nextRoom = nextProps.selectedRoom;
+        if (currRoom !== nextRoom) {
+            this.changedGroup = true;
+            this.autoScroll = false;
+
+            this.scrollPositions[currGroupId][currRoom] = Math.round(
+                messageList.scrollTop
             );
         }
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState) {
+        const { messageList } = this.refs;
         const groupId = this.props.selectedGroupId;
-        const previousScrollPos = this.scrollPositions[groupId];
+        const room = this.props.selectedRoom;
 
-        if (this.changedGroup) {
-            if (previousScrollPos === undefined || previousScrollPos === null) {
-                this.refs.messageList.scrollTop = this.refs.messageList.scrollHeight;
+        if (messageList && this.props.ready) {
+            let scrollPos;
+            const scrollPosObj = this.scrollPositions[groupId];
+            if (!scrollPosObj) {
+                scrollPos = undefined;
             } else {
-                this.refs.messageList.scrollTop = previousScrollPos;
+                scrollPos = scrollPosObj[room];
             }
-        }
 
-        if (this.shouldScroll) {
-            console.log("Hey");
-            this.scrollToBottom();
-        }
+            /* If user came from another list or room,
+            move scroll to its previous position */
+            if (this.changedGroup) {
+                if (scrollPos !== undefined) {
+                    messageList.scrollTop = scrollPos;
+                } else {
+                    messageList.scrollTop = messageList.scrollHeight;
+                }
 
-        this.changedGroup = false;
+                this.changedGroup = false;
+            }
+
+            const messages = this.props.messages;
+            const scrollBottom =
+                messageList.scrollHeight - messageList.clientHeight;
+            const scrollIsAtBottom =
+                Math.abs(messageList.scrollTop - scrollBottom) < 1;
+
+            // Notify new message if user scrollbar is not at bottom
+            if (messages.length !== 0) {
+                const lastMessage = messages[messages.length - 1];
+                const notByUser = lastMessage.userId !== Meteor.userId();
+                if (notByUser && !scrollIsAtBottom) {
+                    // TODO: notify new message
+                    console.log("new message");
+                }
+            }
+
+            /* Scroll the bar to the bottom if the user sent the message
+            OR if the scroll bar is at the bottom */
+            const justSent = Session.get("sentToGroup") === groupId;
+            if (scrollIsAtBottom || justSent) {
+                this.scrollToBottom();
+            }
+
+            Session.set("sentToGroup", "");
+        }
     }
 }
 
 export default withTracker(() => {
+    const selectedRoom = Session.get("selectedRoom");
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("messagesByGroup", selectedGroupId);
+    const selectedDsbjId = Session.get("selectedDsbjId");
+
+    let handle, messages;
+    if (selectedRoom === "groups") {
+        handle = Meteor.subscribe("messagesByGroup", selectedGroupId);
+        messages = GroupsMessagesDB.find({ room: selectedRoom }).fetch();
+    } else {
+        handle = Meteor.subscribe("messagesByDsbj", selectedDsbjId);
+        messages = DsbjsMessagesDB.find().fetch();
+    }
 
     return {
         selectedGroupId,
-        messages: MessagesDB.find().fetch()
+        selectedRoom,
+        messages,
+        ready: handle.ready()
     };
 })(MessageList);
