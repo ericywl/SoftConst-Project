@@ -15,17 +15,54 @@ export class ChatAreaBody extends React.Component {
     }
 
     render() {
+        const tabText = this.props.selectedTab.slice(
+            0,
+            this.props.selectedTab.length - 1
+        );
+
         return (
             <div className="chat-area__body">
                 {this.state.error ? <p>{this.state.error}</p> : undefined}
 
                 {this.props.notInItem ? (
-                    <button onClick={this.onClickJoin.bind(this)}>Join</button>
+                    <div className="chat-area__body--not-joined">
+                        <h2 className="chat-area__body-desc">
+                            {this.props.selectedItem.description}
+                        </h2>
+
+                        <div className="chat-area__body-tags">
+                            {this.renderTags(tabText)}
+                        </div>
+
+                        <button
+                            className="button"
+                            onClick={this.onClickJoin.bind(this)}
+                        >
+                            Join {tabText}
+                        </button>
+                    </div>
                 ) : (
                     <MessageList />
                 )}
             </div>
         );
+    }
+
+    renderTags(tabText) {
+        if (this.props.selectedItem.tags.length === 0) {
+            return (
+                <div className="empty-tags">
+                    This {tabText} does not have any tags.
+                </div>
+            );
+        }
+
+        return this.props.selectedItem.tags.map((tag, index) => (
+            <span className="tags__tag" key={`tag${index}`}>
+                <span className="tags__tag--hash"># </span>
+                <span>{tag}</span>
+            </span>
+        ));
     }
 
     onClickJoin(event) {
@@ -37,12 +74,14 @@ export class ChatAreaBody extends React.Component {
 
         this.props.meteorCall(
             joinMethod,
-            this.props.selectedItemId,
+            this.props.selectedItem._id,
             (err, res) => {
-                if (err) this.setState({ error: err.reason });
-                if (res) {
-                    // TODO: Add joined list message
-                    console.log("you have joined the list!");
+                if (err) {
+                    this.setState({ error: err.reason });
+                    setTimeout(() => this.setState({ error: "" }), 10000);
+                } else {
+                    // TODO: Add joined message
+                    console.log("you have joined!");
                 }
             }
         );
@@ -50,7 +89,7 @@ export class ChatAreaBody extends React.Component {
 }
 
 ChatAreaBody.propTypes = {
-    selectedItemId: PropTypes.string.isRequired,
+    selectedItem: PropTypes.object.isRequired,
     selectedTab: PropTypes.string.isRequired,
     notInItem: PropTypes.bool.isRequired,
     isOwner: PropTypes.bool.isRequired,

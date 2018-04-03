@@ -60,7 +60,7 @@ export class ChatArea extends React.Component {
                     />
 
                     <ChatAreaBody
-                        selectedItemId={selectedItem._id}
+                        selectedItem={selectedItem}
                         selectedTab={this.props.selectedTab}
                         notInItem={notInItem}
                         isOwner={isOwner}

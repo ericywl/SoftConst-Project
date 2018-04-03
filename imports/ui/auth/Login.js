@@ -19,9 +19,8 @@ export class Login extends React.Component {
         let password = this.refs.password.value;
         this.props.loginWithPassword(user, password, err => {
             if (err) {
-                this.setState({
-                    error: err.reason
-                });
+                this.setState({ error: err.reason });
+                setTimeout(() => this.setState({ error: "" }), 10000);
             } else {
                 this.setState({ error: "" });
             }

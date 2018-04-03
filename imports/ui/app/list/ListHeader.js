@@ -16,16 +16,37 @@ export class GroupListHeader extends React.Component {
         this.state = {
             search: ""
         };
+
+        this.groupsSearchBackup = "";
+        this.dsbjsSearchBackup = "";
+    }
+
+    componentWillUpdate(nextProps, nextState, nextContext) {
+        if (nextProps.selectedTab !== this.props.selectedTab) {
+            if (this.props.selectedTab === "groups") {
+                this.groupsSearchBackup = this.state.search.trim();
+            } else {
+                this.dsbjsSearchBackup = this.state.search.trim();
+            }
+        }
     }
 
     componentDidUpdate(prevProps, prevState, prevContext) {
         if (prevProps.selectedTab !== this.props.selectedTab) {
-            this.setState({ search: "" });
+            const search =
+                this.props.selectedTab === "groups"
+                    ? this.groupsSearchBackup
+                    : this.dsbjsSearchBackup;
+            this.setState({ search });
         }
+
+        this.props.session.set("searchQuery", this.state.search.trim());
     }
 
     render() {
         const selectedTab = this.props.selectedTab;
+        const selectedItemId =
+            selectedTab === "groups" ? "selectedGroupId" : "selectedDsbjId";
         const slicedTabText = selectedTab.slice(0, selectedTab.length - 1);
 
         return (
@@ -33,13 +54,21 @@ export class GroupListHeader extends React.Component {
                 <div className="item-list__buttons">
                     <button
                         className="button item-list__button--join"
-                        onClick={() => this.joinModalChild.toggleModal()}
+                        onClick={() => {
+                            this.joinModalChild.toggleModal();
+                            this.setState({ search: "" });
+                            this.props.session.set(selectedItemId, "");
+                        }}
                     >
                         Join A {slicedTabText}
                     </button>
                     <button
                         className="button button--greyed item-list__button--create"
-                        onClick={() => this.addModalChild.toggleModal()}
+                        onClick={() => {
+                            this.addModalChild.toggleModal();
+                            this.setState({ search: "" });
+                            this.props.session.set(selectedItemId, "");
+                        }}
                     >
                         +
                     </button>
@@ -80,7 +109,6 @@ export class GroupListHeader extends React.Component {
         } else if (newSearch.slice(-1) === "#") return;
 
         this.setState({ search: newSearch });
-        this.props.session.set("searchQuery", newSearch);
     }
 }
 

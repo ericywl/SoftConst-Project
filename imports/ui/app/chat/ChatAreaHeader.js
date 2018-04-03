@@ -21,17 +21,21 @@ export class ChatAreaHeader extends React.Component {
                         {this.props.selectedItem.name}
                     </h1>
 
-                    <div className="chat-area__header-dots">
-                        <ChatDropdown
-                            selectedItem={this.props.selectedItem}
-                            selectedTab={this.props.selectedTab}
-                            notInItem={this.props.notInItem}
-                            isOwner={this.props.isOwner}
-                            isModerator={this.props.isModerator}
-                            meteorCall={this.props.meteorCall}
-                            session={this.props.session}
-                        />
-                    </div>
+                    {this.props.notInItem ? (
+                        undefined
+                    ) : (
+                        <div className="chat-area__header-dots">
+                            <ChatDropdown
+                                selectedItem={this.props.selectedItem}
+                                selectedTab={this.props.selectedTab}
+                                notInItem={this.props.notInItem}
+                                isOwner={this.props.isOwner}
+                                isModerator={this.props.isModerator}
+                                meteorCall={this.props.meteorCall}
+                                session={this.props.session}
+                            />
+                        </div>
+                    )}
                 </div>
             );
         }
@@ -43,6 +47,7 @@ export class ChatAreaHeader extends React.Component {
 ChatAreaHeader.propTypes = {
     meteorCall: PropTypes.func.isRequired,
     session: PropTypes.object.isRequired,
+    notInItem: PropTypes.bool.isRequired,
     selectedItem: PropTypes.object.isRequired,
     selectedTab: PropTypes.string.isRequired
 };
