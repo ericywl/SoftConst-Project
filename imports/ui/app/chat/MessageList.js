@@ -1,8 +1,9 @@
 // Library
 import React from "react";
 import PropTypes from "prop-types";
-import { withTracker } from "meteor/react-meteor-data";
+import Modal from "react-modal";
 import moment from "moment";
+import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
 import { Message } from "./Message";
@@ -136,12 +137,13 @@ export class MessageList extends React.Component {
 }
 
 export default withTracker(() => {
+    const selectedTab = Session.get("selectedTab");
     const selectedRoom = Session.get("selectedRoom");
     const selectedGroupId = Session.get("selectedGroupId");
     const selectedDsbjId = Session.get("selectedDsbjId");
 
     let handle, messages;
-    if (selectedRoom === "groups") {
+    if (selectedTab === "groups") {
         handle = Meteor.subscribe("messagesByGroup", selectedGroupId);
         messages = GroupsMessagesDB.find({ room: selectedRoom }).fetch();
     } else {
@@ -149,9 +151,15 @@ export default withTracker(() => {
         messages = DsbjsMessagesDB.find().fetch();
     }
 
+    messages = messages.map(message => {
+        return {
+            ...message,
+            isSender: message.userId === Meteor.userId()
+        };
+    });
+
     return {
         selectedGroupId,
-        selectedRoom,
         messages,
         ready: handle.ready()
     };

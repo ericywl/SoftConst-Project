@@ -81,10 +81,13 @@ export class ChatAreaFooter extends React.Component {
         if (this.state.input.trim() === "") return;
 
         const partialMsg = {
-            dsbjId: this.props.selectedItemId,
             room: this.props.selectedRoom,
             content: this.state.input.trim()
         };
+
+        const itemId =
+            this.props.selectedTab === "groups" ? "groupId" : "dsbjId";
+        partialMsg[itemId] = this.props.selectedItemId;
 
         const messagesInsert =
             this.props.selectedTab === "groups"
