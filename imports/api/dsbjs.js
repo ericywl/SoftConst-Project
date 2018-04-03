@@ -35,8 +35,8 @@ Meteor.methods({
         const now = moment().valueOf();
         const timeoutAt = now + partialDsbj.timeout;
 
-        const res = DsbjsDB.insert(
-            {
+        try {
+            const res = DsbjsDB.insert({
                 name: partialDsbj.name,
                 description: partialDsbj.description,
                 numberReq: partialDsbj.numberReq,
@@ -46,22 +46,14 @@ Meteor.methods({
                 createdBy: this.userId,
                 tags: [],
                 attendees: []
-            },
-            (err, dsbjId) => {
-                if (!err) {
-                    try {
-                        ProfilesDB.update(
-                            { _id: this.userId },
-                            { $push: { dsbjs: dsbjId } }
-                        );
-                    } catch (newErr) {
-                        throw newErr;
-                    }
-                } else {
-                    throw err;
-                }
-            }
-        );
+            });
+
+            ProfilesDB.update({ _id: this.userId }, { $push: { dsbjs: res } });
+
+            return res;
+        } catch (err) {
+            throw err;
+        }
     },
 
     /**

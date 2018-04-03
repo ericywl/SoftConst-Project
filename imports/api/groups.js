@@ -34,8 +34,8 @@ Meteor.methods({
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         validateGroup(partialGroup);
 
-        const res = GroupsDB.insert(
-            {
+        try {
+            const res = GroupsDB.insert({
                 name: partialGroup.name,
                 description: partialGroup.description,
                 tags: [],
@@ -44,24 +44,14 @@ Meteor.methods({
                 ownedBy: this.userId,
                 moderators: [],
                 members: []
-            },
-            (err, groupId) => {
-                if (!err) {
-                    try {
-                        ProfilesDB.update(
-                            { _id: this.userId },
-                            { $push: { groups: groupId } }
-                        );
-                    } catch (newErr) {
-                        throw newErr;
-                    }
-                } else {
-                    throw err;
-                }
-            }
-        );
+            });
 
-        return res;
+            ProfilesDB.update({ _id: this.userId }, { $push: { groups: res } });
+
+            return res;
+        } catch (err) {
+            throw err;
+        }
     },
 
     /**
