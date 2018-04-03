@@ -23,6 +23,7 @@ export class MessageList extends React.Component {
 
         this.changedItem = true;
         this.autoScroll = false;
+        this.hasChecked = {};
         this.scrollPositions = {};
     }
 
@@ -31,11 +32,13 @@ export class MessageList extends React.Component {
         const notReady = !this.props.ready || this.props.messages.length == 0;
 
         return (
-            <div className="message-list" ref="messageList">
+            <div
+                className="message-list"
+                ref="messageList"
+                onScroll={this.scrollListener.bind(this)}
+            >
                 {notReady ? (
-                    <div className="empty-message-list">
-                        No {this.props.selectedRoom} to see here.
-                    </div>
+                    <div />
                 ) : (
                     this.props.messages.map(message => {
                         return (
@@ -136,8 +139,28 @@ export class MessageList extends React.Component {
         );
     }
 
+    scrollListener(event) {
+        const { messageList } = this.refs;
+        const scrollBottom =
+            messageList.scrollHeight - messageList.clientHeight;
+        const scrollIsAtBottom =
+            Math.abs(messageList.scrollTop - scrollBottom) < 1;
+
+        if (scrollIsAtBottom && this.props.session.get("newMessage")) {
+            this.props.session.set("newMessage", false);
+            if (this.hasChecked[this.props.selectedItemId] == undefined) {
+                this.hasChecked[this.props.selectedItemId] = {};
+            }
+
+            this.hasChecked[this.props.selectedItemId][
+                this.props.selectedRoom
+            ] = true;
+        }
+    }
+
     scrollToBottom() {
-        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+        this.refs.messageList.scrollTop = this.refs.messageList.scrollHeight;
+        //this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
 
     componentWillUpdate(nextProps, nextState, nextContext) {
@@ -145,33 +168,30 @@ export class MessageList extends React.Component {
         const currRoom = this.props.selectedRoom;
 
         const nextItemId = nextProps.selectedItemId;
+        const nextRoom = nextProps.selectedRoom;
         const { messageList } = this.refs;
 
-        if (this.scrollPositions[currItemId] === undefined) {
-            this.scrollPositions[currItemId] = {};
-        }
+        if (messageList) {
+            if (this.scrollPositions[currItemId] === undefined) {
+                this.scrollPositions[currItemId] = {};
+            }
 
-        // If user has changed list, save current scroll position
-        if (nextItemId !== currItemId) {
-            this.changedItem = true;
-            this.autoScroll = false;
+            // If user has changed list, save current scroll position
+            if (nextItemId !== currItemId || currRoom !== nextRoom) {
+                this.changedItem = true;
+                this.scrollPositions[currItemId][currRoom] = Math.ceil(
+                    messageList.scrollTop
+                );
+                return;
+            }
 
-            this.scrollPositions[currItemId][currRoom] = Math.round(
-                messageList.scrollTop
-            );
-            return;
-        }
+            const scrollBottom =
+                messageList.scrollHeight - messageList.clientHeight;
+            const scrollIsAtBottom =
+                scrollBottom !== 0 &&
+                Math.abs(messageList.scrollTop - scrollBottom) < 1;
 
-        // If user has changed room, save current scroll position
-        const nextRoom = nextProps.selectedRoom;
-
-        if (currRoom !== nextRoom) {
-            this.changedItem = true;
-            this.autoScroll = false;
-
-            this.scrollPositions[currItemId][currRoom] = Math.round(
-                messageList.scrollTop
-            );
+            this.autoScroll = scrollIsAtBottom;
         }
     }
 
@@ -199,32 +219,43 @@ export class MessageList extends React.Component {
                 }
 
                 this.changedItem = false;
+            } else if (this.props.messages.length > prevProps.messages.length) {
+                if (this.hasChecked[this.props.selectedItemId] == undefined) {
+                    this.hasChecked[this.props.selectedItemId] = {};
+                }
+
+                this.hasChecked[this.props.selectedItemId][
+                    this.props.selectedRoom
+                ] = false;
             }
 
-            const messages = this.props.messages;
-            const scrollBottom =
-                messageList.scrollHeight - messageList.clientHeight;
-            const scrollIsAtBottom =
-                Math.abs(messageList.scrollTop - scrollBottom) < 1;
-
             // Notify new message if user scrollbar is not at bottom
+            const messages = this.props.messages;
             if (messages.length !== 0) {
                 const lastMessage = messages[messages.length - 1];
                 const notByUser = lastMessage.userId !== Meteor.userId();
-                if (notByUser && !scrollIsAtBottom) {
-                    // TODO: notify new message
-                    console.log("new message");
+                const checked = this.hasChecked[this.props.selectedItemId]
+                    ? this.hasChecked[this.props.selectedItemId][
+                          this.props.selectedRoom
+                      ]
+                    : false;
+
+                if (notByUser && !this.autoScroll && !checked) {
+                    if (!this.props.session.get("newMessage")) {
+                        this.props.session.set("newMessage", true);
+                    }
+                }
+
+                /* Scroll the bar to the bottom if the user sent the message
+                OR if the scroll bar is at the bottom */
+                const justSent =
+                    this.props.session.get("sentToGroup") === itemId;
+                if (this.autoScroll || justSent) {
+                    this.props.session.set("sentToGroup", "");
+                    this.scrollToBottom();
+                    this.autoScroll = false;
                 }
             }
-
-            /* Scroll the bar to the bottom if the user sent the message
-            OR if the scroll bar is at the bottom */
-            const justSent = this.props.session.get("sentToGroup") === itemId;
-            if (scrollIsAtBottom || justSent) {
-                this.scrollToBottom();
-            }
-
-            this.props.session.set("sentToGroup", "");
         }
     }
 }

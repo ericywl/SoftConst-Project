@@ -35,6 +35,15 @@ export class ChatAreaFooter extends React.Component {
 
         return (
             <div className="chat-area__footer">
+                {this.props.newMessage ? (
+                    <div className="chat-area__footer-new-wrapper">
+                        <div className="chat-area__footer-new">
+                            New message!
+                        </div>
+                    </div>
+                ) : (
+                    undefined
+                )}
                 <form
                     className="chat-area__footer-form"
                     onSubmit={this.handleSubmitMessage.bind(this)}
@@ -138,8 +147,10 @@ ChatAreaFooter.propTypes = {
 
 export default withTracker(() => {
     const selectedRoom = Session.get("selectedRoom");
+    const newMessage = Session.get("newMessage");
 
     return {
+        newMessage,
         selectedRoom,
         meteorCall: Meteor.call
     };

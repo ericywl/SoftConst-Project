@@ -24,6 +24,7 @@ if (Meteor.isClient) {
         Session.setDefault("selectedRoom", "announcements");
         Session.setDefault("searchQuery", "");
         Session.setDefault("sentToGroup", "");
+        Session.setDefault("newMessage", false);
         Session.setDefault("isNavOpen", false);
         Session.setDefault("isModalOpen", false);
         Session.setDefault("sessionTime", moment().valueOf());

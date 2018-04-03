@@ -91,6 +91,20 @@
     }
 }
 
+.chat-area__footer-new-wrapper {
+    margin-top: -$base-font-size;
+    transform: translateY(-1.5rem);
+}
+
+.chat-area__footer-new {
+    color: white;
+    background: $brand-primary;
+    text-align: center;
+    width: 90%;
+    margin: 0 auto;
+    padding: 0.1rem;
+}
+
 .chat-area__footer-form {
     display: flex;
     flex-direction: row;
