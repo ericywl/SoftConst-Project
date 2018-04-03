@@ -57,6 +57,24 @@
     }
 }
 
+.chat-area__body--not-joined {
+    padding: $space;
+    margin-right: $space;
+
+    @include desktop() {
+        margin-right: calc(#{$large-space} + 0.2rem);
+    }
+}
+
+.chat-area__body-desc {
+    font-weight: normal;
+}
+
+.chat-area__body-tags {
+    margin: $space 0;
+    margin-left: -0.4rem;
+}
+
 /* FOOTER */
 .chat-area__footer {
     border-top: 2px solid $brand-primary;

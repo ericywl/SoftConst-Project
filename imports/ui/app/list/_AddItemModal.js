@@ -136,14 +136,14 @@ export default class AddGroupModal extends React.Component {
         if (isGroupTab) {
             meteorMethod = "groupsInsert";
             partialItem = {
-                name: this.state.itemName,
-                description: this.state.itemDesc
+                name: this.state.itemName.trim(),
+                description: this.state.itemDesc.trim()
             };
         } else {
             meteorMethod = "dsbjsInsert";
             partialItem = {
-                name: this.state.itemName,
-                description: this.state.itemDesc,
+                name: this.state.itemName.trim(),
+                description: this.state.itemDesc.trim(),
                 timeout: Number(this.state.itemTimeout),
                 numberReq: Number(this.state.itemNumOfPeople)
             };
@@ -152,15 +152,15 @@ export default class AddGroupModal extends React.Component {
         this.props.meteorCall(meteorMethod, partialItem, (err, res) => {
             if (err) {
                 this.setState({ error: err.reason });
-                setTimeout(() => {
-                    this.setState({ error: "" });
-                }, 10000);
+                setTimeout(() => this.setState({ error: "" }), 10000);
             } else {
-                this.toggleModal();
                 const selectedText = isGroupTab
                     ? "selectedGroupId"
                     : "selectedDsbjId";
                 this.props.session.set(selectedText, res);
+                this.toggleModal();
+                this.props.session.set("isNavOpen", false);
+                this.props.session.set("searchQuery", "");
             }
         });
     }

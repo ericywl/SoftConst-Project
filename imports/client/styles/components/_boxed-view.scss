@@ -32,6 +32,13 @@
     flex-direction: column;
 }
 
+.boxed-view__form-subtitle {
+    font-size: $small-font-size;
+    color: $dark-grey;
+    text-align: left;
+    padding: 0.5rem;
+}
+
 .boxed-view__form--row {
     display: flex;
     flex-direction: row;

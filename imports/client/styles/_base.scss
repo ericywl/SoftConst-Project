@@ -32,6 +32,11 @@ h2 {
     margin-bottom: $space;
 }
 
+h3 {
+    font-size: $medium-font-size;
+    margin-bottom: $space;
+}
+
 p {
     margin-bottom: $space;
 }
@@ -54,6 +59,7 @@ textarea {
 }
 
 textarea {
+    height: 10rem;
     resize: none;
 }
 

@@ -37,15 +37,14 @@
 }
 
 .item-list__button--join {
-    width: 80%;
+    width: calc(100% - 4.1rem);
     margin: 0;
     margin-right: $input-spacing;
 }
 
 .item-list__button--create {
-    width: 20%;
+    width: 4.1rem;
     margin: 0;
-    max-width: 4.1rem;
 }
 
 /* ITEM */

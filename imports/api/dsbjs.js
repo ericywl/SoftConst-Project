@@ -8,7 +8,7 @@ import {
     checkUserExist,
     tagFilter,
     validateDsbj,
-    validateDsbjName
+    validateDsbjDetails
 } from "../misc/methods";
 
 export const DsbjsDB = new Mongo.Collection("dsbjs");
@@ -107,19 +107,6 @@ Meteor.methods({
     },
 
     /**
-     * Change the list name
-     * @param {String} dsbjId : id of the list
-     * @param {String} newName : the list's new name
-     */
-    dsbjsNameChange(dsbjId, newName) {
-        if (!this.userId) throw new Meteor.Error("not-logged-in");
-        validateDsbjName(newName);
-        checkAccess(dsbjId, DsbjsDB);
-
-        return DsbjsDB.update({ _id: dsbjId }, { $set: { name: newName } });
-    },
-
-    /**
      * Update the timeout, ie. shorten or extend DSBJ response deadline
      * @param {String} dsbjId : id of DSBJ to be updated
      * @param {String} newTimeout : the new timeout
@@ -194,6 +181,23 @@ Meteor.methods({
         return DsbjsDB.update(
             { _id: dsbjId },
             { $pull: { attendees: removedUserId } }
+        );
+    },
+
+    /**
+     * Change the dsbj name and description
+     * @param {String} dsbjId : id of the dsbj
+     * @param {String} newName : the dsbj's new name
+     * @param {String} newDesc : the dsbj's new description
+     */
+    dsbjsDetailsChange(dsbjId, newName, newDesc) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        validateDsbjDetails(newName, newDesc);
+        checkAccess(dsbjId, DsbjsDB);
+
+        return DsbjsDB.update(
+            { _id: dsbjId },
+            { $set: { name: newName, description: newDesc } }
         );
     }
 });
