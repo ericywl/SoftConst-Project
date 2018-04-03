@@ -1,49 +1,7 @@
 import expect from "expect";
 
 import { GroupsDB } from "./groups";
-import { validateNewGroup } from "./groups";
 
-if (Meteor.isClient){
-    describe("Groups", function() {
-        it("should allow valid name and description", function() {
-            const validGroup = {
-                _id: "testId1",
-                name: "valid group name",
-                description: "valid description",
-                isPrivate: true
-            };
-            const res = validateNewGroup(validGroup);
-            expect(res).toBe(true);
-        });
-
-        it("should reject invalid group name", function() {
-            const invalidNameGroup = {
-                _id: "testId1",
-                name: "a",
-                description: "valid description",
-                isPrivate: true
-            };
-
-            expect(() => {
-                validateNewUserClient(invalidNameGroup);
-            }).toThrow();
-        });
-
-        it("should reject descriptions that are too long", function() {
-            const invalidDescriptionGroup = {
-                _id: "testId1",
-                name: "valid group name",
-                description: "invalid description invalid description invalid description invalid description ",
-                isPrivate: true
-            };
-
-            expect(() => {
-                validateNewUserClient(invalidDescriptionGroup);
-            }).toThrow();
-        });
-
-    });
-}
 
 
 if (Meteor.isServer) {

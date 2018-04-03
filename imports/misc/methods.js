@@ -98,7 +98,7 @@ export const tagFilter = input => {
 };
 
 export const spaceFilter = input => {
-    return input.replace(/\s+/gi, " ");
+    return input.replace(/\s+/gi, "");
 };
 
 /**

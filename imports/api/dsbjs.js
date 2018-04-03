@@ -1,6 +1,7 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
+import { ProfilesDB } from "./profiles";
 
 import {
     checkAccess,
