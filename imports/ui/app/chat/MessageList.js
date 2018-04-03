@@ -38,7 +38,9 @@ export class MessageList extends React.Component {
                 onScroll={this.scrollListener.bind(this)}
             >
                 {notReady ? (
-                    <div />
+                    <div className="empty-message-list">
+                        No {this.props.selectedRoom} to see here.
+                    </div>
                 ) : (
                     this.props.messages.map(message => {
                         return (
