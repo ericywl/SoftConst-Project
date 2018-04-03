@@ -31,12 +31,12 @@ export default class ChangeNameModal extends React.Component {
                     });
                 }}
                 onRequestClose={this.toggleModal.bind(this)}
-                className="boxed-view__large-box"
+                className="boxed-view__box boxed-view__box--l"
                 overlayClassName="boxed-view boxed-view__modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                <h2 className="boxed-view__modal-title">Change Name</h2>
+                <h2 className="boxed-view__modal-message-title">Change Name</h2>
 
                 {this.state.error ? <p>{this.state.error}</p> : undefined}
 

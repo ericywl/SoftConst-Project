@@ -27,7 +27,7 @@ export default class ManageTagsModal extends React.Component {
                 contentLabel="Manage Tags"
                 onAfterOpen={() => this.refs.newTag.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
-                className="boxed-view__large-box"
+                className="boxed-view__box boxed-view__box--l"
                 overlayClassName="boxed-view boxed-view__modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}

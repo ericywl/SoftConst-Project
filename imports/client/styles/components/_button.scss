@@ -57,6 +57,9 @@
 
 /* DELETE */
 .button--delete {
+    background-color: $red;
+    border: 1px solid $dark-red;
+    color: white;
     outline: none;
 }
 
@@ -80,13 +83,14 @@
     justify-content: space-between;
 
     button:first-of-type {
-        margin-left: $large-space;
-        margin-right: $space;
+        margin: 0;
+        margin-top: $space;
+        margin-right: $input-spacing;
     }
 
     button:nth-of-type(2) {
-        margin-left: $space;
-        margin-right: $large-space;
+        margin: 0;
+        margin-top: $space;
     }
 
     button {
@@ -155,4 +159,10 @@
         border: 2px solid $grey;
         background: lighten($grey, 3%);
     }
+}
+
+/* WRAPPER */
+.button__wrapper {
+    display: flex;
+    float: right;
 }

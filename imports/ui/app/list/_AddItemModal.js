@@ -48,7 +48,7 @@ export default class AddGroupModal extends React.Component {
                 contentLabel={"Create New " + formattedTabText}
                 onAfterOpen={() => this.refs.itemName.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
-                className="boxed-view__large-box"
+                className="boxed-view__box boxed-view__box--l"
                 overlayClassName="boxed-view boxed-view__modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
