@@ -6,7 +6,7 @@ import { ProfilesDB } from "./profiles";
 /* test client misc */
 if (Meteor.isClient) {
     describe("users", function() {
-        it("should allow valid username, email and password", function() {
+        it("should allow valid user email and password", function() {
             const validUser = {
                 _id: "testId1",
                 username: "TestUser1",
