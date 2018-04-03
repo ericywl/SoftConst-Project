@@ -6,6 +6,7 @@ import { withTracker } from "meteor/react-meteor-data";
 // React Components
 import AddItemModal from "./_AddItemModal";
 import JoinItemModal from "./_JoinItemModal";
+import PrivateTab from "../PrivateTab";
 
 // APIs
 import { searchFilterBeforeSet } from "../../../misc/methods";
@@ -14,7 +15,8 @@ export class GroupListHeader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            search: ""
+            search: "",
+            tab: ""
         };
 
         this.groupsSearchBackup = "";
@@ -51,6 +53,34 @@ export class GroupListHeader extends React.Component {
 
         return (
             <div className="item-list__header">
+                <div className="tab-container__wrapper--mobile">
+                    <div className="switch">
+                        <label className="switch__box">
+                            <input
+                                ref="groupPrivate"
+                                className="switch__input"
+                                type="checkbox"
+                                onClick={event => {
+                                    if (event.target.checked) {
+                                        this.props.session.set(
+                                            "selectedTab",
+                                            "DSBJs"
+                                        );
+                                    } else {
+                                        this.props.session.set(
+                                            "selectedTab",
+                                            "groups"
+                                        );
+                                    }
+                                }}
+                            />
+                            <span className="switch__slider">
+                                <span>DSBJs</span>
+                                <span>Groups</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
                 <div className="item-list__buttons">
                     <button
                         className="button item-list__button--join"

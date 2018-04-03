@@ -10,6 +10,14 @@
     }
 }
 
+.tab-container__wrapper--mobile {
+    width: 100%;
+
+    @include desktop() {
+        display: none;
+    }
+}
+
 .tab-container {
     height: $tab-height;
     padding-top: $space;

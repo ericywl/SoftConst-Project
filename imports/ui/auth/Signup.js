@@ -42,7 +42,7 @@ export class Signup extends React.Component {
 
     render() {
         return (
-            <div className="boxed-view">
+            <div className="boxed-view boxed-view--auth">
                 <div className="boxed-view__box">
                     <h1>Signup</h1>
 

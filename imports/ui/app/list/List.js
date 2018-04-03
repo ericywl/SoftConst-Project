@@ -82,12 +82,22 @@ export class List extends React.Component {
             "mousedown",
             this.handleClickOutside.bind(this)
         );
+
+        document.addEventListener(
+            "touchstart",
+            this.handleClickOutside.bind(this)
+        );
     }
 
     componentWillUnmount() {
         // Remove listener for click events
         document.removeEventListener(
             "mousedown",
+            this.handleClickOutside.bind(this)
+        );
+
+        document.removeEventListener(
+            "touchstart",
             this.handleClickOutside.bind(this)
         );
     }

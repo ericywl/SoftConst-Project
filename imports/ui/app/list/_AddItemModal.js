@@ -87,12 +87,12 @@ export default class AddGroupModal extends React.Component {
                         undefined
                     ) : (
                         <input
-                            name="itemNumOfPpl"
-                            ref="itemNumOfPpl"
+                            name="itemTimeout"
+                            ref="itemTimeout"
                             type="text"
-                            placeholder="Required No. of people (0 for unlimited)"
-                            value={this.state.itemNumOfPeople}
-                            onChange={this.handlePeopleChange.bind(this)}
+                            placeholder="Timeout in hours"
+                            value={this.state.itemTimeout}
+                            onChange={this.handleTimeoutChange.bind(this)}
                         />
                     )}
 
@@ -100,12 +100,12 @@ export default class AddGroupModal extends React.Component {
                         undefined
                     ) : (
                         <input
-                            name="itemTimeout"
-                            ref="itemTimeout"
+                            name="itemNumOfPpl"
+                            ref="itemNumOfPpl"
                             type="text"
-                            placeholder="Timeout in hours"
-                            value={this.state.itemTimeout}
-                            onChange={this.handleTimeoutChange.bind(this)}
+                            placeholder="Required No. of people (0 for unlimited)"
+                            value={this.state.itemNumOfPeople}
+                            onChange={this.handlePeopleChange.bind(this)}
                         />
                     )}
 

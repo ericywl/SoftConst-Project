@@ -1,6 +1,7 @@
 .header {
     background-color: $header-bg;
     color: $header-color;
+    z-index: 20;
 }
 
 .header__content {

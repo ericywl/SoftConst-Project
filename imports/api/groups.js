@@ -151,17 +151,21 @@ Meteor.methods({
     /**
      * Change the group name and description
      * @param {String} groupdId : id of the group
-     * @param {String} newName : the group's new name
-     * @param {String} newDesc : the group's new description
+     * @param {Object} partialNewGroup : new group object
      */
-    groupsDetailsChange(groupdId, newName, newDesc) {
+    groupsDetailsChange(groupdId, partialNewGroup) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
-        validateGroupDetails(newName, newDesc);
+        validateGroup(partialNewGroup);
         checkAccess(groupdId, GroupsDB);
 
         return GroupsDB.update(
             { _id: groupdId },
-            { $set: { name: newName, description: newDesc } }
+            {
+                $set: {
+                    name: partialNewGroup.name,
+                    description: partialNewGroup.description
+                }
+            }
         );
     }
 });

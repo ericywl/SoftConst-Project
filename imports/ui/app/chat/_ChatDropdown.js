@@ -26,7 +26,10 @@ export default class ChatDropdown extends React.Component {
             _id: this.props.selectedItem._id,
             name: this.props.selectedItem.name,
             description: this.props.selectedItem.description,
-            tags: this.props.selectedItem.tags
+            tags: this.props.selectedItem.tags,
+            timeoutHours: this.props.selectedItem.timeoutHours,
+            createdAt: this.props.selectedItem.createdAt,
+            numberReq: this.props.selectedItem.numberReq
         };
 
         let haveAccess;
@@ -68,9 +71,11 @@ export default class ChatDropdown extends React.Component {
                 >
                     {haveAccess ? (
                         <div
+                            name="details"
                             className="dropdown__item"
-                            onClick={() => {
-                                this.childNameModal.toggleModal();
+                            onClick={event => {
+                                event.preventDefault();
+                                this.childDetailsModal.toggleModal();
                                 this.setState({ dropdownIsOpen: false });
                             }}
                         >
@@ -81,8 +86,10 @@ export default class ChatDropdown extends React.Component {
                     )}
 
                     <div
+                        name="tags"
                         className="dropdown__item"
-                        onClick={() => {
+                        onClick={event => {
+                            event.preventDefault();
                             this.childTagsModal.toggleModal();
                             this.setState({ dropdownIsOpen: false });
                         }}
@@ -123,7 +130,7 @@ export default class ChatDropdown extends React.Component {
                         selectedItemPartial={selectedItemPartial}
                         meteorCall={this.props.meteorCall}
                         ref={ref => {
-                            this.childNameModal = ref;
+                            this.childDetailsModal = ref;
                         }}
                     />
                 ) : (
@@ -138,11 +145,21 @@ export default class ChatDropdown extends React.Component {
             "mousedown",
             this.handleClickOutside.bind(this)
         );
+
+        document.addEventListener(
+            "touchstart",
+            this.handleClickOutside.bind(this)
+        );
     }
 
     componentWillUnmount() {
         document.removeEventListener(
             "mousedown",
+            this.handleClickOutside.bind(this)
+        );
+
+        document.removeEventListener(
+            "touchstart",
             this.handleClickOutside.bind(this)
         );
     }
@@ -152,8 +169,11 @@ export default class ChatDropdown extends React.Component {
     }
 
     handleClickOutside(event) {
+        const inWrapperRef =
+            this.wrapperRef && !this.wrapperRef.contains(event.target);
+
         if (
-            (this.wrapperRef && !this.wrapperRef.contains(event.target)) ||
+            inWrapperRef ||
             event.target.className ===
                 "dropdown__control dropdown__control--open"
         ) {

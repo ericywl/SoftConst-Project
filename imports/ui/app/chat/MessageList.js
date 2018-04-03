@@ -34,7 +34,7 @@ export class MessageList extends React.Component {
             <div className="message-list" ref="messageList">
                 {notReady ? (
                     <div className="empty-message-list">
-                        Nothing to see here.
+                        No {this.props.selectedRoom} to see here.
                     </div>
                 ) : (
                     this.props.messages.map(message => {

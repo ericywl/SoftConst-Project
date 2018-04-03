@@ -1,7 +1,7 @@
 .switch {
-    border: 1px solid $grey;
+    //border: 1px solid $grey;
     margin-bottom: $space;
-    padding: $input-spacing;
+    //padding: $input-spacing;
 }
 
 .switch__text {
@@ -27,20 +27,36 @@
 
 /* The slider */
 .switch__slider {
+    display: flex;
     position: absolute;
     cursor: pointer;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: $switch-bg-color;
+    background-color: $slider-bg-color;
     -webkit-transition: 0.3s;
     transition: 0.3s;
+
+    span {
+        color: white;
+        font-size: $base-font-size;
+        text-transform: uppercase;
+        text-align: center;
+
+        width: 50%;
+        line-height: 2.4;
+    }
+
+    span:first-of-type {
+        float: left;
+    }
 }
 
 .switch__slider:before {
-    position: absolute;
     content: "";
+
+    position: absolute;
     height: $switch-slider-height;
     width: $switch-slider-width;
     left: 4px;
@@ -59,7 +75,7 @@
 }
 
 .switch__input:checked + .switch__slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    -webkit-transform: translateX(97%);
+    -ms-transform: translateX(97%);
+    transform: translateX(97%);
 }

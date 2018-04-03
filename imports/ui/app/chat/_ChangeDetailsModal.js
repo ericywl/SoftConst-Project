@@ -5,7 +5,7 @@ import FlipMove from "react-flip-move";
 import Modal from "react-modal";
 
 // APIs
-import { spaceFilter } from "../../../misc/methods";
+import { spaceFilter, numberFilter } from "../../../misc/methods";
 import {
     ITEMNAME_MAX_LENGTH,
     GROUPDESC_MAX_LENGTH,
@@ -19,6 +19,8 @@ export default class ChangeDetailsModal extends React.Component {
             modalIsOpen: false,
             newName: "",
             newDesc: "",
+            newNum: "",
+            newTimeout: "",
             error: ""
         };
     }
@@ -34,7 +36,11 @@ export default class ChangeDetailsModal extends React.Component {
                     this.refs.newName.focus();
                     this.setState({
                         newName: this.props.selectedItemPartial.name.trim(),
-                        newDesc: this.props.selectedItemPartial.description.trim()
+                        newDesc: this.props.selectedItemPartial.description.trim(),
+                        newTimeout: String(
+                            this.props.selectedItemPartial.timeoutHours
+                        ),
+                        newNum: String(this.props.selectedItemPartial.numberReq)
                     });
                 }}
                 onRequestClose={this.toggleModal.bind(this)}
@@ -64,6 +70,44 @@ export default class ChangeDetailsModal extends React.Component {
                         value={this.state.newDesc}
                         onChange={this.handleDescChange.bind(this)}
                     />
+
+                    {this.props.isGroupTab ? (
+                        undefined
+                    ) : (
+                        <div className="boxed-view__form-subtitle">Timeout</div>
+                    )}
+
+                    {this.props.isGroupTab ? (
+                        undefined
+                    ) : (
+                        <input
+                            name="newTimeout"
+                            ref="newTimeout"
+                            type="text"
+                            value={this.state.newTimeout}
+                            onChange={this.handleTimeoutChange.bind(this)}
+                        />
+                    )}
+
+                    {this.props.isGroupTab ? (
+                        undefined
+                    ) : (
+                        <div className="boxed-view__form-subtitle">
+                            Required number of people (0 for unlimited)
+                        </div>
+                    )}
+
+                    {this.props.isGroupTab ? (
+                        undefined
+                    ) : (
+                        <input
+                            ref="newNum"
+                            type="text"
+                            value={this.state.newNum}
+                            onChange={this.handlePeopleChange.bind(this)}
+                        />
+                    )}
+
                     <div className="button__side-by-side button__side-by-side--uneven">
                         <button
                             type="button"
@@ -86,26 +130,26 @@ export default class ChangeDetailsModal extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        if (
-            this.state.newName.trim() ===
-                this.props.selectedItemPartial.name.trim() &&
-            this.state.newDesc.trim() ===
-                this.props.selectedItemPartial.description.trim()
-        ) {
-            this.setState({ error: "Details not changed" });
-            setTimeout(() => this.setState({ error: "" }), 10000);
-            return;
-        }
+        if (!this.checkDetails()) return;
 
         const meteorMethod = this.props.isGroupTab
             ? "groupsDetailsChange"
             : "dsbjsDetailsChange";
 
+        const partialNewItem = {
+            name: this.state.newName.trim(),
+            description: this.state.newDesc.trim()
+        };
+
+        if (!this.props.isGroupTab) {
+            partialNewItem["timeout"] = Number(this.state.newTimeout);
+            partialNewItem["numberReq"] = Number(this.state.newNum);
+        }
+
         this.props.meteorCall(
             meteorMethod,
             this.props.selectedItemPartial._id,
-            this.state.newName.trim(),
-            this.state.newDesc.trim(),
+            partialNewItem,
             err => {
                 if (err) {
                     this.setState({ error: err.reason });
@@ -143,11 +187,60 @@ export default class ChangeDetailsModal extends React.Component {
         this.setState({ newDesc: inputValue });
     }
 
+    handleTimeoutChange(event) {
+        event.preventDefault();
+        const inputValue = numberFilter(event.target.value);
+        if (inputValue[0] === "0") return;
+        if (inputValue.length > 3) return;
+
+        this.setState({ newTimeout: inputValue });
+    }
+
+    handlePeopleChange(event) {
+        event.preventDefault();
+        const inputValue = numberFilter(event.target.value);
+        if (inputValue === "00") return;
+        if (inputValue.length > 2) return;
+
+        this.setState({ newNum: inputValue });
+    }
+
     toggleModal() {
         this.setState({
             modalIsOpen: !this.state.modalIsOpen,
             error: ""
         });
+    }
+
+    checkDetails() {
+        const groupCheck =
+            this.state.newName.trim() ===
+                this.props.selectedItemPartial.name.trim() &&
+            this.state.newDesc.trim() ===
+                this.props.selectedItemPartial.description.trim();
+
+        const dsbjCheck =
+            this.state.newTimeout ===
+                String(this.props.selectedItemPartial.timeoutHours) &&
+            this.state.newNum ===
+                String(this.props.selectedItemPartial.numberReq) &&
+            groupCheck;
+
+        if (this.props.isGroupTab) {
+            if (groupCheck) {
+                this.setState({ error: "Details not changed" });
+                setTimeout(() => this.setState({ error: "" }), 10000);
+                return false;
+            }
+        } else {
+            if (dsbjCheck) {
+                this.setState({ error: "Details not changed" });
+                setTimeout(() => this.setState({ error: "" }), 10000);
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 

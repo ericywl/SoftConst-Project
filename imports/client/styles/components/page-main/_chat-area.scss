@@ -42,9 +42,13 @@
 
 .chat-area__header-dots {
     margin: 0;
-    margin-right: $input-spacing;
+    margin-right: $space;
     width: 30%;
     overflow: visible;
+
+    @include desktop() {
+        margin-right: $large-space;
+    }
 }
 
 /* BODY */

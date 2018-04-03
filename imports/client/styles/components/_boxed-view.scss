@@ -7,6 +7,10 @@
     width: 100vw;
 }
 
+.boxed-view--auth {
+    background: $grey;
+}
+
 .boxed-view__box {
     background: $boxed-view-bg;
     border: 1px solid $boxed-view-border-color;

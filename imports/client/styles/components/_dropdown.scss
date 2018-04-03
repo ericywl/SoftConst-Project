@@ -5,11 +5,14 @@
     margin-top: 1rem;
     outline: none;
     overflow: visible;
+    float: right;
+    z-index: 5;
 }
 
 .dropdown__control {
     width: inherit;
     display: flex;
+
     flex-direction: row;
     justify-content: space-between;
     text-transform: uppercase;
@@ -21,6 +24,7 @@
     background-color: white;
     border: 1px solid $dropdown-greyed-border-color;
     position: relative;
+    z-index: 5;
 }
 
 .dropdown__item {
@@ -28,6 +32,7 @@
     box-sizing: border-box;
     border: 1px solid transparent;
     padding: $input-spacing;
+    z-index: 5;
 }
 
 .dropdown__item:hover {

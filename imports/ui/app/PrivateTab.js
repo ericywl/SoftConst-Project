@@ -6,8 +6,10 @@ import { TAB_TEXT_ARR } from "../../misc/constants";
 export class PrivateTab extends React.Component {
     render() {
         return (
-            <div className="tab-container__wrapper">
-                <div className="tab-container">{this.renderTabs()}</div>
+            <div>
+                <div className="tab-container__wrapper">
+                    <div className="tab-container">{this.renderTabs()}</div>
+                </div>
             </div>
         );
     }

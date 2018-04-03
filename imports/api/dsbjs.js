@@ -7,8 +7,7 @@ import {
     checkAccess,
     checkUserExist,
     tagFilter,
-    validateDsbj,
-    validateDsbjDetails
+    validateDsbj
 } from "../misc/methods";
 
 export const DsbjsDB = new Mongo.Collection("dsbjs");
@@ -34,13 +33,16 @@ Meteor.methods({
         validateDsbj(partialDsbj);
 
         const now = moment().valueOf();
-        const timeoutAt = now + partialDsbj.timeout;
+        const timeoutAt = moment(now)
+            .hours(partialDsbj.timeout)
+            .valueOf();
 
         try {
             const res = DsbjsDB.insert({
                 name: partialDsbj.name,
                 description: partialDsbj.description,
                 numberReq: partialDsbj.numberReq,
+                timeoutHours: partialDsbj.timeout,
                 timeoutAt: timeoutAt,
                 lastMessageAt: now,
                 createdAt: now,
@@ -107,43 +109,37 @@ Meteor.methods({
     },
 
     /**
-     * Update the timeout, ie. shorten or extend DSBJ response deadline
-     * @param {String} dsbjId : id of DSBJ to be updated
-     * @param {String} newTimeout : the new timeout
+     * Change the dsbj name and description
+     * @param {String} dsbjId : id of the dsbj
+     * @param {Object} partialNewDsbj: new dsbj object
      */
-    dsbjsTimeoutUpdate(dsbjId, newTimeout) {
+    dsbjsDetailsChange(dsbjId, partialNewDsbj) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
+        validateDsbj(partialNewDsbj);
         checkAccess(dsbjId, DsbjsDB);
 
         const dsbj = DsbjsDB.findOne({ _id: dsbjId });
-        const dsbjCreatedAt = dsbj.createdAt;
-        const newTimeoutAt = dsbjCreatedAt + newTimeout;
+        const newTimeoutAt = moment(dsbj.createdAt)
+            .hours(partialNewDsbj.timeout)
+            .valueOf();
         if (newTimeoutAt <= moment().valueOf())
             throw new Meteor.Error("timeout-in-past");
 
-        return DsbjsDB.update(
-            { _id: dsbjId },
-            { set: { timeoutAt: newTimeoutAt } }
-        );
-    },
-
-    /**
-     * Update the required number of people for the DSBJ event
-     * @param {String} dsbjId : id of DSBJ to be updated
-     * @param {String} newNumberReq : the new number of attendees required
-     */
-    dsbjsNumberReqUpdate(dsbjId, newNumberReq) {
-        if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(dsbjId, DsbjsDB);
-
-        const dsbj = DsbjsDB.findOne({ _id: dsbjId });
         const numOfAttendees = dsbj.attendees.length;
-        if (numOfAttendees > newNumberReq)
+        if (numOfAttendees > partialNewDsbj.numberReq)
             throw new Meteor.Error("more-attendees-than-numreq");
 
         return DsbjsDB.update(
             { _id: dsbjId },
-            { set: { numberReq: newNumberReq } }
+            {
+                $set: {
+                    name: partialNewDsbj.name,
+                    description: partialNewDsbj.description,
+                    numberReq: partialNewDsbj.numberReq,
+                    timeoutHours: partialNewDsbj.timeout,
+                    timeoutAt: newTimeoutAt
+                }
+            }
         );
     },
 
@@ -181,23 +177,6 @@ Meteor.methods({
         return DsbjsDB.update(
             { _id: dsbjId },
             { $pull: { attendees: removedUserId } }
-        );
-    },
-
-    /**
-     * Change the dsbj name and description
-     * @param {String} dsbjId : id of the dsbj
-     * @param {String} newName : the dsbj's new name
-     * @param {String} newDesc : the dsbj's new description
-     */
-    dsbjsDetailsChange(dsbjId, newName, newDesc) {
-        if (!this.userId) throw new Meteor.Error("not-logged-in");
-        validateDsbjDetails(newName, newDesc);
-        checkAccess(dsbjId, DsbjsDB);
-
-        return DsbjsDB.update(
-            { _id: dsbjId },
-            { $set: { name: newName, description: newDesc } }
         );
     }
 });
