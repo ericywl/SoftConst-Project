@@ -2,7 +2,15 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { checkAccess, checkUserExist, tagFilter } from "../methods/methods";
+// APIs
+import { ProfilesDB } from "./profiles";
+import {
+    checkAccess,
+    checkUserExist,
+    tagFilter,
+    validateGroup,
+    validateGroupName
+} from "../misc/methods";
 
 export const GroupsDB = new Mongo.Collection("groups");
 
@@ -13,121 +21,153 @@ if (Meteor.isServer) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        return GroupsDB.find(
-            {},
-            {
-                fields: {
-                    name: 1,
-                    lastMessageAt: 1,
-                    tags: 1,
-                    moderators: 1,
-                    isPrivate: 1
-                },
-                $limit: 10
-            }
-        );
+        return GroupsDB.find({}, { $limit: 100 });
     });
 }
 
 Meteor.methods({
     /**
-     * Add group to database with a partialGroup object
-     * @param {Object} partialGroup : includes name, description and isPrivate
+     * Add list to database with a partialGroup object
+     * @param {Object} partialGroup : includes name, description
      */
     groupsInsert(partialGroup) {
-        checkUserExist(Meteor.userId());
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        validateGroup(partialGroup);
 
-        return GroupsDB.insert({
-            name: partialGroup.name,
-            description: partialGroup.description,
-            isPrivate: partialGroup.isPrivate,
-            tags: [],
-            lastMessageAt: moment().valueOf(),
-            createdAt: moment().valueOf(),
-            createdBy: Meteor.userId(),
-            moderators: [Meteor.userId()]
-        });
+        const res = GroupsDB.insert(
+            {
+                name: partialGroup.name,
+                description: partialGroup.description,
+                tags: [],
+                lastMessageAt: moment().valueOf(),
+                createdAt: moment().valueOf(),
+                ownedBy: this.userId,
+                moderators: [],
+                members: []
+            },
+            (err, groupId) => {
+                if (!err) {
+                    try {
+                        ProfilesDB.update(
+                            { _id: this.userId },
+                            { $push: { groups: groupId } }
+                        );
+                    } catch (newErr) {
+                        throw newErr;
+                    }
+                } else {
+                    throw err;
+                }
+            }
+        );
+
+        return res;
     },
 
     /**
-     * Remove group from database
-     * @param {String} _id : id of the group to be removed
+     * Remove list from database
+     * @param {String} groupId : id of the list to be removed
      */
-    groupsRemove(_id) {
-        checkAccess(_id, GroupsDB);
+    groupsRemove(groupId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        const accessLevel = checkAccess(groupdId, GroupsDB);
+        if (accessLevel !== "high")
+            throw new Meteor.Error("high-level-access-required");
 
-        return GroupsDB.remove({ _id });
+        const group = GroupsDB.findOne({ _id: groupId });
+        const canRemoveGroup =
+            group.members.length === 1 && group.members.includes(this.userId);
+
+        if (!canRemoveGroup)
+            throw new Meteor.Error("cannot-remove-list-with-members");
+
+        return GroupsDB.remove({ _id: groupId });
     },
 
     /**
-     * Add tag to a group
-     * @param {String} _id : id of the group
+     * Add tag to a list
+     * @param {String} groupId : id of the list
      * @param {String} tag : tag to be inserted
      */
-    groupsAddTag(_id, tag) {
-        checkAccess(_id, GroupsDB);
+    groupsTagAdd(groupId, tag) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkAccess(groupId, GroupsDB);
         const formattedTag = tagFilter(tag);
 
-        return GroupsDB.update({ _id }, { $addToSet: { tags: formattedTag } });
+        return GroupsDB.update(
+            { _id: groupId },
+            { $addToSet: { tags: formattedTag } }
+        );
     },
 
     /**
-     * Remove tag from the group identified by id if exists
-     * @param {String} _id : id of the group
+     * Remove tag from the list identified by id if exists
+     * @param {String} groupId : id of the list
      * @param {String} tag : tag to be removed
      */
-    groupsRemoveTag(_id, tag) {
-        checkAccess(_id, GroupsDB);
+    groupsTagRemove(groupId, tag) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkAccess(groupId, GroupsDB);
         const formattedTag = tagFilter(tag);
 
-        if (!GroupsDB.findOne({ _id, tags: formattedTag })) {
+        if (!GroupsDB.findOne({ _id: groupId, tags: formattedTag })) {
             throw new Meteor.Error("tag-not-found");
         }
 
-        return GroupsDB.update({ _id }, { $pull: { tags: formattedTag } });
+        return GroupsDB.update(
+            { _id: groupId },
+            { $pull: { tags: formattedTag } }
+        );
     },
 
     /**
-     * Add userId to the list of group moderators
-     * @param {String} _id : id of the group
+     * Add userId to the list of list moderators
+     * Only the owner can add moderators
+     * @param {String} groupdId : id of the list
      * @param {String} userId : id of the user
      */
-    groupsAddModerator(_id, userId) {
-        checkAccess(_id, GroupsDB);
+    groupsModeratorAdd(groupdId, userId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkUserExist(userId);
+        const accessLevel = checkAccess(groupdId, GroupsDB);
+        if (accessLevel !== "high")
+            throw new Meteor.Error("high-level-access-required");
 
-        return GroupsDB.update({ _id }, { $push: { moderators: userId } });
+        return GroupsDB.update(
+            { _id: groupdId },
+            { $push: { moderators: userId } }
+        );
     },
 
     /**
-     * Update last message at, called only when messages are inserted
-     * @param {String} _id : id of the group
-     * @param {Number} time : time of last message
+     * Remove userId from the list of list moderators
+     * Only the owner can remove moderators
+     * @param {String} groupId: id of the list
+     * @param {String} userId: id of the user
      */
-    groupsUpdateLastMessageAt(_id, time) {
-        return GroupsDB.update({ _id }, { $set: { lastMessageAt: time } });
+    groupsModeratorRemove(groupdId, userId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkUserExist(userId);
+        const accessLevel = checkAccess(groupdId, GroupsDB);
+        if (accessLevel !== "high")
+            throw new Meteor.Error("high-level-access-required");
+
+        return GroupsDB.update(
+            { _id: groupdId },
+            { $pull: { moderators: userId } }
+        );
+    },
+
+    /**
+     * Change the group name
+     * @param {String} groupdId : id of the group
+     * @param {String} newName : the group's new name
+     */
+    groupsNameChange(groupdId, newName) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        validateGroupName(newName);
+        checkAccess(groupdId, GroupsDB);
+
+        return GroupsDB.update({ _id: groupdId }, { $set: { name: newName } });
     }
 });
-
-const validateNewGroup = partialGroup => {
-    new SimpleSchema({
-        name: {
-            type: String,
-            min: 3,
-            max: 30
-        },
-        description: {
-            type: String,
-            max: 50
-        },
-        isPrivate: {
-            type: Boolean
-        }
-    }).validate({
-        name: partialGroup.name,
-        description: partialGroup.description,
-        isPrivate: partialGroup.isPrivate
-    });
-
-    return true;
-};

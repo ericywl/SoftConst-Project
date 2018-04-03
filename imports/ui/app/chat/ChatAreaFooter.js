@@ -7,6 +7,7 @@ import { withTracker } from "meteor/react-meteor-data";
 export class ChatAreaFooter extends React.Component {
     constructor(props) {
         super(props);
+        this.groupInputs = {};
         this.state = {
             input: "",
             error: ""
@@ -14,9 +15,17 @@ export class ChatAreaFooter extends React.Component {
     }
 
     render() {
-        const disabled = this.props.notInGroup ? true : false;
-        const placeholder = this.props.notInGroup
-            ? "Join the group to chat!"
+        let cannotSendToAnnouncements =
+            this.props.selectedRoom === "announcements" && !this.props.isOwner;
+
+        if (this.props.selectedTab === "groups") {
+            connanotSenToAnnouncements =
+                cannotSendToAnnouncements && !this.props.isModerator;
+        }
+
+        const disabledInput = this.props.notInItem || cannotSendToAnnouncements;
+        const inputPlaceholder = this.props.notInItem
+            ? "Join the list to chat!"
             : "";
 
         return (
@@ -26,26 +35,43 @@ export class ChatAreaFooter extends React.Component {
                     onSubmit={this.handleSubmitMessage.bind(this)}
                 >
                     <input
-                        disabled={disabled}
-                        placeholder={placeholder}
+                        disabled={disabledInput}
+                        placeholder={inputPlaceholder}
                         ref="msgInput"
                         type="text"
                         value={this.state.input}
                         onChange={this.handleInputChange.bind(this)}
                     />
                 </form>
+
+                <div ref="errorBar" className="snackbar">
+                    {this.state.error}
+                </div>
             </div>
         );
     }
 
-    // Reset the message input field if user change group
     componentDidUpdate(prevProps, prevState, prevContext) {
-        const currentGroupId = this.props.selectedGroupId;
-        const prevGroupId = prevProps.selectedGroupId;
+        const currGroupId = this.props.selectedItemId;
+        const prevGroupId = prevProps.selectedItemId;
 
-        if (currentGroupId && currentGroupId !== prevGroupId) {
+        const currRoom = this.props.selectedRoom;
+        const prevRoom = prevProps.selectedRoom;
+
+        // Save and reload the message input field if user change list
+        if (!!currGroupId && currGroupId !== prevGroupId) {
+            if (this.groupInputs[prevGroupId] === undefined) {
+                this.groupInputs[prevGroupId] = {};
+            }
+
+            this.groupInputs[prevGroupId][prevRoom] = prevState.input;
+            const reloadedCurrGroupInput =
+                this.groupInputs[currGroupId] === undefined
+                    ? ""
+                    : this.groupInputs[currGroupId][currRoom];
+
             this.setState({
-                input: ""
+                input: reloadedCurrGroupInput ? reloadedCurrGroupInput : ""
             });
         }
     }
@@ -55,28 +81,37 @@ export class ChatAreaFooter extends React.Component {
         if (this.state.input.trim() === "") return;
 
         const partialMsg = {
-            groupId: this.props.selectedGroupId,
+            dsbjId: this.props.selectedItemId,
+            room: this.props.selectedRoom,
             content: this.state.input.trim()
         };
 
-        this.props.meteorCall("messagesInsert", partialMsg, (err, res) => {
+        const messagesInsert =
+            this.props.selectedTab === "groups"
+                ? "groupsMessagesInsert"
+                : "dsbjsMessagesInsert";
+
+        this.props.meteorCall(messagesInsert, partialMsg, (err, res) => {
             if (err) this.setState({ error: err.reason });
 
             if (res) {
-                try {
-                    this.props.meteorCall(
-                        "groupsUpdateLastMessageAt",
-                        partialMsg.groupId,
-                        moment().valueOf()
-                    );
-                } catch (err) {
-                    // remove message from db
-                    throw new Meteor.Error(err.reason);
-                }
-
+                Session.set("sentToGroup", this.props.selectedItemId);
                 this.setState({ input: "" });
             }
         });
+
+        if (this.state.error) {
+            this.showSnackbar();
+        }
+    }
+
+    showSnackbar() {
+        const errorBar = this.refs.errorBar;
+        errorBar.classList.add("snackbar--show");
+        setTimeout(() => {
+            errorBar.classList.remove("snackbar--show");
+            this.setState({ error: "" });
+        }, 3000);
     }
 
     handleInputChange(event) {
@@ -86,16 +121,17 @@ export class ChatAreaFooter extends React.Component {
 }
 
 ChatAreaFooter.propTypes = {
-    notInGroup: PropTypes.bool.isRequired,
-    selectedGroupId: PropTypes.string.isRequired,
+    notInItem: PropTypes.bool.isRequired,
+    selectedItemId: PropTypes.string.isRequired,
+    selectedRoom: PropTypes.string.isRequired,
     meteorCall: PropTypes.func.isRequired
 };
 
 export default withTracker(() => {
-    const selectedGroupId = Session.get("selectedGroupId");
+    const selectedRoom = Session.get("selectedRoom");
 
     return {
-        selectedGroupId,
+        selectedRoom,
         meteorCall: Meteor.call
     };
 })(ChatAreaFooter);

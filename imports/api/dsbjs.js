@@ -2,7 +2,13 @@ import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
 
-import { checkAccess, checkUserExist, tagFilter } from "../methods/methods";
+import {
+    checkAccess,
+    checkUserExist,
+    tagFilter,
+    validateDsbj,
+    validateDsbjName
+} from "../misc/methods";
 
 export const DsbjsDB = new Mongo.Collection("dsbjs");
 
@@ -13,7 +19,7 @@ if (Meteor.isServer) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        return DsbjsDB.find();
+        return DsbjsDB.find({}, { $limit: 100 });
     });
 }
 
@@ -24,20 +30,38 @@ Meteor.methods({
      */
     dsbjsInsert(partialDsbj) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
+        validateDsbj(partialDsbj);
 
-        validateNewDsbj(partialDsbj);
+        const now = moment().valueOf();
+        const timeoutAt = now + partialDsbj.timeout;
 
-        return DsbjsDB.insert({
-            name: partialDsbj.name,
-            description: partialDsbj.description,
-            tags: [],
-            lastMessageAt: moment().valueOf(),
-            timeout: partialDsbj.timeout,
-            createdAt: moment().valueOf(),
-            createdBy: this.userId,
-            numberReq: partialDsbj.numberReq,
-            attendees: []
-        });
+        const res = DsbjsDB.insert(
+            {
+                name: partialDsbj.name,
+                description: partialDsbj.description,
+                numberReq: partialDsbj.numberReq,
+                timeoutAt: timeoutAt,
+                lastMessageAt: now,
+                createdAt: now,
+                createdBy: this.userId,
+                tags: [],
+                attendees: []
+            },
+            (err, dsbjId) => {
+                if (!err) {
+                    try {
+                        ProfilesDB.update(
+                            { _id: this.userId },
+                            { $push: { dsbjs: dsbjId } }
+                        );
+                    } catch (newErr) {
+                        throw newErr;
+                    }
+                } else {
+                    throw err;
+                }
+            }
+        );
     },
 
     /**
@@ -52,47 +76,11 @@ Meteor.methods({
     },
 
     /**
-     * Add a new attendee to a DSBJ event
-     * @param {String} dsbjId : id of the DSBJ event
-     * @param {String} addedUserId : user id to be added
-     */
-    dsbjsAddAttendee(dsbjId, addedUserId) {
-        if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(dsbjId, addedUserId);
-
-        if (DsbjsDB.findOne({ dsbjId }).attendees.includes(removedUserId))
-            throw new Meteor.Error("user-already-in-dsbj");
-
-        return DsbjsDB.update(
-            { _id: dsbjId },
-            { $addToSet: { attendees: addedUserId } }
-        );
-    },
-
-    /**
-     * Remove specified userId from DSBJ event
-     * @param {String} dsbjId : id of the DSBJ event
-     * @param {String} removedUserId : user id to be removed
-     */
-    dsbjsRemoveAttendee(dsbjId, removedUserId) {
-        if (!this.userId) throw new Meteor.Error("not-logged-in");
-        checkAccess(dsbjId, removedUserId);
-
-        if (!DsbjsDB.findOne({ dsbjId }).attendees.includes(removedUserId))
-            throw new Meteor.Error("user-not-in-dsbj");
-
-        return DsbjsDB.update(
-            { _id: dsbjId },
-            { $pull: { attendees: removedUserId } }
-        );
-    },
-
-    /**
      * Add tag to a DSBJ event
-     * @param {String} dsbjId : id of the group
+     * @param {String} dsbjId : id of the list
      * @param {String} addedTag : tag to be inserted
      */
-    dsbjsAddTag(dsbjId, addedTag) {
+    dsbjsTagAdd(dsbjId, addedTag) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
         const formattedTag = tagFilter(addedTag);
@@ -108,10 +96,10 @@ Meteor.methods({
 
     /**
      * Remove tag from the DSBJ event identified by id if exists
-     * @param {String} dsbjId : id of the group
+     * @param {String} dsbjId : id of the list
      * @param {String} removedTag : tag to be removed
      */
-    dsbjsRemoveTag(dsbjId, removedTag) {
+    dsbjsTagRemove(dsbjId, removedTag) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
         const formattedTag = tagFilter(removedTag);
@@ -126,28 +114,52 @@ Meteor.methods({
     },
 
     /**
+     * Change the list name
+     * @param {String} dsbjId : id of the list
+     * @param {String} newName : the list's new name
+     */
+    dsbjsNameChange(dsbjId, newName) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        validateDsbjName(newName);
+        checkAccess(dsbjId, DsbjsDB);
+
+        return DsbjsDB.update({ _id: dsbjId }, { $set: { name: newName } });
+    },
+
+    /**
      * Update the timeout, ie. shorten or extend DSBJ response deadline
      * @param {String} dsbjId : id of DSBJ to be updated
      * @param {String} newTimeout : the new timeout
      */
-    dsbjsUpdateTimeout(dsbjId, newTimeout) {
+    dsbjsTimeoutUpdate(dsbjId, newTimeout) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
 
+        const dsbj = DsbjsDB.findOne({ _id: dsbjId });
+        const dsbjCreatedAt = dsbj.createdAt;
+        const newTimeoutAt = dsbjCreatedAt + newTimeout;
+        if (newTimeoutAt <= moment().valueOf())
+            throw new Meteor.Error("timeout-in-past");
+
         return DsbjsDB.update(
             { _id: dsbjId },
-            { set: { timeout: newTimeout } }
+            { set: { timeoutAt: newTimeoutAt } }
         );
     },
 
     /**
-     *
+     * Update the required number of people for the DSBJ event
      * @param {String} dsbjId : id of DSBJ to be updated
      * @param {String} newNumberReq : the new number of attendees required
      */
-    dsbjsUpdateNumberReq(dsbjId, newNumberReq) {
+    dsbjsNumberReqUpdate(dsbjId, newNumberReq) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkAccess(dsbjId, DsbjsDB);
+
+        const dsbj = DsbjsDB.findOne({ _id: dsbjId });
+        const numOfAttendees = dsbj.attendees.length;
+        if (numOfAttendees > newNumberReq)
+            throw new Meteor.Error("more-attendees-than-numreq");
 
         return DsbjsDB.update(
             { _id: dsbjId },
@@ -155,48 +167,40 @@ Meteor.methods({
         );
     },
 
+    /* DEPRECATED */
     /**
-     * Update last message at, called only when messages are inserted
-     * @param {String} dsbjId : id of the group
-     * @param {Number} time : time of last message
+     * Add a new attendee to a DSBJ event
+     * @param {String} dsbjId : id of the DSBJ event
+     * @param {String} addedUserId : user id to be added
      */
-    dsbjsUpdateLastMessageAt(dsbjId, time) {
+    dsbjsAttendeeAdd(dsbjId, addedUserId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkAccess(dsbjId, DsbjsDB);
+
+        if (DsbjsDB.findOne({ dsbjId }).attendees.includes(removedUserId))
+            throw new Meteor.Error("user-already-in-dsbj");
 
         return DsbjsDB.update(
             { _id: dsbjId },
-            { $set: { lastMessageAt: time } }
+            { $addToSet: { attendees: addedUserId } }
+        );
+    },
+
+    /**
+     * Remove specified userId from DSBJ event
+     * @param {String} dsbjId : id of the DSBJ event
+     * @param {String} removedUserId : user id to be removed
+     */
+    dsbjsAttendeeRemove(dsbjId, removedUserId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkAccess(dsbjId, DsbjsDB);
+
+        if (!DsbjsDB.findOne({ dsbjId }).attendees.includes(removedUserId))
+            throw new Meteor.Error("user-not-in-dsbj");
+
+        return DsbjsDB.update(
+            { _id: dsbjId },
+            { $pull: { attendees: removedUserId } }
         );
     }
 });
-
-const validateNewDsbj = partialDsbj => {
-    new SimpleSchema({
-        name: {
-            type: String,
-            min: 3,
-            max: 30
-        },
-        description: {
-            type: String,
-            max: 50
-        },
-        isPrivate: {
-            type: Boolean
-        },
-        timeout: {
-            type: SimpleSchema.Integer,
-            min: moment().valueOf()
-        },
-        numberReq: {
-            type: SimpleSchema.Integer,
-            min: 1
-        }
-    }).validate({
-        name: partialDsbj.name,
-        description: partialDsbj.description,
-        isPrivate: partialDsbj.isPrivate
-    });
-
-    return true;
-};
