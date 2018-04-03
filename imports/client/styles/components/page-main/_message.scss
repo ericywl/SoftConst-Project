@@ -23,3 +23,28 @@
     padding-right: $large-space;
     border-bottom: 1px solid $grey;
 }
+
+.message__header {
+    margin-bottom: $input-spacing / 2;
+}
+
+.message__header-username {
+    font-size: calc(#{$base-font-size} + 0.1rem);
+}
+
+.message__header-time {
+    font-size: $small-font-size;
+    color: lighten($dark-grey, 10%);
+}
+
+.message__body {
+    font-size: calc(#{$base-font-size} - 0.1rem);
+    color: darken($dark-grey, 10%);
+}
+
+/* EMPTY */
+.empty-message-list {
+    color: $dark-grey;
+    font-style: italic;
+    padding: $large-space $space;
+}

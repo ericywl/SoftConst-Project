@@ -12,6 +12,7 @@ import ChatAreaBody from "./ChatAreaBody";
 
 // APIs
 import { GroupsDB } from "../../../api/groups";
+import { DsbjsDB } from "../../../api/dsbjs";
 import { ProfilesDB } from "../../../api/profiles";
 
 /**
@@ -19,54 +20,110 @@ import { ProfilesDB } from "../../../api/profiles";
  */
 export class ChatArea extends React.Component {
     render() {
-        if (!this.props.selectedGroup) {
+        const isGroupTab = this.props.selectedTab === "groups";
+        const tabText = this.props.selectedTab.slice(
+            0,
+            this.props.selectedTab.length - 1
+        );
+
+        const selectedItem = isGroupTab
+            ? this.props.selectedGroup
+            : this.props.selectedDsbj;
+
+        const notInItem = isGroupTab
+            ? this.props.notInGroup
+            : this.props.notInDsbj;
+
+        const isOwner = isGroupTab
+            ? this.props.isGroupOwner
+            : this.props.isDsbjCreator;
+
+        if (!selectedItem) {
             return (
-                <div>
-                    <p>Please select a group to start chatting.</p>
+                <div className="chat-area">
+                    <p className="empty-chat-area">
+                        Please select a {tabText} to start chatting.
+                    </p>
                 </div>
             );
         }
 
-        return (
-            <div className="chat-area">
-                <ChatAreaHeader
-                    selectedGroup={this.props.selectedGroup}
-                    isModerator={this.props.isModerator}
-                />
+        if (this.props.ready) {
+            return (
+                <div className="chat-area">
+                    <ChatAreaHeader
+                        selectedItem={selectedItem}
+                        selectedTab={this.props.selectedTab}
+                        notInItem={notInItem}
+                        isOwner={isOwner}
+                        isModerator={this.props.isModerator}
+                    />
 
-                <ChatAreaBody
-                    notInGroup={this.props.notInGroup}
-                    selectedGroupId={this.props.selectedGroup._id}
-                />
+                    <ChatAreaBody
+                        selectedItemId={selectedItem._id}
+                        selectedTab={this.props.selectedTab}
+                        notInItem={notInItem}
+                        isOwner={isOwner}
+                        isModerator={this.props.isModerator}
+                    />
 
-                <ChatAreaFooter notInGroup={this.props.notInGroup} />
-            </div>
-        );
+                    <ChatAreaFooter
+                        selectedItemId={selectedItem._id}
+                        selectedTab={this.props.selectedTab}
+                        notInItem={notInItem}
+                        isOwner={isOwner}
+                        isModerator={this.props.isModerator}
+                    />
+                </div>
+            );
+        }
+
+        return <div className="chat-area" />;
     }
 }
 
 ChatArea.propTypes = {
     isModerator: PropTypes.bool.isRequired,
     selectedGroup: PropTypes.object,
+    selectedTab: PropTypes.string.isRequired,
     notInGroup: PropTypes.bool.isRequired
 };
 
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
-    Meteor.subscribe("groups");
-    Meteor.subscribe("profiles");
+    const selectedDsbjId = Session.get("selectedDsbjId");
 
-    const userProfile = ProfilesDB.find().fetch()[0];
+    const profilesHandle = Meteor.subscribe("profiles");
+    const groupsHandle = Meteor.subscribe("groups");
+    const dsbjsHandle = Meteor.subscribe("dsbjs");
+
+    const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
     const userGroups = userProfile ? userProfile.groups : [];
+    const userDsbjs = userProfile ? userProfile.dsbjs : [];
 
     const selectedGroup = GroupsDB.findOne({ _id: selectedGroupId });
+    const selectedDsbj = DsbjsDB.findOne({ _id: selectedDsbjId });
+
+    const isDsbjCreator = selectedDsbj
+        ? selectedDsbj.createdBy === Meteor.userId()
+        : false;
+
+    const isGroupOwner = selectedGroup
+        ? selectedGroup.ownedBy === Meteor.userId()
+        : false;
+
     const isModerator = selectedGroup
         ? selectedGroup.moderators.includes(Meteor.userId())
         : false;
 
     return {
+        isDsbjCreator,
+        isGroupOwner,
         isModerator,
         selectedGroup,
-        notInGroup: !userGroups.includes(selectedGroupId)
+        selectedDsbj,
+        notInGroup: !userGroups.includes(selectedGroupId),
+        notInDsbj: !userDsbjs.includes(selectedDsbjId),
+        ready: profilesHandle.ready() && groupsHandle.ready()
     };
 })(ChatArea);

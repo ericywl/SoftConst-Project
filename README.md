@@ -4,6 +4,8 @@ Elements of Software Construction Project
 
 Deployed on https://sutd-chat.herokuapp.com.
 
+Note: The system is tested fully only on Google Chrome. Other browsers may experience some minor bugs. For example, Firefox does not use webkit scrollbars, so the scrollbar background is not overwritten by this webapp.
+
 # Instructions for local deployment and testing
 
 1.  Clone the project
