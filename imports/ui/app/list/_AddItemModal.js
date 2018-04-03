@@ -157,6 +157,10 @@ export default class AddGroupModal extends React.Component {
                 }, 10000);
             } else {
                 this.toggleModal();
+                const selectedText = isGroupTab
+                    ? "selectedGroupId"
+                    : "selectedDsbjId";
+                this.props.session.set(selectedText, res);
             }
         });
     }
