@@ -232,6 +232,7 @@ Meteor.methods({
      * @param {String} newBio
      */
 <<<<<<< HEAD
+<<<<<<< HEAD
     profilesUpdateBio(_id, newBio) {
         if (!Meteor.userId()) {
             throw new Meteor.Error("not-logged-in");
@@ -241,6 +242,8 @@ Meteor.methods({
         return ProfilesDB.update(
             { _id: _id },
 =======
+=======
+>>>>>>> b91ba1690cfa54c1ceade029ed06d518eae43384
     profilesUpdateBio(newBio) {
         if (!this.userId) {
             throw new Meteor.Error("not-logged-in");
@@ -249,7 +252,10 @@ Meteor.methods({
         checkUserExist(this.userId);
         return ProfilesDB.update(
             { _id: this.userId },
+<<<<<<< HEAD
 >>>>>>> 501bb88799a220b646f3b5b2390ddaf4509d6fb2
+=======
+>>>>>>> b91ba1690cfa54c1ceade029ed06d518eae43384
             { $set: { bio: newBio } }
         );
     },

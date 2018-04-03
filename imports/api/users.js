@@ -2,10 +2,15 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 // API
 >>>>>>> 501bb88799a220b646f3b5b2390ddaf4509d6fb2
+=======
+
+// API
+>>>>>>> b91ba1690cfa54c1ceade029ed06d518eae43384
 import { ProfilesDB } from "./profiles.js";
 import { USERNAME_MIN_LENGTH } from "../misc/constants";
 
