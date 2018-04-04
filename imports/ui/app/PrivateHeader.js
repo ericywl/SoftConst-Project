@@ -26,12 +26,20 @@ export const PrivateHeader = props => {
                     {props.title}
                 </h1>
 
-                <button
-                    className="button button--title"
-                    onClick={props.handleLogout}
-                >
-                    Logout
-                </button>
+                <div className="header__right-wrapper">
+                    <img
+                        className="header__profile"
+                        src="/images/people.png"
+                        onClick={() => history.replace("/profile")}
+                    />
+
+                    <button
+                        className="button button--title"
+                        onClick={props.handleLogout}
+                    >
+                        Logout
+                    </button>
+                </div>
             </div>
         </div>
     );

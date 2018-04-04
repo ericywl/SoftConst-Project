@@ -20,6 +20,16 @@
     margin: 0;
 }
 
+.header__right-wrapper {
+    display: flex;
+}
+
+.header__profile {
+    cursor: pointer;
+    height: 3rem;
+    margin-right: $large-space;
+}
+
 .header__nav-toggle {
     cursor: pointer;
     height: 2rem;
