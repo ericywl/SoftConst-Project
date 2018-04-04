@@ -23,9 +23,14 @@ export class ChatAreaFooter extends React.Component {
                 cannotSendToAnnouncements && !this.props.isModerator;
         }
 
+        const tabText = this.props.selectedTab.slice(
+            0,
+            this.props.selectedTab.length - 1
+        );
+
         const disabledInput = this.props.notInItem || cannotSendToAnnouncements;
         const inputPlaceholder = this.props.notInItem
-            ? "Join the list to chat!"
+            ? `Join the ${tabText} to chat!`
             : "";
 
         return (
@@ -95,9 +100,10 @@ export class ChatAreaFooter extends React.Component {
                 : "dsbjsMessagesInsert";
 
         this.props.meteorCall(messagesInsert, partialMsg, (err, res) => {
-            if (err) this.setState({ error: err.reason });
-
-            if (res) {
+            if (err) {
+                this.setState({ error: err.reason });
+                setTimeout(() => this.setState({ error: "" }), 10000);
+            } else {
                 Session.set("sentToGroup", this.props.selectedItemId);
                 this.setState({ input: "" });
             }

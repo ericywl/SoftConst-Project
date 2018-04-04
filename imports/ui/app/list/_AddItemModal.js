@@ -48,7 +48,7 @@ export default class AddGroupModal extends React.Component {
                 contentLabel={"Create New " + formattedTabText}
                 onAfterOpen={() => this.refs.itemName.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
-                className="boxed-view__large-box"
+                className="boxed-view__box boxed-view__box--l"
                 overlayClassName="boxed-view boxed-view__modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
@@ -136,14 +136,14 @@ export default class AddGroupModal extends React.Component {
         if (isGroupTab) {
             meteorMethod = "groupsInsert";
             partialItem = {
-                name: this.state.itemName,
-                description: this.state.itemDesc
+                name: this.state.itemName.trim(),
+                description: this.state.itemDesc.trim()
             };
         } else {
             meteorMethod = "dsbjsInsert";
             partialItem = {
-                name: this.state.itemName,
-                description: this.state.itemDesc,
+                name: this.state.itemName.trim(),
+                description: this.state.itemDesc.trim(),
                 timeout: Number(this.state.itemTimeout),
                 numberReq: Number(this.state.itemNumOfPeople)
             };
@@ -152,11 +152,15 @@ export default class AddGroupModal extends React.Component {
         this.props.meteorCall(meteorMethod, partialItem, (err, res) => {
             if (err) {
                 this.setState({ error: err.reason });
-                setTimeout(() => {
-                    this.setState({ error: "" });
-                }, 10000);
+                setTimeout(() => this.setState({ error: "" }), 10000);
             } else {
+                const selectedText = isGroupTab
+                    ? "selectedGroupId"
+                    : "selectedDsbjId";
+                this.props.session.set(selectedText, res);
                 this.toggleModal();
+                this.props.session.set("isNavOpen", false);
+                this.props.session.set("searchQuery", "");
             }
         });
     }

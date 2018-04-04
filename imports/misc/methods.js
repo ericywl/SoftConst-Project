@@ -98,7 +98,7 @@ export const tagFilter = input => {
 };
 
 export const spaceFilter = input => {
-    return input.replace(/\s+/gi, "");
+    return input.replace(/[ \t\r]+/g, " ").replace(/[\n]{3,}/gi, "\n\n");
 };
 
 /**
@@ -168,15 +168,21 @@ export const validateGroup = partialGroup => {
     return true;
 };
 
-export const validateGroupName = groupName => {
+export const validateGroupDetails = (groupName, groupDesc) => {
     new SimpleSchema({
         name: {
             type: String,
             min: c.ITEMNAME_MIN_LENGTH,
             max: c.ITEMNAME_MAX_LENGTH
+        },
+        desc: {
+            optional: true,
+            type: String,
+            max: c.GROUPDESC_MAX_LENGTH
         }
     }).validate({
-        name: groupName
+        name: groupName,
+        desc: groupDesc
     });
 
     return true;
@@ -228,14 +234,21 @@ export const validateDsbj = partialDsbj => {
     return true;
 };
 
-export const validateDsbjName = dsbjName => {
+export const validateDsbjDetails = (dsbjName, dsbjDesc) => {
     new SimpleSchema({
         name: {
             type: String,
             min: c.ITEMNAME_MIN_LENGTH,
             max: c.ITEMNAME_MAX_LENGTH
+        },
+        desc: {
+            type: String,
+            max: c.DSBJDESC_MAX_LENGTH
         }
-    }).validate({ name: dsbjName });
+    }).validate({
+        name: dsbjName,
+        desc: dsbjDesc
+    });
 
     return true;
 };
