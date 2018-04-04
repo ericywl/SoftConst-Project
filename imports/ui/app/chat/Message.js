@@ -8,9 +8,10 @@ export class Message extends React.Component {
     render() {
         const userDisplayName = this.props.message.userDisplayName;
         const messageSentAt = moment(this.props.message.sentAt).calendar();
+        const modalClass = this.props.removeMessage ? "" : " message--modal";
 
         return (
-            <div className="message">
+            <div className={"message" + modalClass}>
                 <div className="message__header">
                     <span className="message__header-username">
                         {userDisplayName}
@@ -19,11 +20,31 @@ export class Message extends React.Component {
                         {messageSentAt}
                     </span>
                 </div>
+
                 <div className="message__body">
-                    {this.props.message.content}
+                    <div className="message__body-content">
+                        {this.props.message.content}
+                    </div>
+
+                    {this.props.removeMessage ? (
+                        <div className="message__body-option">
+                            <img
+                                className="message__body-option-del"
+                                src="/images/close_x.svg"
+                                onClick={this.handleOnClick.bind(this)}
+                            />
+                        </div>
+                    ) : (
+                        undefined
+                    )}
                 </div>
             </div>
         );
+    }
+
+    handleOnClick(event) {
+        event.preventDefault();
+        this.props.removeMessage(this.props.message);
     }
 }
 
