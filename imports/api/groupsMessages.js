@@ -77,7 +77,8 @@ Meteor.methods({
         if (!message) throw new Meteor.Error("message-does-not-exist");
 
         if (message.userId !== this.userId) {
-            checkAccess(message.groupId, GroupsDB);
+            if (!checkAccess(message.groupId, GroupsDB))
+                throw new Meteor.Error("not-sender");
         }
 
         return GroupsMessagesDB.remove({ _id: messageId });

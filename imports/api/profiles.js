@@ -63,26 +63,21 @@ Meteor.methods({
             );
         }
 
-        const result = ProfilesDB.update(
-            { _id: this.userId },
-            { $addToSet: { groups: groupId } },
-            err => {
-                if (!err) {
-                    try {
-                        GroupsDB.update(
-                            { _id: groupId },
-                            { $addToSet: { members: this.userId } }
-                        );
-                    } catch (newErr) {
-                        throw newErr;
-                    }
-                } else {
-                    throw err;
-                }
-            }
-        );
+        try {
+            const result = ProfilesDB.update(
+                { _id: this.userId },
+                { $addToSet: { groups: groupId } }
+            );
 
-        return result;
+            GroupsDB.update(
+                { _id: groupId },
+                { $addToSet: { members: this.userId } }
+            );
+
+            return result;
+        } catch (err) {
+            throw err;
+        }
     },
 
     profilesLeaveGroup(groupId) {

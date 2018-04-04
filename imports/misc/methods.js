@@ -14,43 +14,43 @@ import { DsbjsDB } from "../api/dsbjs";
  * @param {Mongo.Collection} db : db to be searched
  */
 export const checkAccess = (itemId, db) => {
-    if (!Meteor.isTest) {
-        const dbObj = db.findOne({ _id: itemId });
-        if (!dbObj) throw new Meteor.Error("object-not-found");
+    if (Meteor.isTest) return undefined;
 
-        let accessLevel;
-        if (AdminsDB.findOne().h4x0rs.includes(Meteor.userId())) {
-            return accessLevel;
-        }
+    const dbObj = db.findOne({ _id: itemId });
+    if (!dbObj) throw new Meteor.Error("object-not-found");
 
-        switch (db) {
-            case GroupsDB:
-                if (dbObj.ownedBy === Meteor.userId()) {
-                    accessLevel = "high";
-                } else if (dbObj.moderators.includes(Meteor.userId())) {
-                    accessLevel = "low";
-                } else {
-                    throw new Meteor.Error("not-authorized");
-                }
-
-                break;
-
-            case DsbjsDB:
-                if (dbObj.createdBy === Meteor.userId()) {
-                    accessLevel = "high";
-                } else {
-                    throw new Meteor.Error("not-authorized");
-                }
-
-                break;
-
-            default:
-                throw new Meteor.Error("invalid-db");
-                break;
-        }
-
+    let accessLevel;
+    if (AdminsDB.findOne().h4x0rs.includes(Meteor.userId())) {
         return accessLevel;
     }
+
+    switch (db) {
+        case GroupsDB:
+            if (dbObj.ownedBy === Meteor.userId()) {
+                accessLevel = "high";
+            } else if (dbObj.moderators.includes(Meteor.userId())) {
+                accessLevel = "low";
+            } else {
+                throw new Meteor.Error("not-authorized");
+            }
+
+            break;
+
+        case DsbjsDB:
+            if (dbObj.createdBy === Meteor.userId()) {
+                accessLevel = "high";
+            } else {
+                throw new Meteor.Error("not-authorized");
+            }
+
+            break;
+
+        default:
+            throw new Meteor.Error("invalid-db");
+            break;
+    }
+
+    return accessLevel;
 };
 
 /**
@@ -62,13 +62,12 @@ export const checkUserExist = userId => {
         userId: String
     }).validate({ userId });
 
-    if (!Meteor.isTest) {
-        if (!Meteor.users.findOne({ _id: userId }))
-            throw new Meteor.Error("user-not-found");
+    if (Meteor.isTest) return false;
+    if (!Meteor.users.findOne({ _id: userId }))
+        throw new Meteor.Error("user-not-found");
 
-        if (!ProfilesDB.findOne({ _id: userId }))
-            throw new Meteor.Error("profile-not-found");
-    }
+    if (!ProfilesDB.findOne({ _id: userId }))
+        throw new Meteor.Error("profile-not-found");
 
     return true;
 };

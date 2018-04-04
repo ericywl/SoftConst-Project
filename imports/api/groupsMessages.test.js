@@ -10,6 +10,7 @@ if (Meteor.isServer) {
         const userDisplayName = "someName";
         const userId2 = "testId2";
         const userDisplayName2 = "abcdefghijklmnopqrstuvwxyz1234567890";
+        const msgId1 = "messageId111";
 
         beforeEach(function() {
             GroupsMessagesDB.remove({});
@@ -17,6 +18,7 @@ if (Meteor.isServer) {
             ProfilesDB.remove({});
 
             GroupsDB.insert({ _id: "groupId1", lastMessageAt: 0 });
+            GroupsMessagesDB.insert({ _id: msgId1, userId });
             ProfilesDB.insert({ _id: userId, displayName: userDisplayName });
             ProfilesDB.insert({ _id: userId2, displayName: userDisplayName2 });
         });
@@ -107,6 +109,26 @@ if (Meteor.isServer) {
                     Meteor.server.method_handlers.groupsMessagesInsert.apply(
                         { userId: userId2 },
                         [partialMsg]
+                    )
+                ).toThrow();
+            });
+        });
+
+        describe("groupsMessagesRemove", function() {
+            it("should remove group message", function() {
+                Meteor.server.method_handlers.groupsMessagesRemove.apply(
+                    { userId },
+                    [msgId1]
+                );
+
+                expect(GroupsMessagesDB.findOne({ _id: msgId1 })).toBeFalsy();
+            });
+
+            it("should throw error if not sender", function() {
+                expect(() =>
+                    Meteor.server.method_handlers.groupsMessagesRemove.apply(
+                        { userId: userId2 },
+                        [msgId1]
                     )
                 ).toThrow();
             });
