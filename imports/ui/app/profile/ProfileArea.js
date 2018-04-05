@@ -12,27 +12,12 @@ export class ProfileArea extends React.Component {
     }
 
     render() {
-<<<<<<< HEAD
-        if (Meteor.userId()) {
-            return (
-                <div>
-                    <Profile/>
-                </div>
-            );
-        }
-=======
         return (
             <div>
                 <Profile />
             </div>
         );
->>>>>>> 501bb88799a220b646f3b5b2390ddaf4509d6fb2
     }
 }
 
 export default ProfileArea;
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 501bb88799a220b646f3b5b2390ddaf4509d6fb2

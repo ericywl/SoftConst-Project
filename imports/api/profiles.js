@@ -25,7 +25,8 @@ if (Meteor.isServer) {
                     groups: 1,
                     dsbjs: 1,
                     tags: 1,
-                    bio: 1
+                    bio: 1,
+                    createdAt: 1
                 }
             }
         );
@@ -228,34 +229,16 @@ Meteor.methods({
 
     /**
      * Update the bio of the current user
-     * @param {String} _id
      * @param {String} newBio
      */
-<<<<<<< HEAD
-<<<<<<< HEAD
-    profilesUpdateBio(_id, newBio) {
-        if (!Meteor.userId()) {
-            throw new Meteor.Error("not-logged-in");
-        }
-
-        checkUserExist(_id);
-        return ProfilesDB.update(
-            { _id: _id },
-=======
-=======
->>>>>>> b91ba1690cfa54c1ceade029ed06d518eae43384
     profilesUpdateBio(newBio) {
-        if (!this.userId) {
+        if (!Meteor.userId()) {
             throw new Meteor.Error("not-logged-in");
         }
 
         checkUserExist(this.userId);
         return ProfilesDB.update(
-            { _id: this.userId },
-<<<<<<< HEAD
->>>>>>> 501bb88799a220b646f3b5b2390ddaf4509d6fb2
-=======
->>>>>>> b91ba1690cfa54c1ceade029ed06d518eae43384
+            { _id: Meteor.userId() },
             { $set: { bio: newBio } }
         );
     },
