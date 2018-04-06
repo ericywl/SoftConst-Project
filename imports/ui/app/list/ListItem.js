@@ -22,12 +22,16 @@ export class ListItem extends React.Component {
 
     handleOnClick(event) {
         event.preventDefault();
-        const sessionStr =
-            this.props.selectedTab === "groups"
-                ? "selectedGroupId"
-                : "selectedDsbjId";
+        const isGroupTab = this.props.selectedTab === "groups";
+        const selectedItemId = isGroupTab
+            ? "selectedGroupId"
+            : "selectedDsbjId";
 
-        this.props.session.set(sessionStr, this.props.item._id);
+        this.props.session.set(selectedItemId, this.props.item._id);
+
+        if (!isGroupTab) {
+            this.props.session.set("isNavOpen", false);
+        }
     }
 }
 

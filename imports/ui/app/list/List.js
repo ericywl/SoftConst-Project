@@ -143,6 +143,7 @@ export default withTracker(() => {
         userDsbjs
     );
 
+    const queriedGroups = filterItemsByQuery(fetchedGroups, searchQuery);
     const queriedDsbjs = filterItemsByQuery(fetchedDsbjs, searchQuery);
 
     return {
@@ -150,7 +151,7 @@ export default withTracker(() => {
             profilesHandle.ready() &&
             groupsHandle.ready() &&
             dsbjsHandle.ready(),
-        groups: filterItemsByQuery(fetchedGroups, searchQuery),
+        groups: queriedGroups,
         dsbjs: queriedDsbjs,
         notInGroup: !userGroups.includes(selectedGroupId),
         session: Session

@@ -1,13 +1,15 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import moment from "moment";
+import { ProfilesDB } from "./profiles";
 
+import { ProfilesDB } from "./profiles";
 import {
     checkAccess,
     checkUserExist,
     tagFilter,
     validateDsbj,
-    validateDsbjName
+    validateDsbjDetails
 } from "../misc/methods";
 
 export const DsbjsDB = new Mongo.Collection("dsbjs");
@@ -35,8 +37,8 @@ Meteor.methods({
         const now = moment().valueOf();
         const timeoutAt = now + partialDsbj.timeout;
 
-        const res = DsbjsDB.insert(
-            {
+        try {
+            const res = DsbjsDB.insert({
                 name: partialDsbj.name,
                 description: partialDsbj.description,
                 numberReq: partialDsbj.numberReq,
@@ -46,22 +48,14 @@ Meteor.methods({
                 createdBy: this.userId,
                 tags: [],
                 attendees: []
-            },
-            (err, dsbjId) => {
-                if (!err) {
-                    try {
-                        ProfilesDB.update(
-                            { _id: this.userId },
-                            { $push: { dsbjs: dsbjId } }
-                        );
-                    } catch (newErr) {
-                        throw newErr;
-                    }
-                } else {
-                    throw err;
-                }
-            }
-        );
+            });
+
+            ProfilesDB.update({ _id: this.userId }, { $push: { dsbjs: res } });
+
+            return res;
+        } catch (err) {
+            throw err;
+        }
     },
 
     /**
@@ -111,19 +105,6 @@ Meteor.methods({
             { _id: dsbjId },
             { $pull: { tags: formattedTag } }
         );
-    },
-
-    /**
-     * Change the list name
-     * @param {String} dsbjId : id of the list
-     * @param {String} newName : the list's new name
-     */
-    dsbjsNameChange(dsbjId, newName) {
-        if (!this.userId) throw new Meteor.Error("not-logged-in");
-        validateDsbjName(newName);
-        checkAccess(dsbjId, DsbjsDB);
-
-        return DsbjsDB.update({ _id: dsbjId }, { $set: { name: newName } });
     },
 
     /**
@@ -201,6 +182,23 @@ Meteor.methods({
         return DsbjsDB.update(
             { _id: dsbjId },
             { $pull: { attendees: removedUserId } }
+        );
+    },
+
+    /**
+     * Change the dsbj name and description
+     * @param {String} dsbjId : id of the dsbj
+     * @param {String} newName : the dsbj's new name
+     * @param {String} newDesc : the dsbj's new description
+     */
+    dsbjsDetailsChange(dsbjId, newName, newDesc) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        validateDsbjDetails(newName, newDesc);
+        checkAccess(dsbjId, DsbjsDB);
+
+        return DsbjsDB.update(
+            { _id: dsbjId },
+            { $set: { name: newName, description: newDesc } }
         );
     }
 });

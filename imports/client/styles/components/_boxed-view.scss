@@ -13,21 +13,30 @@
     padding: 2.4rem;
     text-align: center;
     width: 30rem;
+    max-width: 98%;
     outline: none;
 }
 
-.boxed-view__large-box {
-    background: $boxed-view-bg;
-    border: 1px solid $boxed-view-border-color;
-    padding: 2.4rem;
-    text-align: center;
+.boxed-view__box--l {
     width: 40rem;
-    outline: none;
+    max-width: 98%;
+}
+
+.boxed-view__box--el {
+    width: 50rem;
+    max-width: 98%;
 }
 
 .boxed-view__form {
     display: flex;
     flex-direction: column;
+}
+
+.boxed-view__form-subtitle {
+    font-size: $small-font-size;
+    color: $dark-grey;
+    text-align: left;
+    padding: 0.5rem;
 }
 
 .boxed-view__form--row {
