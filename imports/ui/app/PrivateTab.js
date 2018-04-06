@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
 import { TAB_TEXT_ARR } from "../../misc/constants";
@@ -26,6 +27,7 @@ export class PrivateTab extends React.Component {
                     return (
                         <li name={tabText} key={tabText} className="tab">
                             <div
+                                key={tabText}
                                 name={tabText}
                                 className={"tab__box" + tabSelectedClass}
                                 onClick={this.handleOnClick.bind(this)}
@@ -43,7 +45,7 @@ export class PrivateTab extends React.Component {
         event.preventDefault();
         const name = event.target.getAttribute("name");
 
-        if (this.props.session.get("selectedTab") !== name) {
+        if (this.props.selectedTab !== name) {
             Array.from(this.refs.tabs.children).forEach(tab => {
                 tab.children[0].classList.remove("tab__box--selected");
             });
@@ -57,6 +59,11 @@ export class PrivateTab extends React.Component {
         }
     }
 }
+
+PrivateTab.propTypes = {
+    selectedTab: PropTypes.string.isRequired,
+    session: PropTypes.object.isRequired
+};
 
 export default withTracker(() => {
     const selectedTab = Session.get("selectedTab");
