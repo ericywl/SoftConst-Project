@@ -9,7 +9,7 @@ import {
     checkUserExist,
     tagFilter,
     validateGroup,
-    validateGroupName
+    validateGroupDetails
 } from "../misc/methods";
 
 export const GroupsDB = new Mongo.Collection("groups");
@@ -34,8 +34,8 @@ Meteor.methods({
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         validateGroup(partialGroup);
 
-        const res = GroupsDB.insert(
-            {
+        try {
+            const res = GroupsDB.insert({
                 name: partialGroup.name,
                 description: partialGroup.description,
                 tags: [],
@@ -44,24 +44,14 @@ Meteor.methods({
                 ownedBy: this.userId,
                 moderators: [],
                 members: []
-            },
-            (err, groupId) => {
-                if (!err) {
-                    try {
-                        ProfilesDB.update(
-                            { _id: this.userId },
-                            { $push: { groups: groupId } }
-                        );
-                    } catch (newErr) {
-                        throw newErr;
-                    }
-                } else {
-                    throw err;
-                }
-            }
-        );
+            });
 
-        return res;
+            ProfilesDB.update({ _id: this.userId }, { $push: { groups: res } });
+
+            return res;
+        } catch (err) {
+            throw err;
+        }
     },
 
     /**
@@ -159,15 +149,19 @@ Meteor.methods({
     },
 
     /**
-     * Change the group name
+     * Change the group name and description
      * @param {String} groupdId : id of the group
      * @param {String} newName : the group's new name
+     * @param {String} newDesc : the group's new description
      */
-    groupsNameChange(groupdId, newName) {
+    groupsDetailsChange(groupdId, newName, newDesc) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
-        validateGroupName(newName);
+        validateGroupDetails(newName, newDesc);
         checkAccess(groupdId, GroupsDB);
 
-        return GroupsDB.update({ _id: groupdId }, { $set: { name: newName } });
+        return GroupsDB.update(
+            { _id: groupdId },
+            { $set: { name: newName, description: newDesc } }
+        );
     }
 });

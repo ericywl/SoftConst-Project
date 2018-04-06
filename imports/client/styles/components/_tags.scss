@@ -39,14 +39,28 @@
     margin-bottom: 0.1rem;
     width: 0.8rem;
     height: 0.8rem;
-}
 
-.tags__tag--cross:hover {
-    transform: scale(1.2);
+    &:hover {
+        transform: scale(1.2);
+    }
+
+    &:active {
+        transform: scale(1);
+    }
 }
 
 .tags__input[name="newTag"] {
     margin-bottom: 0;
+}
+
+.tags__close-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-top: $space;
+}
+
+.tags__close {
+    margin: 0;
 }
 
 /* EMPTY TAGS */

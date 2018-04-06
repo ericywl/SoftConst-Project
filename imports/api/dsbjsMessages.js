@@ -69,5 +69,18 @@ Meteor.methods({
         );
 
         return result;
+    },
+
+    dsbjsMessagesRemove(messageId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+
+        const message = DsbjsMessagesDB.findOne({ _id: messageId });
+        if (!message) throw new Meteor.Error("message-does-not-exist");
+
+        if (message.userId !== this.userId) {
+            checkAccess(message.dsbjId, DsbjsDB);
+        }
+
+        return DsbjsMessagesDB.remove({ _id: messageId });
     }
 });

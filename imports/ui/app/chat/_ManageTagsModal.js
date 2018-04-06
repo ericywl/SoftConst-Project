@@ -27,7 +27,7 @@ export default class ManageTagsModal extends React.Component {
                 contentLabel="Manage Tags"
                 onAfterOpen={() => this.refs.newTag.focus()}
                 onRequestClose={this.toggleModal.bind(this)}
-                className="boxed-view__large-box"
+                className="boxed-view__box boxed-view__box--l"
                 overlayClassName="boxed-view boxed-view__modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
@@ -70,6 +70,16 @@ export default class ManageTagsModal extends React.Component {
                 ) : (
                     undefined
                 )}
+
+                <div className="tags__close-wrapper">
+                    <button
+                        type="button"
+                        className="button button--greyed tags__close"
+                        onClick={this.toggleModal.bind(this)}
+                    >
+                        Close
+                    </button>
+                </div>
             </Modal>
         );
     }
@@ -120,6 +130,7 @@ export default class ManageTagsModal extends React.Component {
             (err, res) => {
                 if (err) {
                     this.setState({ error: err.reason });
+                    setTimeout(() => this.setState({ error: "" }), 10000);
                 }
             }
         );
@@ -137,6 +148,7 @@ export default class ManageTagsModal extends React.Component {
             (err, res) => {
                 if (err) {
                     this.setState({ error: err.reason });
+                    setTimeout(() => this.setState({ error: "" }), 10000);
                 }
             }
         );

@@ -5,7 +5,7 @@ import moment from "moment";
 
 // React Components
 import ManageTagsModal from "./_ManageTagsModal";
-import ChangeNameModal from "./_ChangeNameModal";
+import ChangeDetailsModal from "./_ChangeDetailsModal";
 import { capitalizeFirstLetter } from "../../../misc/methods";
 
 export default class ChatDropdown extends React.Component {
@@ -17,18 +17,20 @@ export default class ChatDropdown extends React.Component {
     }
 
     render() {
+        const isGroupTab = this.props.selectedTab === "groups";
         const tabText = capitalizeFirstLetter(
-            this.props.selectedTab.slice(0, this.props.selectedTab.length)
+            this.props.selectedTab.slice(0, this.props.selectedTab.length - 1)
         );
 
         const selectedItemPartial = {
             _id: this.props.selectedItem._id,
             name: this.props.selectedItem.name,
+            description: this.props.selectedItem.description,
             tags: this.props.selectedItem.tags
         };
 
         let haveAccess;
-        if (this.props.selectedTab === "groups") {
+        if (isGroupTab) {
             haveAccess = this.props.isModerator || this.props.isOwner;
         } else {
             haveAccess = this.props.isOwner;
@@ -72,7 +74,7 @@ export default class ChatDropdown extends React.Component {
                                 this.setState({ dropdownIsOpen: false });
                             }}
                         >
-                            Change {tabText} Name
+                            Change {tabText} Details
                         </div>
                     ) : (
                         undefined
@@ -104,25 +106,29 @@ export default class ChatDropdown extends React.Component {
                     )}
                 </div>
 
-                <ChangeNameModal
-                    haveAccess={haveAccess}
-                    isGroupTab={this.props.selectedTab === "groups"}
-                    selectedItemPartial={selectedItemPartial}
-                    meteorCall={this.props.meteorCall}
-                    ref={ref => {
-                        this.childNameModal = ref;
-                    }}
-                />
-
                 <ManageTagsModal
                     haveAccess={haveAccess}
-                    isGroupTab={this.props.selectedTab === "groups"}
+                    isGroupTab={isGroupTab}
                     selectedItemPartial={selectedItemPartial}
                     meteorCall={this.props.meteorCall}
                     ref={ref => {
                         this.childTagsModal = ref;
                     }}
                 />
+
+                {haveAccess ? (
+                    <ChangeDetailsModal
+                        haveAccess={haveAccess}
+                        isGroupTab={isGroupTab}
+                        selectedItemPartial={selectedItemPartial}
+                        meteorCall={this.props.meteorCall}
+                        ref={ref => {
+                            this.childNameModal = ref;
+                        }}
+                    />
+                ) : (
+                    undefined
+                )}
             </div>
         );
     }
@@ -146,7 +152,11 @@ export default class ChatDropdown extends React.Component {
     }
 
     handleClickOutside(event) {
-        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+        if (
+            (this.wrapperRef && !this.wrapperRef.contains(event.target)) ||
+            event.target.className ===
+                "dropdown__control dropdown__control--open"
+        ) {
             this.setState({ dropdownIsOpen: false });
         }
     }

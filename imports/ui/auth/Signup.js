@@ -25,12 +25,15 @@ export class Signup extends React.Component {
         try {
             validateNewUserClient({ username, email, password });
         } catch (e) {
-            return this.setState({ error: e.reason });
+            this.setState({ error: e.reason });
+            setTimeout(() => this.setState({ error: "" }), 10000);
+            return;
         }
 
         this.props.createUser({ username, email, password }, err => {
             if (err) {
                 this.setState({ error: err.reason });
+                setTimeout(() => this.setState({ error: "" }), 10000);
             } else {
                 this.setState({ error: "" });
             }

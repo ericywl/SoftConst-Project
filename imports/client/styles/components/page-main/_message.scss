@@ -1,6 +1,6 @@
 .message-list {
     height: 100%;
-    padding-right: calc(#{$large-space} + #{$input-spacing});
+    padding-right: $space;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
 
@@ -16,12 +16,20 @@
     &:hover::-webkit-scrollbar-thumb {
         background-color: darken($grey, 10%);
     }
+
+    @include desktop() {
+        padding-right: calc(#{$large-space} + #{$input-spacing});
+    }
 }
 
 .message {
     padding: $space $input-spacing;
-    padding-right: $large-space;
     border-bottom: 1px solid $grey;
+}
+
+.message--modal {
+    background: $light-grey;
+    border: 1px solid $grey;
 }
 
 .message__header {
@@ -38,7 +46,51 @@
 }
 
 .message__body {
+    display: flex;
+    flex-direction: row;
     font-size: calc(#{$base-font-size} - 0.1rem);
+    color: darken($dark-grey, 10%);
+}
+
+.message__body:hover .message__body-option {
+    visibility: visible;
+}
+
+.message__body-content {
+    margin-right: $space;
+    flex: 1;
+
+    word-wrap: break-word; /* IE 5.5-7 */
+    white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+    white-space: pre-wrap; /* current browsers */
+}
+
+.message__body-option {
+    float: right;
+    visibility: visible;
+    padding-left: $space;
+
+    @include desktop() {
+        visibility: hidden;
+    }
+}
+
+.message__body-option-del {
+    width: 1rem;
+    height: 1rem;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+/* REMOVE */
+.remove-message__subtitle {
+    font-size: $small-font-size;
     color: darken($dark-grey, 10%);
 }
 
