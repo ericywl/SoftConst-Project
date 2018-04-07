@@ -25,7 +25,16 @@ export const PrivateHeader = props => {
                 >
                     {props.title}
                 </h1>
-
+                <button
+                    className="button button--title"
+                    onClick={() => {
+                        history.replace("/profile");
+                        Session.set("selectedProfileId", Meteor.userId());
+                        }
+                    }
+                >
+                    Profile
+                </button>
                 <button
                     className="button button--title"
                     onClick={props.handleLogout}

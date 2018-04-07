@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
+//import FlipMove from "react-flip-move";
 
 import { ProfilesDB } from "../../../api/profiles.js";
 import { ProfileTagsHeader } from "./ProfileTagsHeader.js";
@@ -17,7 +18,7 @@ export class Profile extends React.Component {
         };
     }
     renderProfile() {
-        return this.props.bio == "" ? "Replace me" : this.props.bio;
+        return (this.props.bio=="") ? "Replace me": this.props.bio;
     }
 
     onChangeBio(event) {
@@ -28,14 +29,16 @@ export class Profile extends React.Component {
 
     onUpdateBio(event) {
         event.preventDefault();
-        Meteor.call(
-            "profilesUpdateBio",
-            Meteor.userId(),
-            this.state.newBio,
-            (err, res) => {
-                err ? console.log({ error: err.reason }) : null;
-            }
-        );
+        if (Session.get("selectedProfileId") === Meteor.userId()) {
+            Meteor.call(
+                "profilesUpdateBio",
+                this.state.newBio,
+                (err, res) => {
+                    err ? console.log({ error: err.reason }) : null;
+                }
+            );
+        }
+        this.state.newBio = "";
     }
 
     handleTagDelete(event) {
@@ -66,30 +69,33 @@ export class Profile extends React.Component {
     }
 
     renderBio() {
-        return (
-            <div>
-                <form
-                    className="boxed-view__form--row"
-                    onSubmit={this.onUpdateBio.bind(this)}
-                >
-                    <input
-                        className="tags__input"
-                        ref="new-bio"
-                        type="text"
-                        placeholder="New Bio"
-                        value={this.state.newBio}
-                        onChange={this.onChangeBio.bind(this)}
-                    />
-                    <button
-                        className="button button--tag"
-                        name="update-bio"
-                        onClick={this.onUpdateBio.bind(this)}
+        if (Session.get("selectedProfileId") === Meteor.userId()) {
+            return (
+                <div>
+                    <form
+                        className="boxed-view__form--row"
+                        onSubmit={this.onUpdateBio.bind(this)}
                     >
-                        update
-                    </button>
-                </form>
-            </div>
-        );
+                        <input
+                            className="tags__input"
+                            ref="new-bio"
+                            type="text"
+                            placeholder="New Bio"
+                            value={this.state.newBio}
+                            onChange={this.onChangeBio.bind(this)}
+                        />
+                        <button
+                            className="button button--tag"
+                            name="update-bio"
+                            onClick={this.onUpdateBio.bind(this)}>
+                            update
+                        </button>
+                    </form>
+                </div>
+            );
+        } else {
+            return <div/>
+        }
     }
 
     renderWelcome() {
@@ -98,18 +104,33 @@ export class Profile extends React.Component {
 
     render() {
         //this.currentUserId = Meteor.userId();
-        return (
-            <div className="profile">
-                {this.renderWelcome()}
-                {this.renderProfile()}
-                <div>{this.renderBio()}</div>
-                <div style={profile_padding} />
-                <div>
-                    <ProfileTagsHeader />
+        if (Session.get("selectedProfileId") === Meteor.userId()) {
+            return (
+                <div className="profile">
+                    {this.renderWelcome()}
+                    {this.renderProfile()}
+                    <div>{this.renderBio()}</div>
+                    <div style={profile_padding} />
+                    <div>
+                        <ProfileTagsHeader />
+                    </div>
+                    <div>{this.renderTags()}</div>
                 </div>
-                <div>{this.renderTags()}</div>
-            </div>
-        );
+            );
+        } else {
+            return (
+                <div className="profile">
+                    {this.renderWelcome()}
+                    {this.renderProfile()}
+                    <div>{this.renderBio()}</div>
+                    <div style={profile_padding} />
+                    <div>
+                        <ProfileTagsHeader />
+                    </div>
+                    <div>{this.renderTags()}</div>
+                </div>
+            );
+        }
     }
 }
 
@@ -122,13 +143,18 @@ Profile.propTypes = {
 
 export default withTracker(() => {
     Meteor.subscribe("profiles");
-    const doc = ProfilesDB.find({ _id: Meteor.userId() }).fetch()[0];
-    //console.log(doc);
+    let doc;
+    if (Session.get("selectedProfileId") === Meteor.userId()) {
+        doc = ProfilesDB.find({ _id: Meteor.userId() }).fetch()[0];
+    } else {
+        doc = ProfilesDB.find({ _id: Session.get("selectedProfileId") }).fetch()[0];
+    }
+    console.log(doc);
     return {
         bio: !doc || !doc.bio ? "Bio dummy text" : doc.bio,
         tags: !doc || !doc.tags ? ["Tags", "dummy", "text"] : doc.tags,
         displayName:
             !doc || !doc.displayName ? "Display name" : doc.displayName,
         meteorCall: Meteor.call
-    };
+    }; 
 })(Profile);

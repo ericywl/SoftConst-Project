@@ -28,31 +28,34 @@ export class ProfileTagsHeader extends React.Component {
     }
 
     render() {
-        //this.currentUserId = Meteor.userId();
-        return (
-            <div>
-                <form
-                    className="boxed-view__form--row"
-                    onSubmit={this.onAddTag.bind(this)}
-                >
-                    <input
-                        className="tags__input"
-                        ref="new-tag"
-                        type="text"
-                        placeholder="New Tag"
-                        value={this.state.newTag}
-                        onChange={this.onChangeTag.bind(this)}
-                    />
-                    <button
-                        className="button button--tag"
-                        name="add-tag"
-                        onClick={this.onAddTag.bind(this)}
+        if (Session.get("selectedProfileId") === Meteor.userId()) {
+            return (
+                <div>
+                    <form
+                        className="boxed-view__form--row"
+                        onSubmit={this.onAddTag.bind(this)}
                     >
-                        add
-                    </button>
-                </form>
-            </div>
-        );
+                        <input
+                            className="tags__input"
+                            ref="new-tag"
+                            type="text"
+                            placeholder="New Tag"
+                            value={this.state.newTag}
+                            onChange={this.onChangeTag.bind(this)}
+                        />
+                        <button
+                            className="button button--tag"
+                            name="add-tag"
+                            onClick={this.onAddTag.bind(this)}
+                        >
+                            add
+                        </button>
+                    </form>
+                </div>
+            );
+        } else {
+            return <div/>
+        }
     }
 }
 

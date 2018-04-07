@@ -25,7 +25,8 @@ if (Meteor.isServer) {
                     groups: 1,
                     dsbjs: 1,
                     tags: 1,
-                    bio: 1
+                    bio: 1,
+                    createdAt: 1
                 }
             }
         );
@@ -228,17 +229,16 @@ Meteor.methods({
 
     /**
      * Update the bio of the current user
-     * @param {String} _id
      * @param {String} newBio
      */
     profilesUpdateBio(newBio) {
-        if (!this.userId) {
+        if (!Meteor.userId()) {
             throw new Meteor.Error("not-logged-in");
         }
 
         checkUserExist(this.userId);
         return ProfilesDB.update(
-            { _id: this.userId },
+            { _id: Meteor.userId() },
             { $set: { bio: newBio } }
         );
     },

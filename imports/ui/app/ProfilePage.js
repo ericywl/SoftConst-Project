@@ -4,8 +4,9 @@ import Modal from "react-modal";
 import { withTracker } from "meteor/react-meteor-data";
 
 // React Components
-import PrivateHeader2 from "./PrivateHeader2";
-import List from "./list/List";
+import PrivateHeader from "./PrivateHeader";
+import PrivateTab from "./PrivateTab";
+import ProfileList from "./profile/ProfileList";
 import ChatArea from "./chat/ChatArea";
 import ProfileArea from "./profile/ProfileArea";
 
@@ -22,7 +23,7 @@ export class ProfilePage extends React.Component {
             return (
                 <div className="page-content">
                     <div className="page-content__sidebar">
-                        <div>dummy</div>
+                        <ProfileList selectedTab = {this.props.selectedTab} />
                     </div>
 
                     <div className="page-content__main">
@@ -30,17 +31,23 @@ export class ProfilePage extends React.Component {
                     </div>
                 </div>
             );
-        }
+        } 
     }
 
     render() {
         return (
             <div>
-                <PrivateHeader2 title="STUD Chat" />
+                <PrivateHeader title="STUD Chat" />
                 {this.renderPage()}
             </div>
         );
     }
 }
 
-export default ProfilePage;
+export default withTracker(() => {
+    const selectedTab = Session.get("selectedTab");
+
+    return {
+        selectedTab
+    };
+})(ProfilePage);
