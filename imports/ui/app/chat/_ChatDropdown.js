@@ -101,7 +101,7 @@ export default class ChatDropdown extends React.Component {
                             : "View " + tabText + " Tags"}
                     </div>
 
-                    {this.props.isOwner ? (
+                    {this.props.isModerator || this.props.isOwner ? (
                         <div
                             className="dropdown__item"
                             ref="copy"
@@ -167,16 +167,18 @@ export default class ChatDropdown extends React.Component {
             this.handleClickOutside.bind(this)
         );
 
-        this.clipboard = new Clipboard(this.refs.copy);
+        if (this.props.isModerator || this.props.isOwner) {
+            this.clipboard = new Clipboard(this.refs.copy);
 
-        this.clipboard.on("success", event => {
-            this.setState({ idCopied: true });
-            setTimeout(() => this.setState({ idCopied: false }), 2000);
-        });
+            this.clipboard.on("success", event => {
+                this.setState({ idCopied: true });
+                setTimeout(() => this.setState({ idCopied: false }), 2000);
+            });
 
-        this.clipboard.on("error", () =>
-            console.log("Auto-copying did not work!")
-        );
+            this.clipboard.on("error", () =>
+                console.log("Auto-copying did not work!")
+            );
+        }
     }
 
     componentWillUnmount() {
@@ -190,7 +192,8 @@ export default class ChatDropdown extends React.Component {
             this.handleClickOutside.bind(this)
         );
 
-        this.clipboard.destroy();
+        if (this.props.isModerator || this.props.isOwner)
+            this.clipboard.destroy();
     }
 
     setWrapperRef(node) {

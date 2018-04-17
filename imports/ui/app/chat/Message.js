@@ -10,6 +10,9 @@ export class Message extends React.Component {
         const messageSentAt = moment(this.props.message.sentAt).calendar();
         const modalClass = this.props.removeMessage ? "" : " message--modal";
 
+        const isSender = this.props.message.userId === Meteor.userId();
+        const canRemoveMsg = isSender || this.props.isAuth;
+
         return (
             <div className={"message" + modalClass}>
                 <div className="message__header">
@@ -26,7 +29,7 @@ export class Message extends React.Component {
                         {this.props.message.content}
                     </div>
 
-                    {this.props.removeMessage ? (
+                    {this.props.removeMessage && canRemoveMsg ? (
                         <div className="message__body-option">
                             <img
                                 className="message__body-option-del"

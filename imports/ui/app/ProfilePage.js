@@ -1,14 +1,15 @@
 import React from "react";
 
-import ProfileArea from "./profile/ProfileArea";
 import PrivateHeader from "./PrivateHeader";
+import ProfileList from "./profile/ProfileList";
+import ProfileArea from "./profile/ProfileArea";
 
 export class ProfilePage extends React.Component {
     renderPage() {
         return (
             <div className="page-content">
                 <div className="page-content__sidebar">
-                    <div>dummy</div>
+                    <ProfileList />
                 </div>
 
                 <div className="page-content__main">

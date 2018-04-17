@@ -30,6 +30,7 @@ export class MessageList extends React.Component {
     render() {
         const modalStyles = { overlay: { zIndex: 10 } };
         const notReady = !this.props.ready || this.props.messages.length == 0;
+        const isAuth = this.props.isOwner || this.props.isModerator;
 
         return (
             <div
@@ -47,6 +48,7 @@ export class MessageList extends React.Component {
                             <Message
                                 key={message._id}
                                 message={message}
+                                isAuth={isAuth}
                                 removeMessage={this.openModal.bind(this)}
                             />
                         );
@@ -86,6 +88,7 @@ export class MessageList extends React.Component {
 
                             <Message
                                 message={this.state.modalMessage}
+                                isAuth={isAuth}
                                 removeMessage={undefined}
                             />
 
@@ -190,8 +193,8 @@ export class MessageList extends React.Component {
             const scrollBottom =
                 messageList.scrollHeight - messageList.clientHeight;
             const scrollIsAtBottom =
-                scrollBottom !== 0 &&
-                Math.abs(messageList.scrollTop - scrollBottom) < 1;
+                scrollBottom !== 0 && messageList.scrollTop !== 0;
+            Math.abs(messageList.scrollTop - scrollBottom) < 1;
 
             this.autoScroll = scrollIsAtBottom;
         }
@@ -261,6 +264,18 @@ export class MessageList extends React.Component {
         }
     }
 }
+
+MessageList.propTypes = {
+    isOwner: PropTypes.bool.isRequired,
+    isModerator: PropTypes.bool.isRequired,
+    isGroupTab: PropTypes.bool.isRequired,
+    selectedItemId: PropTypes.string.isRequired,
+    messages: PropTypes.array.isRequired,
+    ready: PropTypes.bool.isRequired,
+    session: PropTypes.object.isRequired,
+    meteorCall: PropTypes.func.isRequired,
+    selectedRoom: PropTypes.string.isRequired
+};
 
 export default withTracker(() => {
     const selectedTab = Session.get("selectedTab");

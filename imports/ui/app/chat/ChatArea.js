@@ -38,6 +38,8 @@ export class ChatArea extends React.Component {
             ? this.props.isGroupOwner
             : this.props.isDsbjCreator;
 
+        const isModerator = isGroupTab ? this.props.isModerator : false;
+
         if (!selectedItem) {
             return (
                 <div className="chat-area">
@@ -56,7 +58,7 @@ export class ChatArea extends React.Component {
                         selectedTab={this.props.selectedTab}
                         notInItem={notInItem}
                         isOwner={isOwner}
-                        isModerator={this.props.isModerator}
+                        isModerator={isModerator}
                     />
 
                     <ChatAreaBody
@@ -64,7 +66,7 @@ export class ChatArea extends React.Component {
                         selectedTab={this.props.selectedTab}
                         notInItem={notInItem}
                         isOwner={isOwner}
-                        isModerator={this.props.isModerator}
+                        isModerator={isModerator}
                     />
 
                     <ChatAreaFooter
@@ -72,7 +74,7 @@ export class ChatArea extends React.Component {
                         selectedTab={this.props.selectedTab}
                         notInItem={notInItem}
                         isOwner={isOwner}
-                        isModerator={this.props.isModerator}
+                        isModerator={isModerator}
                     />
                 </div>
             );

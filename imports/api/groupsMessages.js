@@ -70,6 +70,42 @@ Meteor.methods({
         return result;
     },
 
+    groupsMessagesWelcome(groupId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkUserExist(this.userId);
+
+        const userDisplayName = ProfilesDB.findOne({ _id: this.userId })
+            .displayName;
+
+        const now = moment().valueOf();
+        const result = GroupsMessagesDB.insert(
+            {
+                groupId: groupId,
+                room: "messages",
+                content: `${userDisplayName} has joined the group!`,
+                userId: this.userId,
+                userDisplayName: "",
+                sentAt: now
+            },
+            err => {
+                if (!err) {
+                    try {
+                        GroupsDB.update(
+                            { _id: groupId },
+                            { $set: { lastMessageAt: now } }
+                        );
+                    } catch (newErr) {
+                        throw newErr;
+                    }
+                } else {
+                    throw err;
+                }
+            }
+        );
+
+        return result;
+    },
+
     groupsMessagesRemove(messageId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
 

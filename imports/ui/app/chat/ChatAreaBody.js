@@ -42,7 +42,10 @@ export class ChatAreaBody extends React.Component {
                         </button>
                     </div>
                 ) : (
-                    <MessageList />
+                    <MessageList
+                        isOwner={this.props.isOwner}
+                        isModerator={this.props.isModerator}
+                    />
                 )}
             </div>
         );
@@ -80,8 +83,10 @@ export class ChatAreaBody extends React.Component {
                     this.setState({ error: err.reason });
                     setTimeout(() => this.setState({ error: "" }), 10000);
                 } else {
-                    // TODO: Add joined message
-                    console.log("you have joined!");
+                    this.props.meteorCall(
+                        "groupsMessagesWelcome",
+                        this.props.selectedItem._id
+                    );
                 }
             }
         );
