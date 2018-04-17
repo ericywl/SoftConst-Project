@@ -2,6 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
+import Clipboard from "clipboard";
 
 // React Components
 import ManageTagsModal from "./_ManageTagsModal";
@@ -12,7 +13,8 @@ export default class ChatDropdown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dropdownIsOpen: false
+            dropdownIsOpen: false,
+            idCopied: false
         };
     }
 
@@ -100,6 +102,20 @@ export default class ChatDropdown extends React.Component {
                     </div>
 
                     {this.props.isOwner ? (
+                        <div
+                            className="dropdown__item"
+                            ref="copy"
+                            data-clipboard-text={selectedItemPartial._id}
+                        >
+                            {this.state.idCopied
+                                ? "ID Copied!"
+                                : `Copy ${tabText} ID`}
+                        </div>
+                    ) : (
+                        undefined
+                    )}
+
+                    {this.props.isOwner ? (
                         <div className="dropdown__item dropdown__item--disabled">
                             Leave {tabText}
                         </div>
@@ -150,6 +166,17 @@ export default class ChatDropdown extends React.Component {
             "touchstart",
             this.handleClickOutside.bind(this)
         );
+
+        this.clipboard = new Clipboard(this.refs.copy);
+
+        this.clipboard.on("success", event => {
+            this.setState({ idCopied: true });
+            setTimeout(() => this.setState({ idCopied: false }), 2000);
+        });
+
+        this.clipboard.on("error", () =>
+            console.log("Auto-copying did not work!")
+        );
     }
 
     componentWillUnmount() {
@@ -162,6 +189,8 @@ export default class ChatDropdown extends React.Component {
             "touchstart",
             this.handleClickOutside.bind(this)
         );
+
+        this.clipboard.destroy();
     }
 
     setWrapperRef(node) {
