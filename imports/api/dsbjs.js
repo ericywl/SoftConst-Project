@@ -34,8 +34,10 @@ Meteor.methods({
 
         const now = moment().valueOf();
         const timeoutAt = moment(now)
-            .hours(partialDsbj.timeout)
+            .add(partialDsbj.timeout, "hours")
             .valueOf();
+
+        console.log(timeoutAt);
 
         try {
             const res = DsbjsDB.insert({

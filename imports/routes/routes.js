@@ -3,8 +3,8 @@ import React from "react";
 import { Redirect, Router, Route, Switch } from "react-router-dom";
 
 // React Components
-import Dashboard from "../ui/app/Dashboard";
-import ProfilePage from "../ui/app/ProfilePage";
+import DashboardChat from "../ui/app/DashboardChat";
+import DashboardProfile from "../ui/app/DashboardProfile";
 import Login from "../ui/auth/Login";
 import Signup from "../ui/auth/Signup";
 import NotFound from "../ui/NotFound";
@@ -36,14 +36,14 @@ export const getRoutes = isAuthenticated => {
                         exact
                         path="/dashboard"
                         isAuth={isAuthenticated}
-                        component={Dashboard}
+                        component={DashboardChat}
                     />
 
                     <PrivateRoute
                         exact
                         path="/profile"
                         isAuth={isAuthenticated}
-                        component={ProfilePage}
+                        component={DashboardProfile}
                     />
 
                     <Route component={NotFound} />

@@ -136,7 +136,11 @@ export class GroupListHeader extends React.Component {
         let newSearch = searchFilterBeforeSet(event.target.value);
         if (newSearch[0] === "#") {
             newSearch = newSearch.trim();
-        } else if (newSearch.slice(-1) === "#") return;
+        } else if (newSearch.slice(-1) === "#") {
+            return;
+        } else if (newSearch[0] === " ") {
+            return;
+        }
 
         this.setState({ search: newSearch });
     }

@@ -20,6 +20,9 @@ export default class ChatDropdown extends React.Component {
 
     render() {
         const isGroupTab = this.props.selectedTab === "groups";
+        const noMembers = isGroupTab
+            ? this.props.selectedItem.members.length === 0
+            : this.props.selectedItem.attendees.length === 0;
         const tabText = capitalizeFirstLetter(
             this.props.selectedTab.slice(0, this.props.selectedTab.length - 1)
         );
@@ -115,7 +118,7 @@ export default class ChatDropdown extends React.Component {
                         undefined
                     )}
 
-                    {this.props.isOwner ? (
+                    {this.props.isOwner && !noMembers ? (
                         <div className="dropdown__item dropdown__item--disabled">
                             Leave {tabText}
                         </div>
@@ -214,10 +217,6 @@ export default class ChatDropdown extends React.Component {
     }
 
     handleLeaveOnClick(event) {
-        if (this.props.isOwner) {
-            throw new Meteor.Error("owner-cannot-leave");
-        }
-
         const meteorMethod =
             this.props.selectedTab === "groups"
                 ? "profilesLeaveGroup"

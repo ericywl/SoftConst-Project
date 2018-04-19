@@ -153,6 +153,8 @@ export default withTracker(() => {
         userDsbjs
     );
 
+    console.log(fetchedDsbjs);
+
     const queriedGroups = filterItemsByQuery(fetchedGroups, searchQuery);
     const queriedDsbjs = filterItemsByQuery(fetchedDsbjs, searchQuery);
 
@@ -193,17 +195,24 @@ const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
             ).fetch();
         }
     } else {
-        const db = item === "groups" ? GroupsDB : DsbjsDB;
-
-        items = db
-            .find(
+        if (item === "groups") {
+            items = GroupsDB.find(
                 { _id: { $in: userItems } },
                 {
-                    sort: { lastMessageAt: -1 },
-                    $limit: SHOWN_ITEMS_LIMIT
+                    sort: { lastMessageAt: -1 }
                 }
-            )
-            .fetch();
+            ).fetch();
+        } else {
+            items = DsbjsDB.find(
+                {
+                    _id: { $in: userItems },
+                    timeoutAt: { $exists: true, $gt: moment().valueOf() }
+                },
+                {
+                    sort: { lastMessageAt: -1 }
+                }
+            );
+        }
     }
 
     items = items.map(item => {

@@ -47,7 +47,11 @@ export class ProfileListHeader extends React.Component {
             newSearch = newSearch.trim();
         } else if (newSearch[0] === "@") {
             newSearch = newSearch.trim();
-        } else if (newSearch.slice(-1) === "#") return;
+        } else if (newSearch.slice(-1) === "#") {
+            return;
+        } else if (newSearch[0] === " ") {
+            return;
+        }
 
         this.setState({ search: newSearch });
         this.props.session.set("searchQuery", newSearch);

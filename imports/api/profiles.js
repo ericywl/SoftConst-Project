@@ -5,6 +5,7 @@ import moment from "moment";
 
 // APIs
 import { GroupsDB } from "./groups";
+import { DsbjsDB } from "./dsbjs";
 import { checkUserExist, validateUserDisplayName } from "../misc/methods";
 import { ROOM_TEXT_ARR, USERNAME_MIN_LENGTH } from "../misc/constants";
 
@@ -93,11 +94,33 @@ Meteor.methods({
                 "The list specified does not exist"
             );
 
-        if (group.ownedBy === this.userId)
+        if (group.ownedBy === this.userId && group.members.length !== 0) {
             throw new Meteor.Error(
-                "owner-cannot-leave-list",
-                "Owner cannot leave his/her list"
+                "owner-cannot-leave-non-empty-list",
+                "Owner cannot leave if group is not empty"
             );
+        } else if (
+            group.ownedBy === this.userId &&
+            group.members.length === 0
+        ) {
+            const result = ProfilesDB.update(
+                { _id: this.userId },
+                { $pull: { groups: groupId } },
+                err => {
+                    if (!err) {
+                        try {
+                            GroupsDB.remove({ _id: groupId });
+                        } catch (newErr) {
+                            throw newErr;
+                        }
+                    } else {
+                        throw err;
+                    }
+                }
+            );
+
+            return result;
+        }
 
         if (
             !group.members.includes(this.userId) &&
@@ -177,6 +200,81 @@ Meteor.methods({
                         DsbjsDB.update(
                             { _id: dsbjId },
                             { $addToSet: { attendees: this.userId } }
+                        );
+                    } catch (newErr) {
+                        throw newErr;
+                    }
+                } else {
+                    throw err;
+                }
+            }
+        );
+
+        return result;
+    },
+
+    profilesLeaveDsbj(dsbjId) {
+        if (!this.userId) {
+            throw new Meteor.Error("not-logged-in");
+        }
+        checkUserExist(this.userId);
+
+        const dsbj = DsbjsDB.findOne({ _id: dsbjId });
+        if (!dsbj)
+            throw new Meteor.Error(
+                "list-does-not-exist",
+                "The list specified does not exist"
+            );
+
+        if (dsbj.createdBy === this.userId && dsbj.attendees.length !== 0) {
+            throw new Meteor.Error(
+                "owner-cannot-leave-non-empty-list",
+                "Owner cannot leave if dsbj is not empty"
+            );
+        } else if (
+            dsbj.createdBy === this.userId &&
+            dsbj.attendees.length === 0
+        ) {
+            const result = ProfilesDB.update(
+                { _id: this.userId },
+                { $pull: { dsbjs: dsbjId } },
+                err => {
+                    if (!err) {
+                        try {
+                            DsbjsDB.remove({ _id: dsbjId });
+                        } catch (newErr) {
+                            throw newErr;
+                        }
+                    } else {
+                        throw err;
+                    }
+                }
+            );
+
+            return result;
+        }
+
+        if (
+            !dsbj.members.includes(this.userId) &&
+            !dsbj.moderators.includes(this.userId)
+        ) {
+            throw new Meteor.Error("not-in-list", "You are not in that list");
+        }
+
+        const profile = ProfilesDB.findOne({ _id: this.userId });
+        if (!profile.dsbjs.includes(dsbjId)) {
+            throw new Meteor.Error("not-in-list", "You are not in that list");
+        }
+
+        const result = ProfilesDB.update(
+            { _id: this.userId },
+            { $pull: { dsbjs: dsbjId } },
+            err => {
+                if (!err) {
+                    try {
+                        DsbjsDB.update(
+                            { _id: dsbjId },
+                            { $pull: { attendees: this.userId } }
                         );
                     } catch (newErr) {
                         throw newErr;

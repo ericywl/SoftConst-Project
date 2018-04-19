@@ -30,6 +30,12 @@ export class ChatAreaBody extends React.Component {
                             {this.props.selectedItem.description}
                         </h2>
 
+                        {this.props.selectedTab === "dsbjs" ? (
+                            <div>time</div>
+                        ) : (
+                            undefined
+                        )}
+
                         <div className="chat-area__body-tags">
                             {this.renderTags(tabText)}
                         </div>
@@ -70,10 +76,15 @@ export class ChatAreaBody extends React.Component {
 
     onClickJoin(event) {
         event.preventDefault();
-        const joinMethod =
-            this.props.selectedTab === "groups"
-                ? "profilesJoinGroup"
-                : "profilesJoinDsbj";
+        const isGroupTab = this.props.selectedTab === "groups";
+
+        const joinMethod = isGroupTab
+            ? "profilesJoinGroup"
+            : "profilesJoinDsbj";
+
+        const welcomeMethod = isGroupTab
+            ? "groupsMessagesWelcome"
+            : "dsbjsMessagesWelcome";
 
         this.props.meteorCall(
             joinMethod,
@@ -84,7 +95,7 @@ export class ChatAreaBody extends React.Component {
                     setTimeout(() => this.setState({ error: "" }), 10000);
                 } else {
                     this.props.meteorCall(
-                        "groupsMessagesWelcome",
+                        welcomeMethod,
                         this.props.selectedItem._id
                     );
                 }

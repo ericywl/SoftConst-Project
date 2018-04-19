@@ -10,7 +10,7 @@ export const DSBJDESC_MAX_LENGTH = 150;
 export const DSBJ_MAX_TIMEOUT = 168; // 1 week
 export const DSBJ_MAX_NUMREQ = 99;
 
-const SHOWN_ITEMS_LIMIT = 20;
+export const SHOWN_ITEMS_LIMIT = 20;
 
 export const ROOM_TEXT_ARR = ["announcements", "messages"];
 export const TAB_TEXT_ARR = ["groups", "DSBJs"];
