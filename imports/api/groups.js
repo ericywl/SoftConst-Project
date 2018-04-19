@@ -21,7 +21,7 @@ if (Meteor.isServer) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        return GroupsDB.find({}, { $limit: 100 });
+        return GroupsDB.find();
     });
 }
 
@@ -146,6 +146,33 @@ Meteor.methods({
             { _id: groupdId },
             { $pull: { moderators: userId } }
         );
+    },
+
+    groupsMemberRemove(groupdId, userId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkUserExist(userId);
+        checkAccess(groupdId, GroupsDB);
+
+        const result = GroupsDB.update(
+            { _id: groupdId },
+            { $pull: { members: userId, moderators: userId } },
+            (err, res) => {
+                if (!err) {
+                    try {
+                        ProfilesDB.update(
+                            { _id: userId },
+                            { $pull: { groups: groupdId } }
+                        );
+                    } catch (newErr) {
+                        throw newErr;
+                    }
+                } else {
+                    throw err;
+                }
+            }
+        );
+
+        return result;
     },
 
     /**

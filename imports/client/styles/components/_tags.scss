@@ -1,5 +1,5 @@
 .tags {
-    margin-bottom: $large-space;
+    margin-bottom: $space;
     padding-top: $space;
 }
 
@@ -18,7 +18,7 @@
     margin-bottom: 0;
 }
 
-.tags__tag {
+.tag {
     background-color: $tags-tag-bg-color;
     float: left;
     margin: $space / 4;
@@ -27,13 +27,13 @@
     border-radius: $tags-tag-border-radius;
 }
 
-.tags__tag--hash {
+.tag__hash {
     font-size: 1.8rem;
     font-weight: bold;
     color: $dark-grey;
 }
 
-.tags__tag--cross {
+.tag__cross {
     cursor: pointer;
     margin-left: 1rem;
     margin-bottom: 0.1rem;

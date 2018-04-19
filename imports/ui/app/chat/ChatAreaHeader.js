@@ -28,6 +28,7 @@ export class ChatAreaHeader extends React.Component {
                             <ChatDropdown
                                 selectedItem={this.props.selectedItem}
                                 selectedTab={this.props.selectedTab}
+                                members={this.props.members}
                                 notInItem={this.props.notInItem}
                                 isOwner={this.props.isOwner}
                                 isModerator={this.props.isModerator}
@@ -49,7 +50,8 @@ ChatAreaHeader.propTypes = {
     session: PropTypes.object.isRequired,
     notInItem: PropTypes.bool.isRequired,
     selectedItem: PropTypes.object.isRequired,
-    selectedTab: PropTypes.string.isRequired
+    selectedTab: PropTypes.string.isRequired,
+    members: PropTypes.array.isRequired
 };
 
 export default withTracker(() => {

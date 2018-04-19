@@ -71,7 +71,8 @@ export class ProfileList extends React.Component {
             !this.props.session.get("isModalOpen") &&
             event.target.className !== "header__nav-toggle"
         ) {
-            this.props.session.set("isNavOpen", false);
+            if (this.props.session.get("isNavOpen"))
+                this.props.session.set("isNavOpen", false);
         }
     }
 }

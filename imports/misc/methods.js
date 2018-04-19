@@ -62,9 +62,7 @@ export const checkUserExist = userId => {
         userId: String
     }).validate({ userId });
 
-    if (Meteor.isTest) return false;
-    if (!Meteor.users.findOne({ _id: userId }))
-        throw new Meteor.Error("user-not-found");
+    if (Meteor.isTest) return true;
 
     if (!ProfilesDB.findOne({ _id: userId }))
         throw new Meteor.Error("profile-not-found");

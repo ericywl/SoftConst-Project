@@ -6,20 +6,21 @@
 /* COMPONENTS */
 @import "./components/_boxed-view.scss";
 @import "./components/_button.scss";
-@import "components/_switch.scss";
+@import "./components/_switch.scss";
 @import "./components/_tags.scss";
-@import "components/_dropdown.scss";
+@import "./components/_dropdown.scss";
 @import "./components/_snackbar.scss";
+@import "./components/_members.scss";
 
 /* DASHBOARD */
-@import "components/dashboard/_header.scss";
-@import "components/dashboard/_page-content.scss";
-@import "components/dashboard/_tab.scss";
+@import "./components/dashboard/_header.scss";
+@import "./components/dashboard/_page-content.scss";
+@import "./components/dashboard/_tab.scss";
 
 /* PAGE-SIDEBAR */
-@import "components/page-sidebar/_item.scss";
-@import "components/page-sidebar/_room-bar.scss";
+@import "./components/page-sidebar/_item.scss";
+@import "./components/page-sidebar/_room-bar.scss";
 
 /* PAGE-MAIN */
-@import "components/page-main/_chat-area.scss";
-@import "components/page-main/_message.scss";
+@import "./components/page-main/_chat-area.scss";
+@import "./components/page-main/_message.scss";

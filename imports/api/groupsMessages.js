@@ -26,7 +26,7 @@ if (Meteor.isServer) {
             groupId: { type: String }
         }).validate({ groupId });
 
-        return GroupsMessagesDB.find({ groupId }, { limit: 500 });
+        return GroupsMessagesDB.find({ groupId }, { sort: { sentAt: 1 } });
     });
 }
 

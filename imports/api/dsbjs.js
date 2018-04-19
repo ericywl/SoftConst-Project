@@ -19,7 +19,7 @@ if (Meteor.isServer) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        return DsbjsDB.find({}, { $limit: 100 });
+        return DsbjsDB.find();
     });
 }
 

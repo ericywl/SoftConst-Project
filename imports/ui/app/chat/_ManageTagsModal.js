@@ -92,12 +92,12 @@ export default class ManageTagsModal extends React.Component {
         }
 
         return this.props.selectedItemPartial.tags.map((tag, index) => (
-            <span className="tags__tag" key={`tag${index}`}>
-                <span className="tags__tag--hash"># </span>
+            <span className="tag" key={`tag${index}`}>
+                <span className="tag__hash"># </span>
                 <span>{tag}</span>
                 {this.props.haveAccess ? (
                     <img
-                        className="tags__tag--cross"
+                        className="tag__cross"
                         src="/images/round_x.svg"
                         onClick={this.handleTagDelete.bind(this)}
                     />

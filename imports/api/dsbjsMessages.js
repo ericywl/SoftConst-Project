@@ -26,7 +26,7 @@ if (Meteor.isServer) {
             dsbjId: { type: String }
         }).validate({ dsbjId });
 
-        return DsbjsMessagesDB.find({ dsbjId }, { limit: 500 });
+        return DsbjsMessagesDB.find({ dsbjId }, { sort: { sentAt: 1 } });
     });
 }
 

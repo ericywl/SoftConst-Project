@@ -21,6 +21,9 @@ export default class ChatDropdown extends React.Component {
 
     render() {
         const isGroupTab = this.props.selectedTab === "groups";
+        const moderatorIds = isGroupTab
+            ? this.props.selectedItem.moderators
+            : [];
         const noMembers = isGroupTab
             ? this.props.selectedItem.members.length === 0
             : this.props.selectedItem.attendees.length === 0;
@@ -106,7 +109,16 @@ export default class ChatDropdown extends React.Component {
                     </div>
 
                     {haveAccess ? (
-                        <div className="dropdown__item">Manage Members</div>
+                        <div
+                            className="dropdown__item"
+                            onClick={event => {
+                                event.preventDefault();
+                                this.childMembersModal.toggleModal();
+                                this.setState({ dropdownIsOpen: false });
+                            }}
+                        >
+                            Manage Members
+                        </div>
                     ) : (
                         undefined
                     )}
@@ -163,7 +175,22 @@ export default class ChatDropdown extends React.Component {
                     undefined
                 )}
 
-                {haveAccess ? <ManageMembersModal /> : undefined}
+                {haveAccess ? (
+                    <ManageMembersModal
+                        selectedItemId={this.props.selectedItem._id}
+                        moderatorIds={moderatorIds}
+                        members={this.props.members}
+                        isGroupTab={isGroupTab}
+                        isOwner={this.props.isOwner}
+                        isModerator={this.props.isModerator}
+                        meteorCall={this.props.meteorCall}
+                        ref={ref => {
+                            this.childMembersModal = ref;
+                        }}
+                    />
+                ) : (
+                    undefined
+                )}
             </div>
         );
     }
@@ -221,7 +248,8 @@ export default class ChatDropdown extends React.Component {
             event.target.className ===
                 "dropdown__control dropdown__control--open"
         ) {
-            this.setState({ dropdownIsOpen: false });
+            if (this.state.dropdownIsOpen)
+                this.setState({ dropdownIsOpen: false });
         }
     }
 
@@ -245,6 +273,7 @@ export default class ChatDropdown extends React.Component {
 }
 
 ChatDropdown.propTypes = {
+    members: PropTypes.array.isRequired,
     selectedItem: PropTypes.object.isRequired,
     selectedTab: PropTypes.string.isRequired,
     notInItem: PropTypes.bool.isRequired,

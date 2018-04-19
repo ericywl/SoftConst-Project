@@ -1,0 +1,68 @@
+.members__title {
+    margin-bottom: 1rem;
+}
+
+.members__list {
+    max-height: 50vh;
+    margin: $space 0;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        width: 2px;
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        background-color: darken($grey, 10%);
+    }
+}
+
+.member {
+    font-size: $small-font-size;
+    display: flex;
+    flex-direction: row;
+}
+
+.member__name {
+    padding: 0.5rem;
+    margin-right: $input-spacing;
+}
+
+.member__id {
+    padding: 0.5rem;
+    margin-right: $input-spacing;
+}
+
+.member__options {
+    padding: 0.5rem;
+}
+
+.member__options--cross {
+    cursor: pointer;
+    margin-left: 1rem;
+    margin-bottom: 0.1rem;
+    width: 0.8rem;
+    height: 0.8rem;
+
+    &:hover {
+        transform: scale(1.2);
+    }
+
+    &:active {
+        transform: scale(1);
+    }
+}
+
+.empty-members {
+    color: $dark-grey;
+    background-color: $tags-tag-bg-color;
+    border-radius: 0.8rem;
+    font-style: italic;
+    text-align: center;
+    padding: $space;
+}

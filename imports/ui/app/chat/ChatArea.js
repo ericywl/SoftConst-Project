@@ -30,6 +30,10 @@ export class ChatArea extends React.Component {
             ? this.props.selectedGroup
             : this.props.selectedDsbj;
 
+        const members = isGroupTab
+            ? this.props.groupMembers
+            : this.props.dsbjAttendees;
+
         const notInItem = isGroupTab
             ? this.props.notInGroup
             : this.props.notInDsbj;
@@ -50,45 +54,52 @@ export class ChatArea extends React.Component {
             );
         }
 
-        if (this.props.ready) {
-            return (
-                <div className="chat-area">
-                    <ChatAreaHeader
-                        selectedItem={selectedItem}
-                        selectedTab={this.props.selectedTab}
-                        notInItem={notInItem}
-                        isOwner={isOwner}
-                        isModerator={isModerator}
-                    />
-
-                    <ChatAreaBody
-                        selectedItem={selectedItem}
-                        selectedTab={this.props.selectedTab}
-                        notInItem={notInItem}
-                        isOwner={isOwner}
-                        isModerator={isModerator}
-                    />
-
-                    <ChatAreaFooter
-                        selectedItemId={selectedItem._id}
-                        selectedTab={this.props.selectedTab}
-                        notInItem={notInItem}
-                        isOwner={isOwner}
-                        isModerator={isModerator}
-                    />
-                </div>
-            );
+        if (!this.props.ready) {
+            return <div className="chat-area" />;
         }
 
-        return <div className="chat-area" />;
+        return (
+            <div className="chat-area">
+                <ChatAreaHeader
+                    members={members}
+                    selectedItem={selectedItem}
+                    selectedTab={this.props.selectedTab}
+                    notInItem={notInItem}
+                    isOwner={isOwner}
+                    isModerator={isModerator}
+                />
+
+                <ChatAreaBody
+                    selectedItem={selectedItem}
+                    selectedTab={this.props.selectedTab}
+                    notInItem={notInItem}
+                    isOwner={isOwner}
+                    isModerator={isModerator}
+                />
+
+                <ChatAreaFooter
+                    selectedItemId={selectedItem._id}
+                    selectedTab={this.props.selectedTab}
+                    notInItem={notInItem}
+                    isOwner={isOwner}
+                    isModerator={isModerator}
+                />
+            </div>
+        );
     }
 }
 
 ChatArea.propTypes = {
     isModerator: PropTypes.bool.isRequired,
+    isGroupOwner: PropTypes.bool.isRequired,
+    isDsbjCreator: PropTypes.bool.isRequired,
     selectedGroup: PropTypes.object,
+    selectedDsbj: PropTypes.object,
+    groupMembers: PropTypes.array.isRequired,
+    dsbjAttendees: PropTypes.array.isRequired,
     selectedTab: PropTypes.string.isRequired,
-    notInGroup: PropTypes.bool.isRequired
+    notInGroup: PropTypes.bool.isRequired,
+    notInDsbj: PropTypes.bool.isRequired
 };
 
 export default withTracker(() => {
@@ -105,6 +116,17 @@ export default withTracker(() => {
 
     const selectedGroup = GroupsDB.findOne({ _id: selectedGroupId });
     const selectedDsbj = DsbjsDB.findOne({ _id: selectedDsbjId });
+    const groupMembers = selectedGroup
+        ? ProfilesDB.find({
+              _id: { $in: selectedGroup.members }
+          }).fetch()
+        : [];
+    const dsbjAttendees = selectedDsbj
+        ? ProfilesDB.find({ _id: { $in: selectedDsbj.attendees } }).fetch()
+        : [];
+
+    console.log(groupMembers);
+    console.log(dsbjAttendees);
 
     const isDsbjCreator = selectedDsbj
         ? selectedDsbj.createdBy === Meteor.userId()
@@ -124,6 +146,8 @@ export default withTracker(() => {
         isModerator,
         selectedGroup,
         selectedDsbj,
+        groupMembers,
+        dsbjAttendees,
         notInGroup: !userGroups.includes(selectedGroupId),
         notInDsbj: !userDsbjs.includes(selectedDsbjId),
         ready: profilesHandle.ready() && groupsHandle.ready()

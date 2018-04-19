@@ -8,7 +8,7 @@ import Modal from "react-modal";
 import { GroupsDB } from "../../../api/groups";
 import { tagFilter } from "../../../misc/methods";
 
-export default class ManageTagsModal extends React.Component {
+export default class ManageMembersModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -19,93 +19,77 @@ export default class ManageTagsModal extends React.Component {
 
     render() {
         const modalStyles = { overlay: { zIndex: 10 } };
+        const moderators = [];
+        const members = [];
+
+        this.props.members.map(member => {
+            if (this.props.moderatorIds.includes(member._id)) {
+                moderators.push(member);
+            } else {
+                members.push(member);
+            }
+        });
 
         return (
             <Modal
                 isOpen={this.state.modalIsOpen}
-                contentLabel="Manage Tags"
-                onAfterOpen={() => this.refs.newTag.focus()}
+                contentLabel="Manage Members"
+                onAfterOpen={() => {}}
                 onRequestClose={this.toggleModal.bind(this)}
                 className="boxed-view__box boxed-view__box--l"
                 overlayClassName="boxed-view boxed-view__modal"
                 shouldReturnFocusAfterClose={false}
                 style={modalStyles}
             >
-                Hi
+                <h2 className="boxed-view__modal-title members__title">
+                    Manage Members
+                </h2>
+                <div className="members__list">
+                    {this.renderMembers(members)}
+                </div>
             </Modal>
         );
     }
 
-    renderTags() {
-        if (this.props.selectedItemPartial.tags.length === 0) {
+    renderMembers(members) {
+        if (members.length === 0) {
             return (
-                <div className="empty-tags">There are no tags currently.</div>
+                <div className="empty-members">
+                    There are no members currently.
+                </div>
             );
         }
 
-        return this.props.selectedItemPartial.tags.map((tag, index) => (
-            <span className="tags__tag" key={`tag${index}`}>
-                <span className="tags__tag--hash"># </span>
-                <span>{tag}</span>
-                {this.props.haveAccess ? (
-                    <img
-                        className="tags__tag--cross"
-                        src="/images/round_x.svg"
-                        onClick={this.handleTagDelete.bind(this)}
-                    />
-                ) : (
-                    undefined
-                )}
-            </span>
-        ));
+        return members.map(member => {
+            return (
+                <div key={member._id} className="member">
+                    <div className="member__name ellipsis">
+                        {member.displayName}
+                    </div>
+                    <div className="member__id">{member._id}</div>
+                    <div className="member__options">
+                        <img
+                            className="member__options--cross"
+                            src="/images/round_x.svg"
+                            //onClick={this.handleTagDelete.bind(this)}
+                        />
+                        <img
+                            className="member__options--cross"
+                            src="/images/round_x.svg"
+                            onClick={() => this.handleMemberRemove(member._id)}
+                        />
+                    </div>
+                </div>
+            );
+        });
     }
 
-    handleTagChange(event) {
-        event.preventDefault();
-        const input = tagFilter(event.target.value.trim());
-        if (input.length > 33) return;
-
-        this.setState({ newTag: input });
-    }
-
-    handleTagDelete(event) {
-        event.preventDefault();
-        const tagName = event.target.parentElement.children[1].innerHTML;
-        const tagRemove = this.props.isGroupTab
-            ? "groupsTagRemove"
-            : "dsbjsTagRemove";
-
+    handleMemberRemove(memberId) {
         this.props.meteorCall(
-            tagRemove,
-            this.props.selectedItemPartial._id,
-            tagName,
-            (err, res) => {
-                if (err) {
-                    this.setState({ error: err.reason });
-                    setTimeout(() => this.setState({ error: "" }), 10000);
-                }
-            }
+            "groupsMemberRemove",
+            this.props.selectedItemId,
+            memberId
         );
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();
-        if (this.state.newTag === "") return;
-
-        const tagAdd = this.props.isGroupTab ? "groupsTagAdd" : "dsbjsTagAdd";
-        this.props.meteorCall(
-            tagAdd,
-            this.props.selectedItemPartial._id,
-            this.state.newTag,
-            (err, res) => {
-                if (err) {
-                    this.setState({ error: err.reason });
-                    setTimeout(() => this.setState({ error: "" }), 10000);
-                }
-            }
-        );
-
-        this.setState({ newTag: "" });
     }
 
     toggleModal() {
@@ -116,9 +100,9 @@ export default class ManageTagsModal extends React.Component {
     }
 }
 
-ManageTagsModal.propTypes = {
-    haveAccess: PropTypes.bool.isRequired,
+ManageMembersModal.propTypes = {
+    isOwner: PropTypes.bool.isRequired,
+    isModerator: PropTypes.bool.isRequired,
     isGroupTab: PropTypes.bool.isRequired,
-    selectedItemPartial: PropTypes.object.isRequired,
     meteorCall: PropTypes.func.isRequired
 };

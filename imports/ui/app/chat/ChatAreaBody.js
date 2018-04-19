@@ -67,8 +67,8 @@ export class ChatAreaBody extends React.Component {
         }
 
         return this.props.selectedItem.tags.map((tag, index) => (
-            <span className="tags__tag" key={`tag${index}`}>
-                <span className="tags__tag--hash"># </span>
+            <span className="tag" key={`tag${index}`}>
+                <span className="tag__hash"># </span>
                 <span>{tag}</span>
             </span>
         ));
