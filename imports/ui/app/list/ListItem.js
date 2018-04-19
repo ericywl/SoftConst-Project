@@ -12,7 +12,7 @@ export class ListItem extends React.Component {
 
         return (
             <div className={className} onClick={this.handleOnClick.bind(this)}>
-                <h5 className="item__title">{this.props.item.name}</h5>
+                <h5 className="item__title ellipsis">{this.props.item.name}</h5>
                 <p className="item__subtitle">
                     {moment(this.props.item.lastMessageAt).fromNow()}
                 </p>
@@ -30,7 +30,8 @@ export class ListItem extends React.Component {
         this.props.session.set(selectedItemId, this.props.item._id);
 
         if (!isGroupTab) {
-            this.props.session.set("isNavOpen", false);
+            if (this.props.session.get("isNavOpen"))
+                this.props.session.set("isNavOpen", false);
         }
     }
 }

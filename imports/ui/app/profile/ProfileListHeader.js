@@ -38,6 +38,7 @@ export class ProfileListHeader extends React.Component {
                     value={this.state.search}
                     placeholder={"Search for profiles"}
                     onChange={this.handleSearchChange.bind(this)}
+                    style={{ marginBottom: "0" }}
                 />
             </div>
         );

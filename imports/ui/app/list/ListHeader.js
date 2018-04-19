@@ -135,6 +135,7 @@ export class GroupListHeader extends React.Component {
                     value={this.state.search}
                     placeholder={"Search for " + selectedTab}
                     onChange={this.handleSearchChange.bind(this)}
+                    style={{ marginBottom: "0" }}
                 />
             </div>
         );

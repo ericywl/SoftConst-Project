@@ -8,6 +8,8 @@ import Clipboard from "clipboard";
 import ManageTagsModal from "./_ManageTagsModal";
 import ManageMembersModal from "./_ManageMembersModal";
 import ChangeDetailsModal from "./_ChangeDetailsModal";
+
+// APIs
 import { capitalizeFirstLetter } from "../../../misc/methods";
 
 export default class ChatDropdown extends React.Component {

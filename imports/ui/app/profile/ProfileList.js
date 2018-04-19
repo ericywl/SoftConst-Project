@@ -18,12 +18,11 @@ import {
     searchProfileFilterBeforeFetch
 } from "../../../misc/methods";
 import { SHOWN_ITEMS_LIMIT } from "../../../misc/constants";
-import { Profile } from "./Profile";
 
 export class ProfileList extends React.Component {
     renderList() {
         return this.props.profiles.map(profile => {
-            return <ProfileListItem key={profile._id} item={profile} />;
+            return <ProfileListItem key={profile._id} profile={profile} />;
         });
     }
 
@@ -103,12 +102,12 @@ export default withTracker(() => {
 })(ProfileList);
 
 /* HELPER METHODS */
-const fetchProfilesFromDB = (selectedItemId, query, userTags) => {
-    let items = [];
+const fetchProfilesFromDB = (selectedProfileId, query, userTags) => {
+    let profiles = [];
     const filteredQuery = searchProfileFilterBeforeFetch(query);
     const regex = new RegExp("^" + filteredQuery.substring(1), "i");
     if (filteredQuery[0] === "#") {
-        items = ProfilesDB.find(
+        profiles = ProfilesDB.find(
             {
                 _id: { $ne: Meteor.userId() },
                 tags: regex
@@ -117,12 +116,12 @@ const fetchProfilesFromDB = (selectedItemId, query, userTags) => {
         ).fetch();
     } else if (filteredQuery[0] === "@") {
         if (filteredQuery.length === 1) {
-            items = ProfilesDB.find(
+            profiles = ProfilesDB.find(
                 { _id: { $ne: Meteor.userId() } },
                 { sort: { displayName: 1 } }
             ).fetch();
         } else {
-            items = ProfilesDB.find(
+            profiles = ProfilesDB.find(
                 {
                     _id: { $ne: Meteor.userId() },
                     displayName: regex
@@ -131,7 +130,7 @@ const fetchProfilesFromDB = (selectedItemId, query, userTags) => {
             ).fetch();
         }
     } else {
-        items = ProfilesDB.find(
+        profiles = ProfilesDB.find(
             {
                 _id: { $ne: Meteor.userId() },
                 tags: { $exists: true, $not: { $size: 0 }, $in: userTags }
@@ -140,5 +139,10 @@ const fetchProfilesFromDB = (selectedItemId, query, userTags) => {
         ).fetch();
     }
 
-    return items;
+    return profiles.map(profile => {
+        return {
+            ...profile,
+            selected: profile._id === selectedProfileId
+        };
+    });
 };

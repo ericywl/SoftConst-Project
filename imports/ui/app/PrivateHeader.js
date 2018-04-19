@@ -30,7 +30,10 @@ export const PrivateHeader = props => {
                     <img
                         className="header__profile"
                         src="/images/people.png"
-                        onClick={() => history.replace("/profile")}
+                        onClick={() => {
+                            history.replace("/profile");
+                            Session.set("selectedProfileId", "");
+                        }}
                     />
 
                     <button

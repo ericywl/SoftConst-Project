@@ -3,8 +3,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 
-// Imports
-import Profile from "./Profile";
+// APIs
+import { ProfilesDB } from "../../../api/profiles.js";
 
 export class ProfileArea extends React.Component {
     constructor(props) {
@@ -12,12 +12,26 @@ export class ProfileArea extends React.Component {
     }
 
     render() {
-        return (
-            <div>
-                <Profile />
-            </div>
-        );
+        if (!this.props.profile) {
+            return <div>hi</div>;
+        }
+
+        return <div>{this.props.profile.displayName}</div>;
     }
 }
 
-export default ProfileArea;
+export default withTracker(() => {
+    const selectedProfileId = Session.get("selectedProfileId");
+    let profile;
+    if (selectedProfileId === "") {
+        profile = ProfilesDB.findOne({ _id: Meteor.userId() });
+    } else {
+        profile = ProfilesDB.findOne({ _id: selectedProfileId });
+    }
+
+    return {
+        selectedProfileId,
+        profile,
+        meteorCall: Meteor.call
+    };
+})(ProfileArea);

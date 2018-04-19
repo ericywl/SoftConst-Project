@@ -58,10 +58,6 @@ export class ChatArea extends React.Component {
             );
         }
 
-        if (!this.props.ready) {
-            return <div className="chat-area" />;
-        }
-
         return (
             <div className="chat-area">
                 <ChatAreaHeader
@@ -111,9 +107,9 @@ export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
     const selectedDsbjId = Session.get("selectedDsbjId");
 
-    const profilesHandle = Meteor.subscribe("profiles");
-    const groupsHandle = Meteor.subscribe("groups");
-    const dsbjsHandle = Meteor.subscribe("dsbjs");
+    // const profilesHandle = Meteor.subscribe("profiles");
+    // const groupsHandle = Meteor.subscribe("groups");
+    // const dsbjsHandle = Meteor.subscribe("dsbjs");
 
     const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
     const userGroups = userProfile ? userProfile.groups : [];
@@ -160,7 +156,10 @@ export default withTracker(() => {
         groupOwner,
         dsbjCreator,
         notInGroup: !userGroups.includes(selectedGroupId),
-        notInDsbj: !userDsbjs.includes(selectedDsbjId),
-        ready: profilesHandle.ready() && groupsHandle.ready()
+        notInDsbj: !userDsbjs.includes(selectedDsbjId)
+        // ready:
+        //     profilesHandle.ready() &&
+        //     groupsHandle.ready() &&
+        //     dsbjsHandle.ready()
     };
 })(ChatArea);

@@ -59,6 +59,7 @@ export class List extends React.Component {
                     <FlipMove
                         enterAnimation="none"
                         leaveAnimation="none"
+                        duration="100"
                         maintainContainerHeight="true"
                     >
                         {this.renderList()}
@@ -214,12 +215,10 @@ const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
         }
     }
 
-    items = items.map(item => {
+    return items.map(item => {
         return {
             ...item,
             selected: item._id === selectedItemId
         };
     });
-
-    return items;
 };

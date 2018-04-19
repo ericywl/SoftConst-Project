@@ -36,12 +36,39 @@ export default class ManageMembersModal extends React.Component {
                         ? "Manage Members"
                         : "View Members"}
                 </h2>
+                {this.props.owner ? (
+                    <div>
+                        <h4 className="members__subtitle">
+                            {this.props.isGroupTab ? "Owner" : "Creator"}
+                        </h4>
+                        <div className="members__list members__list--owner">
+                            <div className="member">
+                                <div className="member__name ellipsis">
+                                    {this.props.owner.displayName}
+                                </div>
+                                <div className="member__id">
+                                    {this.props.owner._id}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    undefined
+                )}
                 {this.renderAll()}
             </Modal>
         );
     }
 
     renderAll() {
+        if (!this.props.members) {
+            return (
+                <div className="empty-members">
+                    There are no members currently.
+                </div>
+            );
+        }
+
         if (this.props.members.length === 0) {
             return (
                 <div className="empty-members">
@@ -70,22 +97,6 @@ export default class ManageMembersModal extends React.Component {
 
         return (
             <div className="members__wrapper">
-                <div>
-                    <h4 className="members__subtitle">
-                        {this.props.isGroupTab ? "Owner" : "Creator"}
-                    </h4>
-                    <div className="members__list members__list--owner">
-                        <div className="member">
-                            <div className="member__name ellipsis">
-                                {this.props.owner.displayName}
-                            </div>
-                            <div className="member__id">
-                                {this.props.owner._id}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {moderators.length === 0 ? (
                     undefined
                 ) : (
