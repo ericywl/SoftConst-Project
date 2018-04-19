@@ -282,7 +282,7 @@ Meteor.methods({
      * @param {String} _id
      * @param {String} tag
      */
-    profilesAddTag(tag) {
+    profilesTagAdd(tag) {
         if (!this.userId) {
             throw new Meteor.Error("not-logged-in");
         }
@@ -294,16 +294,7 @@ Meteor.methods({
         );
     },
 
-    profilesRemoveTag(_id, tag) {},
-
-    profilesUpdateDisplayName() {},
-
-    /**
-     * Update the bio of the current user
-     * @param {String} _id
-     * @param {String} newBio
-     */
-    profilesUpdateBio(newBio) {
+    profilesTagRemove(tag) {
         if (!this.userId) {
             throw new Meteor.Error("not-logged-in");
         }
@@ -311,7 +302,24 @@ Meteor.methods({
         checkUserExist(this.userId);
         return ProfilesDB.update(
             { _id: this.userId },
-            { $set: { bio: newBio } }
+            { $pull: { tags: tag } }
+        );
+    },
+
+    /**
+     * Update the profile of the current user
+     * @param {String} newName
+     * @param {String} newBio
+     */
+    profilesUpdate(newName, newBio) {
+        if (!this.userId) {
+            throw new Meteor.Error("not-logged-in");
+        }
+
+        checkUserExist(this.userId);
+        return ProfilesDB.update(
+            { _id: this.userId },
+            { $set: { bio: newBio, displayName: newName } }
         );
     },
 

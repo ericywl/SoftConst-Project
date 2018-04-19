@@ -41,7 +41,7 @@ export class GroupListHeader extends React.Component {
         }
     }
 
-    componentDidUpdate(prevProps, prevState, prevContext) {
+    componentDidUpdate(prevProps, prevState) {
         if (prevProps.selectedTab !== this.props.selectedTab) {
             const search =
                 this.props.selectedTab === "groups"

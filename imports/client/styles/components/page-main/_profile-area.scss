@@ -1,0 +1,90 @@
+.profile-area {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: $space;
+    background-color: white;
+    border: 2px solid $grey;
+    box-sizing: border-box;
+
+    @include desktop() {
+        padding: $large-space;
+    }
+}
+
+.profile-area__header {
+    display: flex;
+    margin-bottom: $space;
+    padding-bottom: $input-spacing;
+    border-bottom: 2px solid $brand-primary;
+    justify-content: space-between;
+}
+
+.profile-area__header-title {
+    margin-bottom: 0;
+}
+
+.profile-area__header-edit {
+    cursor: pointer;
+    width: 2rem;
+    height: 2rem;
+    margin-right: $space;
+}
+
+.profile-area__item {
+    margin-bottom: 1.8rem;
+}
+
+.profile-area__groups {
+    // max-height: 3.9rem;
+    // max-width: 65rem;
+}
+
+.profile-area__group {
+    font-size: $medium-font-size;
+    margin: 0.3rem $input-spacing 0.3rem 0;
+    padding: 0.5rem;
+    border: 1px solid $dark-grey;
+    float: left;
+}
+
+.profile-area__button {
+    display: flex;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    margin-bottom: 0 !important;
+}
+
+.profile-area__input {
+    width: 70%;
+    padding: 0.5rem !important;
+    margin-bottom: 0 !important;
+    margin-right: $input-spacing !important;
+}
+
+.profile-area__form {
+    width: 70%;
+    display: flex;
+}
+
+.profile-area__textarea {
+    width: 70%;
+    height: 6.1rem;
+    padding: 0.5rem !important;
+    margin-bottom: 0 !important;
+}
+
+.profile-area__empty-item {
+    float: left;
+    width: 40%;
+}
+
+.profile__key {
+    color: $dark-grey;
+    margin-bottom: 0.3rem;
+}
+
+.profile__value {
+    font-weight: normal;
+    margin-bottom: 0;
+}

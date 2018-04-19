@@ -65,7 +65,7 @@ export class ChatAreaFooter extends React.Component {
         );
     }
 
-    componentDidUpdate(prevProps, prevState, prevContext) {
+    componentDidUpdate(prevProps, prevState) {
         const currGroupId = this.props.selectedItemId;
         const prevGroupId = prevProps.selectedItemId;
 

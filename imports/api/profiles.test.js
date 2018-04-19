@@ -39,7 +39,7 @@ if (Meteor.isServer) {
             });
         });
 
-        describe("profilesAddTag", function() {
+        describe("profilesTagAdd", function() {
             const userId = "testId";
             const tag = "#food";
             beforeEach(function() {
@@ -48,7 +48,7 @@ if (Meteor.isServer) {
             });
 
             it("should add tags to the user profile", function() {
-                Meteor.server.method_handlers.profilesAddTag.apply({ userId }, [
+                Meteor.server.method_handlers.profilesTagAdd.apply({ userId }, [
                     tag
                 ]);
 
@@ -58,9 +58,9 @@ if (Meteor.isServer) {
             });
         });
 
-        // describe("profilesRemoveTag", function() {
+        // describe("profilesTagRemove", function() {
         //     it("should remove the tag from the user profile", function() {
-        //         Meteor.server.method_handlers.profilesRemoveTag.apply(
+        //         Meteor.server.method_handlers.profilesTagRemove.apply(
         //             { userId: userId2 },
         //             [userId2, tag]
         //         );

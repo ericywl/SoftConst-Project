@@ -174,7 +174,7 @@ const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
         const regex = new RegExp("^" + filteredQuery.substring(1), "i");
         if (item === "groups") {
             items = GroupsDB.find(
-                { tags: regex },
+                { "tags.0": { $exists: true }, tags: regex },
                 {
                     sort: { lastMessageAt: -1 },
                     $limit: SHOWN_ITEMS_LIMIT
@@ -183,6 +183,7 @@ const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
         } else {
             items = DsbjsDB.find(
                 {
+                    "tags.0": { $exists: true },
                     tags: regex,
                     timeoutAt: { $exists: true, $gt: moment().valueOf() }
                 },

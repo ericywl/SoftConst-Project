@@ -1,6 +1,8 @@
 export const USERNAME_MIN_LENGTH = 3;
 export const USERNAME_MAX_LENGTH = 30;
 
+export const BIO_MAX_LENGTH = 100;
+
 export const ITEMNAME_MIN_LENGTH = 3;
 export const ITEMNAME_MAX_LENGTH = 30;
 
