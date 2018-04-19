@@ -11,6 +11,12 @@
     }
 }
 
+.page-content--notab {
+    @include desktop() {
+        height: $page-content-height-desktop-notab;
+    }
+}
+
 .page-content__sidebar {
     display: flex;
     width: 100vw;
@@ -33,6 +39,14 @@
     }
 }
 
+.page-content__sidebar--noroombar {
+    max-width: calc(#{$page-content-sidebar-width-dsbj} + 3rem);
+
+    @include desktop() {
+        max-width: $page-content-sidebar-width-dsbj;
+    }
+}
+
 .page-content__sidebar-wrapper {
     display: flex;
     flex-direction: row;
@@ -41,14 +55,6 @@
 
     @include desktop() {
         border-right: none;
-    }
-}
-
-.page-content__sidebar--dsbj {
-    max-width: calc(#{$page-content-sidebar-width-dsbj} + 3rem);
-
-    @include desktop() {
-        max-width: $page-content-sidebar-width-dsbj;
     }
 }
 

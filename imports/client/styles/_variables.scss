@@ -45,6 +45,7 @@ $page-content-main-width-dsbj: calc(
     #{$site-max-width} - (#{$page-content-sidebar-width-dsbj})
 );
 $page-content-height-desktop: calc(99vh - #{$header-height} - #{$tab-height});
+$page-content-height-desktop-notab: calc(100vh - #{$header-height});
 $page-content-height-mobile: calc(100vh - #{$header-height});
 
 /* BUTTON */

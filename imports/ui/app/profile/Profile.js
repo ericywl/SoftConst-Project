@@ -10,7 +10,7 @@ export class Profile extends React.Component {
     }
 
     renderProfile() {
-        return this.props.bio == "" ? "Replace me" : this.props.bio;
+        return this.props.bio === "" ? "Replace me" : this.props.bio;
     }
 
     onChangeBio(event) {
@@ -60,7 +60,7 @@ Profile.propTypes = {
 
 export default withTracker(() => {
     Meteor.subscribe("profiles");
-    const doc = ProfilesDB.find().fetch()[0];
+    const doc = ProfilesDB.findOne({ _id: Meteor.userId() });
 
     return {
         bio: !doc || !doc.bio ? "Replace me!" : doc.bio,

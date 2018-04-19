@@ -48,7 +48,7 @@ export class List extends React.Component {
 
     render() {
         const itemListClass =
-            this.props.selectedTab === "groups" ? "" : " item-list--dsbj";
+            this.props.selectedTab === "groups" ? "" : " item-list--noroombar";
 
         return (
             <div

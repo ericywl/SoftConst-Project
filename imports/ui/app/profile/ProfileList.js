@@ -34,7 +34,7 @@ export class ProfileList extends React.Component {
                 className="page-content__sidebar-wrapper"
                 ref={this.setWrapperRef.bind(this)}
             >
-                <div className="item-list">
+                <div className="item-list item-list--noroombar">
                     <ProfileListHeader />
                     {this.renderList()}
                 </div>

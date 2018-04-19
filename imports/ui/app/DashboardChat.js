@@ -21,7 +21,7 @@ export class Dashboard extends React.Component {
         const sidebarClass =
             this.props.selectedTab === "groups"
                 ? ""
-                : " page-content__sidebar--dsbj";
+                : " page-content__sidebar--noroombar";
 
         const mainClass =
             this.props.selectedTab === "groups"
