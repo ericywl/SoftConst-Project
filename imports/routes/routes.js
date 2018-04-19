@@ -46,6 +46,12 @@ export const getRoutes = isAuthenticated => {
                         component={DashboardProfile}
                     />
 
+                    <PrivateRoute
+                        path="/profile/:id"
+                        isAuth={isAuthenticated}
+                        component={DashboardProfile}
+                    />
+
                     <Route component={NotFound} />
                 </Switch>
             </div>

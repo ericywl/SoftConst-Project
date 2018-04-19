@@ -153,8 +153,6 @@ export default withTracker(() => {
         userDsbjs
     );
 
-    console.log(fetchedDsbjs);
-
     const queriedGroups = filterItemsByQuery(fetchedGroups, searchQuery);
     const queriedDsbjs = filterItemsByQuery(fetchedDsbjs, searchQuery);
 

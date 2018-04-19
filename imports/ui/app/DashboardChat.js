@@ -9,7 +9,7 @@ import PrivateTab from "./PrivateTab";
 import List from "./list/List";
 import ChatArea from "./chat/ChatArea";
 
-export class Dashboard extends React.Component {
+export class DashboardChat extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -58,4 +58,4 @@ export default withTracker(() => {
     return {
         selectedTab
     };
-})(Dashboard);
+})(DashboardChat);

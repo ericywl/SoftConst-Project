@@ -120,11 +120,10 @@ export default withTracker(() => {
     const profilesHandle = Meteor.subscribe("profiles");
 
     const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
-    const fetchedProfiles = fetchItemsFromDB(
-        "profiles",
+    const fetchedProfiles = fetchProfilesFromDB(
         selectedProfileId,
         searchQuery,
-        []
+        userProfile.tags
     );
 
     return {
@@ -135,65 +134,26 @@ export default withTracker(() => {
 })(ProfileList);
 
 /* HELPER METHODS */
-const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
+const fetchProfilesFromDB = (selectedItemId, query, userTags) => {
     let items = [];
-    if (searchFilterBeforeFetch(query)[0] === "#") {
-        if (item === "groups") {
-            items = GroupsDB.find(
-                { tags: { $exists: true, $not: { $size: 0 } } },
-                {
-                    sort: { lastMessageAt: -1 },
-                    $limit: SHOWN_ITEMS_LIMIT
-                }
-            ).fetch();
-        } else if (item === "profiles") {
-            items = ProfilesDB.find(
-                {
-                    _id: { $ne: Meteor.userId() },
-                    tags: { $exists: true, $not: { $size: 0 } }
-                },
-                {
-                    sort: { createdAt: -1 },
-                    $limit: SHOWN_ITEMS_LIMIT
-                }
-            ).fetch();
-        } else {
-            items = DsbjsDB.find(
-                {
-                    tags: { $exists: true, $not: { $size: 0 } },
-                    timeoutAt: { $exists: true, $gt: moment().valueOf() }
-                },
-                {
-                    sort: { createdAt: -1 },
-                    $limit: SHOWN_ITEMS_LIMIT
-                }
-            ).fetch();
-        }
-    } else {
-        const db = item === "groups" ? GroupsDB : ProfilesDB;
-
-        if (item === "profiles") {
-            items = db
-                .find(
-                    { _id: { $ne: Meteor.userId() } },
-                    {
-                        sort: { lastMessageAt: -1 },
-                        $limit: SHOWN_ITEMS_LIMIT
-                    }
-                )
-                .fetch();
-        } else {
-            items = db
-                .find(
-                    { _id: { $in: userItems } },
-                    {
-                        sort: { lastMessageAt: -1 },
-                        $limit: SHOWN_ITEMS_LIMIT
-                    }
-                )
-                .fetch();
-        }
+    if (query === "") {
+        items = ProfilesDB.find(
+            {
+                _id: { $ne: Meteor.userId() },
+                tags: { $exists: true, $not: { $size: 0 }, $in: userTags }
+            },
+            { sort: { createdAt: -1 } }
+        ).fetch();
+    } else if (searchFilterBeforeFetch(query)[0] === "#") {
+        items = ProfilesDB.find(
+            {
+                _id: { $ne: Meteor.userId() },
+                tags: { $exists: true, $not: { $size: 0 } }
+            },
+            { sort: { createdAt: -1 } }
+        ).fetch();
     }
+
     if (query[0] === "#") {
         items = items.map(item => {
             return {

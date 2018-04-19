@@ -27,9 +27,9 @@ export class ProfileListHeader extends React.Component {
     render() {
         return (
             <div className="item-list__header">
-                <button className="button" onClick={() => {}}>
-                    Add A Friend
-                </button>
+                <div className="item-list__title">
+                    People that you might be interested in
+                </div>
 
                 <input
                     type="search"

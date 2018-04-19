@@ -14,7 +14,7 @@ export class ProfileListItem extends React.Component {
             <div className={className} onClick={this.handleOnClick.bind(this)}>
                 <h5 className="item__title">{this.props.item.displayName}</h5>
                 <p className="item__subtitle">
-                    {moment(this.props.item.createdAt).fromNow()}
+                    Joined {moment(this.props.item.createdAt).fromNow()}
                 </p>
             </div>
         );
