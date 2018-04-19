@@ -30,9 +30,13 @@ export class ChatArea extends React.Component {
             ? this.props.selectedGroup
             : this.props.selectedDsbj;
 
-        const members = isGroupTab
+        const memberProfiles = isGroupTab
             ? this.props.groupMembers
             : this.props.dsbjAttendees;
+
+        const ownerProfile = isGroupTab
+            ? this.props.groupOwner
+            : this.props.dsbjCreator;
 
         const notInItem = isGroupTab
             ? this.props.notInGroup
@@ -61,7 +65,8 @@ export class ChatArea extends React.Component {
         return (
             <div className="chat-area">
                 <ChatAreaHeader
-                    members={members}
+                    owner={ownerProfile}
+                    members={memberProfiles}
                     selectedItem={selectedItem}
                     selectedTab={this.props.selectedTab}
                     notInItem={notInItem}
@@ -115,18 +120,22 @@ export default withTracker(() => {
     const userDsbjs = userProfile ? userProfile.dsbjs : [];
 
     const selectedGroup = GroupsDB.findOne({ _id: selectedGroupId });
-    const selectedDsbj = DsbjsDB.findOne({ _id: selectedDsbjId });
+    const groupOwner = selectedGroup
+        ? ProfilesDB.findOne({ _id: selectedGroup.ownedBy })
+        : {};
     const groupMembers = selectedGroup
         ? ProfilesDB.find({
               _id: { $in: selectedGroup.members }
           }).fetch()
         : [];
+
+    const selectedDsbj = DsbjsDB.findOne({ _id: selectedDsbjId });
+    const dsbjCreator = selectedDsbj
+        ? ProfilesDB.findOne({ _id: selectedDsbj.createdBy })
+        : {};
     const dsbjAttendees = selectedDsbj
         ? ProfilesDB.find({ _id: { $in: selectedDsbj.attendees } }).fetch()
         : [];
-
-    console.log(groupMembers);
-    console.log(dsbjAttendees);
 
     const isDsbjCreator = selectedDsbj
         ? selectedDsbj.createdBy === Meteor.userId()
@@ -148,6 +157,8 @@ export default withTracker(() => {
         selectedDsbj,
         groupMembers,
         dsbjAttendees,
+        groupOwner,
+        dsbjCreator,
         notInGroup: !userGroups.includes(selectedGroupId),
         notInDsbj: !userDsbjs.includes(selectedDsbjId),
         ready: profilesHandle.ready() && groupsHandle.ready()

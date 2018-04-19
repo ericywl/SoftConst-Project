@@ -26,9 +26,10 @@ export class ChatAreaHeader extends React.Component {
                     ) : (
                         <div className="chat-area__header-dots">
                             <ChatDropdown
+                                members={this.props.members}
+                                owner={this.props.owner}
                                 selectedItem={this.props.selectedItem}
                                 selectedTab={this.props.selectedTab}
-                                members={this.props.members}
                                 notInItem={this.props.notInItem}
                                 isOwner={this.props.isOwner}
                                 isModerator={this.props.isModerator}

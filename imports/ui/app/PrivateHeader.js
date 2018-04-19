@@ -54,7 +54,21 @@ PrivateHeader.propTypes = {
 
 export default withTracker(() => {
     return {
-        handleLogout: () => Accounts.logout(),
+        handleLogout: () => {
+            Session.set("selectedTab", "groups");
+            Session.set("selectedDsbjId", "");
+            Session.set("selectedGroupId", "");
+            Session.set("selectedProfileId", "");
+            Session.set("selectedRoom", "announcements");
+            Session.set("chatQuery", "");
+            Session.set("profileQuery", "");
+            Session.set("sentToGroup", "");
+            Session.set("newMessage", false);
+            Session.set("isNavOpen", false);
+            Session.set("isModalOpen", false);
+            Session.set("sessionTime", moment().valueOf());
+            Accounts.logout();
+        },
         toggleNav: () => Session.set("isNavOpen", !Session.get("isNavOpen")),
         isNavOpen: Session.get("isNavOpen")
     };

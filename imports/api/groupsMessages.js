@@ -26,7 +26,7 @@ if (Meteor.isServer) {
             groupId: { type: String }
         }).validate({ groupId });
 
-        return GroupsMessagesDB.find({ groupId }, { sort: { sentAt: 1 } });
+        return GroupsMessagesDB.find({ groupId });
     });
 }
 
@@ -70,21 +70,38 @@ Meteor.methods({
         return result;
     },
 
-    groupsMessagesWelcome(groupId) {
+    groupsMessagesStatus(groupId, status, targetUserId = "") {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkUserExist(this.userId);
 
-        const userDisplayName = ProfilesDB.findOne({ _id: this.userId })
-            .displayName;
+        let userDisplayName;
+        if (targetUserId !== "") {
+            userDisplayName = ProfilesDB.findOne({ _id: targetUserId })
+                .displayName;
+        } else {
+            userDisplayName = ProfilesDB.findOne({ _id: this.userId })
+                .displayName;
+        }
 
         validateUserDisplayName(userDisplayName);
+        let content;
+        if (status.toLowerCase() === "leave") {
+            content = `${userDisplayName} has left the group!`;
+        } else if (status.toLowerCase() === "join") {
+            content = `${userDisplayName} has joined the group!`;
+        } else if (status.toLowerCase() === "kick") {
+            content = `${userDisplayName} has been kicked from the group!`;
+        } else {
+            throw new Meteor.Error("invalid-status");
+        }
 
+        console.log(content);
         const now = moment().valueOf();
         const result = GroupsMessagesDB.insert(
             {
                 groupId: groupId,
                 room: "messages",
-                content: `${userDisplayName} has joined the group!`,
+                content,
                 userId: this.userId,
                 userDisplayName: "",
                 sentAt: now

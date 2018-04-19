@@ -108,20 +108,16 @@ export default class ChatDropdown extends React.Component {
                             : "View " + tabText + " Tags"}
                     </div>
 
-                    {haveAccess ? (
-                        <div
-                            className="dropdown__item"
-                            onClick={event => {
-                                event.preventDefault();
-                                this.childMembersModal.toggleModal();
-                                this.setState({ dropdownIsOpen: false });
-                            }}
-                        >
-                            Manage Members
-                        </div>
-                    ) : (
-                        undefined
-                    )}
+                    <div
+                        className="dropdown__item"
+                        onClick={event => {
+                            event.preventDefault();
+                            this.childMembersModal.toggleModal();
+                            this.setState({ dropdownIsOpen: false });
+                        }}
+                    >
+                        {haveAccess ? "Manage Members" : "View Members"}
+                    </div>
 
                     {haveAccess ? (
                         <div
@@ -175,22 +171,19 @@ export default class ChatDropdown extends React.Component {
                     undefined
                 )}
 
-                {haveAccess ? (
-                    <ManageMembersModal
-                        selectedItemId={this.props.selectedItem._id}
-                        moderatorIds={moderatorIds}
-                        members={this.props.members}
-                        isGroupTab={isGroupTab}
-                        isOwner={this.props.isOwner}
-                        isModerator={this.props.isModerator}
-                        meteorCall={this.props.meteorCall}
-                        ref={ref => {
-                            this.childMembersModal = ref;
-                        }}
-                    />
-                ) : (
-                    undefined
-                )}
+                <ManageMembersModal
+                    members={this.props.members}
+                    owner={this.props.owner}
+                    selectedItemId={this.props.selectedItem._id}
+                    moderatorIds={moderatorIds}
+                    isGroupTab={isGroupTab}
+                    isOwner={this.props.isOwner}
+                    isModerator={this.props.isModerator}
+                    meteorCall={this.props.meteorCall}
+                    ref={ref => {
+                        this.childMembersModal = ref;
+                    }}
+                />
             </div>
         );
     }
@@ -254,12 +247,22 @@ export default class ChatDropdown extends React.Component {
     }
 
     handleLeaveOnClick(event) {
-        const meteorMethod =
+        const leaveGroupMethod =
             this.props.selectedTab === "groups"
                 ? "profilesLeaveGroup"
                 : "profilesLeaveDsbj";
 
-        this.props.meteorCall(meteorMethod, this.props.selectedItem._id);
+        const leaveStatusMethod =
+            this.props.selectedTab === "groups"
+                ? "groupsMessagesStatus"
+                : "dsbjsMessagesStatus";
+
+        const itemId = this.props.selectedItem._id;
+        this.props.meteorCall(leaveGroupMethod, itemId, (err, res) => {
+            if (!err) {
+                this.props.meteorCall(leaveStatusMethod, itemId, "leave");
+            }
+        });
 
         const sessionItemStr =
             this.props.selectedTab === "groups"

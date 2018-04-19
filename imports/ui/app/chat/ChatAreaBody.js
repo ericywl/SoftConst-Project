@@ -83,8 +83,8 @@ export class ChatAreaBody extends React.Component {
             : "profilesJoinDsbj";
 
         const welcomeMethod = isGroupTab
-            ? "groupsMessagesWelcome"
-            : "dsbjsMessagesWelcome";
+            ? "groupsMessagesStatus"
+            : "dsbjsMessagesStatus";
 
         this.props.meteorCall(
             joinMethod,
@@ -96,7 +96,8 @@ export class ChatAreaBody extends React.Component {
                 } else {
                     this.props.meteorCall(
                         welcomeMethod,
-                        this.props.selectedItem._id
+                        this.props.selectedItem._id,
+                        "join"
                     );
                 }
             }

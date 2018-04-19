@@ -26,7 +26,7 @@ if (Meteor.isServer) {
             dsbjId: { type: String }
         }).validate({ dsbjId });
 
-        return DsbjsMessagesDB.find({ dsbjId }, { sort: { sentAt: 1 } });
+        return DsbjsMessagesDB.find({ dsbjId });
     });
 }
 
@@ -71,20 +71,36 @@ Meteor.methods({
         return result;
     },
 
-    dsbjsMessagesWelcome(dsbjId) {
+    dsbjsMessagesStatus(dsbjId, status, targetUserId = "") {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
         checkUserExist(this.userId);
 
-        const userDisplayName = ProfilesDB.findOne({ _id: this.userId })
-            .displayName;
+        let userDisplayName;
+        if (targetUserId !== "") {
+            userDisplayName = ProfilesDB.findOne({ _id: targetUserId })
+                .displayName;
+        } else {
+            userDisplayName = ProfilesDB.findOne({ _id: this.userId })
+                .displayName;
+        }
 
         validateUserDisplayName(userDisplayName);
+        let content;
+        if (status.toLowerCase() === "leave") {
+            content = `${userDisplayName} has left the event!`;
+        } else if (status.toLowerCase() === "join") {
+            content = `${userDisplayName} has joined the event!`;
+        } else if (status.toLowerCase() === "kick") {
+            content = `${userDisplayName} has been kicked from the group!`;
+        } else {
+            throw new Meteor.Error("invalid-status");
+        }
 
         const now = moment().valueOf();
         const result = DsbjsMessagesDB.insert(
             {
                 dsbjId: dsbjId,
-                content: `${userDisplayName} has joined the event!`,
+                content,
                 userId: this.userId,
                 userDisplayName: "",
                 sentAt: now

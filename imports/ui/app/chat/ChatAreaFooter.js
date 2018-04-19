@@ -113,7 +113,10 @@ export class ChatAreaFooter extends React.Component {
                 this.setState({ error: err.reason });
                 setTimeout(() => this.setState({ error: "" }), 10000);
             } else {
-                Session.set("sentToGroup", this.props.selectedItemId);
+                this.props.session.set(
+                    "sentToGroup",
+                    this.props.selectedItemId
+                );
                 this.setState({ input: "" });
             }
         });
@@ -152,6 +155,7 @@ export default withTracker(() => {
     return {
         newMessage,
         selectedRoom,
-        meteorCall: Meteor.call
+        meteorCall: Meteor.call,
+        session: Session
     };
 })(ChatAreaFooter);

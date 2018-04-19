@@ -289,10 +289,13 @@ export default withTracker(() => {
     let handle, messages;
     if (isGroupTab) {
         handle = Meteor.subscribe("messagesByGroup", selectedGroupId);
-        messages = GroupsMessagesDB.find({ room: selectedRoom }).fetch();
+        messages = GroupsMessagesDB.find(
+            { room: selectedRoom },
+            { sort: { sentAt: 1 } }
+        ).fetch();
     } else {
         handle = Meteor.subscribe("messagesByDsbj", selectedDsbjId);
-        messages = DsbjsMessagesDB.find().fetch();
+        messages = DsbjsMessagesDB.find({ sort: { sentAt: 1 } }).fetch();
     }
 
     messages = messages.map(message => {
