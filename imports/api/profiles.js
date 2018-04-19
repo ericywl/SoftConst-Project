@@ -18,18 +18,7 @@ if (Meteor.isServer) {
             throw new Meteor.Error("not-logged-in");
         }
 
-        return ProfilesDB.find(
-            {},
-            {
-                fields: {
-                    displayName: 1,
-                    groups: 1,
-                    dsbjs: 1,
-                    tags: 1,
-                    bio: 1
-                }
-            }
-        );
+        return ProfilesDB.find();
     });
 }
 

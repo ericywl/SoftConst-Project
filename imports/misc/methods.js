@@ -76,16 +76,24 @@ export const checkUserExist = userId => {
  * Filter search input before storing in session variable
  * @param {String} input : search bar input
  */
-export const searchFilterBeforeSet = input => {
+export const searchChatFilterBeforeSet = input => {
     return input.replace(/[^\w\s#]/gi, "");
+};
+
+export const searchProfileFilterBeforeSet = input => {
+    return input.replace(/[^\w\s#@]/gi, "");
 };
 
 /**
  * Filter search query string before fetching from database
  * @param {String} input : search bar input
  */
-export const searchFilterBeforeFetch = input => {
+export const searchChatFilterBeforeFetch = input => {
     return input.replace(/[^\w#]/gi, "").toLowerCase();
+};
+
+export const searchProfileFilterBeforeFetch = input => {
+    return input.replace(/[^\w#@]/gi, "").toLowerCase();
 };
 
 /**
@@ -106,34 +114,6 @@ export const spaceFilter = input => {
  */
 export const numberFilter = input => {
     return input.replace(/[^\d]/gi, "");
-};
-
-/**
- * Filter the items array using the query
- * @param {Array} items : the items to be queried against
- * @param {String} query : the query string
- */
-export const filterItemsByQuery = (items, query) => {
-    if (!items) throw new Meteor.Error("filter-groups-not-provided");
-    if (!query) return items;
-
-    query = searchFilterBeforeFetch(query);
-    if (query[0] === "#") {
-        query = query.slice(1);
-        const queryLen = query.length;
-        return items.filter(item => {
-            for (let i = 0; i < item.tags.length; i++) {
-                const tag = item.tags[i].slice(0, queryLen);
-                if (tag.toLowerCase() === query) return true;
-            }
-
-            return false;
-        });
-    }
-
-    return items.filter(
-        item => searchFilterBeforeFetch(item.name).indexOf(query) !== -1
-    );
 };
 
 /**

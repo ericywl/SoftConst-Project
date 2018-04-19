@@ -14,9 +14,8 @@ import { GroupsDB } from "../../../api/groups";
 import { DsbjsDB } from "../../../api/dsbjs";
 import { ProfilesDB } from "../../../api/profiles";
 import {
-    searchFilterBeforeSet,
-    searchFilterBeforeFetch,
-    filterItemsByQuery
+    searchProfileFilterBeforeSet,
+    searchProfileFilterBeforeFetch
 } from "../../../misc/methods";
 import { SHOWN_ITEMS_LIMIT } from "../../../misc/constants";
 import { Profile } from "./Profile";
@@ -83,52 +82,21 @@ ProfileList.propTypes = {
     session: PropTypes.object.isRequired
 };
 
-function includes(arr, obj) {
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i] === obj) return true;
-    }
-}
-
-function localFilter(items, query) {
-    if (query[0] === "#") {
-        query = query.slice(1);
-        const queryLen = query.length;
-        return items.filter(item => {
-            for (let i = 0; i < item.tags.length; i++) {
-                const tag = item.tags[i].slice(0, queryLen);
-                if (tag.toLowerCase() === query) return true;
-            }
-
-            return false;
-        });
-    } else if (query[0] === "@") {
-        query = query.slice(1);
-        const queryLen = query.length;
-        return items.filter(item => {
-            return item.displayName.includes(query);
-        });
-    }
-    return [];
-}
-
 export default withTracker(() => {
-    const selectedGroupId = Session.get("selectedGroupId");
-    const selectedDsbjId = Session.get("selectedDsbjId");
     const selectedProfileId = Session.get("selectedProfileId");
-    const searchQuery = Session.get("searchQuery");
+    const searchQuery = Session.get("profileQuery");
 
     const profilesHandle = Meteor.subscribe("profiles");
-
     const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
     const fetchedProfiles = fetchProfilesFromDB(
         selectedProfileId,
         searchQuery,
-        userProfile.tags
+        userProfile ? userProfile.tags : []
     );
 
     return {
         ready: profilesHandle.ready(),
-        profiles: localFilter(fetchedProfiles, searchQuery),
+        profiles: fetchedProfiles,
         session: Session
     };
 })(ProfileList);
@@ -136,7 +104,32 @@ export default withTracker(() => {
 /* HELPER METHODS */
 const fetchProfilesFromDB = (selectedItemId, query, userTags) => {
     let items = [];
-    if (query === "") {
+    const filteredQuery = searchProfileFilterBeforeFetch(query);
+    const regex = new RegExp("^" + filteredQuery.substring(1), "i");
+    if (filteredQuery[0] === "#") {
+        items = ProfilesDB.find(
+            {
+                _id: { $ne: Meteor.userId() },
+                tags: regex
+            },
+            { sort: { createdAt: -1 } }
+        ).fetch();
+    } else if (filteredQuery[0] === "@") {
+        if (filteredQuery.length === 1) {
+            items = ProfilesDB.find(
+                { _id: { $ne: Meteor.userId() } },
+                { sort: { displayName: 1 } }
+            ).fetch();
+        } else {
+            items = ProfilesDB.find(
+                {
+                    _id: { $ne: Meteor.userId() },
+                    displayName: regex
+                },
+                { sort: { createdAt: -1 } }
+            ).fetch();
+        }
+    } else {
         items = ProfilesDB.find(
             {
                 _id: { $ne: Meteor.userId() },
@@ -144,37 +137,6 @@ const fetchProfilesFromDB = (selectedItemId, query, userTags) => {
             },
             { sort: { createdAt: -1 } }
         ).fetch();
-    } else if (searchFilterBeforeFetch(query)[0] === "#") {
-        items = ProfilesDB.find(
-            {
-                _id: { $ne: Meteor.userId() },
-                tags: { $exists: true, $not: { $size: 0 } }
-            },
-            { sort: { createdAt: -1 } }
-        ).fetch();
-    }
-
-    if (query[0] === "#") {
-        items = items.map(item => {
-            return {
-                ...item,
-                selected: includes(item.tags, query.slice(1)) // item.tags === selectedItemId
-            };
-        });
-    } else if (query[0] === "@") {
-        items = items.map(item => {
-            return {
-                ...item,
-                selected: item.displayName == query.slice(1) // item.tags === selectedItemId
-            };
-        });
-    } else {
-        items = items.map(item => {
-            return {
-                ...item,
-                selected: item.tags === selectedItemId
-            };
-        });
     }
 
     return items;

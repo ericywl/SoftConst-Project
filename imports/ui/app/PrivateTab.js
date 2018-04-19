@@ -52,7 +52,7 @@ export class PrivateTab extends React.Component {
 
             event.target.classList.add("tab__box--selected");
             this.props.session.set("selectedTab", name);
-            this.props.session.set("searchQuery", "");
+            this.props.session.set("chatQuery", "");
             this.props.session.set("sentToGroup", "");
             this.props.session.set("isNavOpen", false);
             this.props.session.set("isModalOpen", false);

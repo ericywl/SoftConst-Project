@@ -8,7 +8,7 @@ import AddItemModal from "../list/_AddItemModal";
 import JoinItemModal from "../list/_JoinItemModal";
 
 // APIs
-import { searchFilterBeforeSet } from "../../../misc/methods";
+import { searchProfileFilterBeforeSet } from "../../../misc/methods";
 
 export class ProfileListHeader extends React.Component {
     constructor(props) {
@@ -18,10 +18,12 @@ export class ProfileListHeader extends React.Component {
         };
     }
 
-    componentDidUpdate(prevProps, prevState, prevContext) {
-        if (prevProps.selectedTab !== this.props.selectedTab) {
-            this.setState({ search: "" });
-        }
+    componentDidMount() {
+        this.props.session.set("profileQuery", "");
+    }
+
+    componentWillUnmount() {
+        this.props.session.set("profileQuery", "");
     }
 
     render() {
@@ -42,19 +44,24 @@ export class ProfileListHeader extends React.Component {
     }
 
     handleSearchChange(event) {
-        let newSearch = event.target.value;
-        if (newSearch[0] === "#") {
+        let newSearch = searchProfileFilterBeforeSet(event.target.value);
+        const substr = newSearch.substring(1);
+
+        if (newSearch[0] === "#" || newSearch[0] === "@") {
+            if (
+                substr.includes("#") ||
+                substr.includes("@") ||
+                substr.includes(" ")
+            )
+                return;
+
             newSearch = newSearch.trim();
-        } else if (newSearch[0] === "@") {
-            newSearch = newSearch.trim();
-        } else if (newSearch.slice(-1) === "#") {
-            return;
-        } else if (newSearch[0] === " ") {
+        } else if (newSearch !== "") {
             return;
         }
 
         this.setState({ search: newSearch });
-        this.props.session.set("searchQuery", newSearch);
+        this.props.session.set("profileQuery", newSearch);
     }
 }
 

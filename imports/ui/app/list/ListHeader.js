@@ -9,7 +9,7 @@ import JoinItemModal from "./_JoinItemModal";
 import PrivateTab from "../PrivateTab";
 
 // APIs
-import { searchFilterBeforeSet } from "../../../misc/methods";
+import { searchChatFilterBeforeSet } from "../../../misc/methods";
 
 export class GroupListHeader extends React.Component {
     constructor(props) {
@@ -21,6 +21,14 @@ export class GroupListHeader extends React.Component {
 
         this.groupsSearchBackup = "";
         this.dsbjsSearchBackup = "";
+    }
+
+    componentDidMount() {
+        this.props.session.set("chatQuery", "");
+    }
+
+    componentWillUnmount() {
+        this.props.session.set("chatQuery", "");
     }
 
     componentWillUpdate(nextProps, nextState, nextContext) {
@@ -42,7 +50,7 @@ export class GroupListHeader extends React.Component {
             this.setState({ search });
         }
 
-        this.props.session.set("searchQuery", this.state.search.trim());
+        this.props.session.set("chatQuery", this.state.search.trim());
     }
 
     render() {
@@ -133,11 +141,16 @@ export class GroupListHeader extends React.Component {
     }
 
     handleSearchChange(event) {
-        let newSearch = searchFilterBeforeSet(event.target.value);
+        let newSearch = searchChatFilterBeforeSet(event.target.value);
+
         if (newSearch[0] === "#") {
+            if (
+                newSearch.substring(1).includes("#") ||
+                newSearch.substring(1).includes(" ")
+            )
+                return;
+
             newSearch = newSearch.trim();
-        } else if (newSearch.slice(-1) === "#") {
-            return;
         } else if (newSearch[0] === " ") {
             return;
         }

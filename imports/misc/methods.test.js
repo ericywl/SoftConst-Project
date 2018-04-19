@@ -12,8 +12,8 @@ import { DsbjsDB } from "../api/dsbjs";
 import {
     //checkAccess,
     //checkUserExist,
-    searchFilterBeforeSet,
-    searchFilterBeforeFetch,
+    searchChatFilterBeforeSet,
+    searchChatFilterBeforeFetch,
     tagFilter,
     spaceFilter,
     numberFilter,
@@ -28,16 +28,18 @@ import {
 
 if (Meteor.isServer) {
     describe("misc methods", function() {
-        describe("searchFilterBeforeSet", function() {
+        describe("searchChatFilterBeforeSet", function() {
             it("should filter off invalid characters for session variable", function() {
-                const res = searchFilterBeforeSet("@!#$%^&*()+-=food 123");
+                const res = searchChatFilterBeforeSet("@!#$%^&*()+-=food 123");
                 expect(res).toBe("#food 123");
             });
         });
 
-        describe("searchFilterBeforeFetch", function() {
+        describe("searchChatFilterBeforeFetch", function() {
             it("should filter off invalid characters for search bar", function() {
-                const res = searchFilterBeforeFetch("@!#$%^&*()  +-=food_123");
+                const res = searchChatFilterBeforeFetch(
+                    "@!#$%^&*()  +-=food_123"
+                );
                 expect(res).toBe("#food_123");
             });
         });

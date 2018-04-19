@@ -6,6 +6,7 @@ import Clipboard from "clipboard";
 
 // React Components
 import ManageTagsModal from "./_ManageTagsModal";
+import ManageMembersModal from "./_ManageMembersModal";
 import ChangeDetailsModal from "./_ChangeDetailsModal";
 import { capitalizeFirstLetter } from "../../../misc/methods";
 
@@ -104,7 +105,13 @@ export default class ChatDropdown extends React.Component {
                             : "View " + tabText + " Tags"}
                     </div>
 
-                    {this.props.isModerator || this.props.isOwner ? (
+                    {haveAccess ? (
+                        <div className="dropdown__item">Manage Members</div>
+                    ) : (
+                        undefined
+                    )}
+
+                    {haveAccess ? (
                         <div
                             className="dropdown__item"
                             ref="copy"
@@ -155,6 +162,8 @@ export default class ChatDropdown extends React.Component {
                 ) : (
                     undefined
                 )}
+
+                {haveAccess ? <ManageMembersModal /> : undefined}
             </div>
         );
     }

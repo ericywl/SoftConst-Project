@@ -160,7 +160,7 @@ export default class AddGroupModal extends React.Component {
                 this.props.session.set(selectedText, res);
                 this.toggleModal();
                 this.props.session.set("isNavOpen", false);
-                this.props.session.set("searchQuery", "");
+                this.props.session.set("chatQuery", "");
             }
         });
     }

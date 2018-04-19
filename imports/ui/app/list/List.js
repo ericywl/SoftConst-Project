@@ -15,9 +15,8 @@ import { GroupsDB } from "../../../api/groups";
 import { DsbjsDB } from "../../../api/dsbjs";
 import { ProfilesDB } from "../../../api/profiles";
 import {
-    searchFilterBeforeSet,
-    searchFilterBeforeFetch,
-    filterItemsByQuery
+    searchChatFilterBeforeSet,
+    searchChatFilterBeforeFetch
 } from "../../../misc/methods";
 import { SHOWN_ITEMS_LIMIT } from "../../../misc/constants";
 
@@ -129,7 +128,7 @@ List.propTypes = {
 export default withTracker(() => {
     const selectedGroupId = Session.get("selectedGroupId");
     const selectedDsbjId = Session.get("selectedDsbjId");
-    const searchQuery = Session.get("searchQuery");
+    const searchQuery = Session.get("chatQuery");
 
     const profilesHandle = Meteor.subscribe("profiles");
     const groupsHandle = Meteor.subscribe("groups");
@@ -153,16 +152,13 @@ export default withTracker(() => {
         userDsbjs
     );
 
-    const queriedGroups = filterItemsByQuery(fetchedGroups, searchQuery);
-    const queriedDsbjs = filterItemsByQuery(fetchedDsbjs, searchQuery);
-
     return {
         ready:
             profilesHandle.ready() &&
             groupsHandle.ready() &&
             dsbjsHandle.ready(),
-        groups: queriedGroups,
-        dsbjs: queriedDsbjs,
+        groups: fetchedGroups,
+        dsbjs: fetchedDsbjs,
         notInGroup: !userGroups.includes(selectedGroupId),
         session: Session
     };
@@ -171,10 +167,12 @@ export default withTracker(() => {
 /* HELPER METHODS */
 const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
     let items = [];
-    if (searchFilterBeforeFetch(query)[0] === "#") {
+    const filteredQuery = searchChatFilterBeforeFetch(query);
+    if (filteredQuery[0] === "#") {
+        const regex = new RegExp("^" + filteredQuery.substring(1), "i");
         if (item === "groups") {
             items = GroupsDB.find(
-                { tags: { $exists: true, $not: { $size: 0 } } },
+                { tags: regex },
                 {
                     sort: { lastMessageAt: -1 },
                     $limit: SHOWN_ITEMS_LIMIT
@@ -183,7 +181,7 @@ const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
         } else {
             items = DsbjsDB.find(
                 {
-                    tags: { $exists: true, $not: { $size: 0 } },
+                    tags: regex,
                     timeoutAt: { $exists: true, $gt: moment().valueOf() }
                 },
                 {
@@ -193,9 +191,10 @@ const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
             ).fetch();
         }
     } else {
+        const regex = new RegExp(filteredQuery, "i");
         if (item === "groups") {
             items = GroupsDB.find(
-                { _id: { $in: userItems } },
+                { _id: { $in: userItems }, name: regex },
                 {
                     sort: { lastMessageAt: -1 }
                 }
@@ -204,6 +203,7 @@ const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
             items = DsbjsDB.find(
                 {
                     _id: { $in: userItems },
+                    name: regex,
                     timeoutAt: { $exists: true, $gt: moment().valueOf() }
                 },
                 {
