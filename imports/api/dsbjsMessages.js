@@ -71,6 +71,43 @@ Meteor.methods({
         return result;
     },
 
+    dsbjsMessagesWelcome(dsbjId) {
+        if (!this.userId) throw new Meteor.Error("not-logged-in");
+        checkUserExist(this.userId);
+
+        const userDisplayName = ProfilesDB.findOne({ _id: this.userId })
+            .displayName;
+
+        validateUserDisplayName(userDisplayName);
+
+        const now = moment().valueOf();
+        const result = DsbjsMessagesDB.insert(
+            {
+                dsbjId: dsbjId,
+                content: `${userDisplayName} has joined the event!`,
+                userId: this.userId,
+                userDisplayName: "",
+                sentAt: now
+            },
+            err => {
+                if (!err) {
+                    try {
+                        DsbjsDB.update(
+                            { _id: groupId },
+                            { $set: { lastMessageAt: now } }
+                        );
+                    } catch (newErr) {
+                        throw newErr;
+                    }
+                } else {
+                    throw err;
+                }
+            }
+        );
+
+        return result;
+    },
+
     dsbjsMessagesRemove(messageId) {
         if (!this.userId) throw new Meteor.Error("not-logged-in");
 

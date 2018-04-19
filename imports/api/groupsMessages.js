@@ -77,6 +77,8 @@ Meteor.methods({
         const userDisplayName = ProfilesDB.findOne({ _id: this.userId })
             .displayName;
 
+        validateUserDisplayName(userDisplayName);
+
         const now = moment().valueOf();
         const result = GroupsMessagesDB.insert(
             {
