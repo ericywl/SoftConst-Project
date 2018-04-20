@@ -39,10 +39,6 @@ export class ProfileArea extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        console.log("hi");
-    }
-
     render() {
         if (!this.props.profile) {
             return <div>hi</div>;
