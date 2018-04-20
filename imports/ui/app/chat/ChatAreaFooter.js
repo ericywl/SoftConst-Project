@@ -19,9 +19,8 @@ export class ChatAreaFooter extends React.Component {
 
         if (this.props.selectedTab === "groups") {
             connanotSenToAnnouncements =
-                cannotSendToAnnouncements &&
-                !this.props.isModerator &&
                 this.props.selectedRoom === "announcements" &&
+                !this.props.isModerator &&
                 !this.props.isOwner;
         }
 
