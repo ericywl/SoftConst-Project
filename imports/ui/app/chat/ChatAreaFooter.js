@@ -18,10 +18,9 @@ export class ChatAreaFooter extends React.Component {
         let cannotSendToAnnouncements = false;
 
         if (this.props.selectedTab === "groups") {
-            connanotSenToAnnouncements =
+            connanotSendToAnnouncements =
                 this.props.selectedRoom === "announcements" &&
-                !this.props.isModerator &&
-                !this.props.isOwner;
+                (!this.props.isModerator || !this.props.isOwner);
         }
 
         const tabText = this.props.selectedTab.slice(
