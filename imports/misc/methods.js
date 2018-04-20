@@ -253,3 +253,16 @@ export const validateUserDisplayName = userDisplayName => {
 
     return true;
 };
+
+export const validateUserBio = userBio => {
+    new SimpleSchema({
+        userBio: {
+            type: String,
+            max: c.BIO_MAX_LENGTH
+        }
+    }).validate({
+        userBio
+    });
+
+    return true;
+};

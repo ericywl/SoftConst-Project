@@ -6,7 +6,11 @@ import moment from "moment";
 // APIs
 import { GroupsDB } from "./groups";
 import { DsbjsDB } from "./dsbjs";
-import { checkUserExist, validateUserDisplayName } from "../misc/methods";
+import {
+    checkUserExist,
+    validateUserDisplayName,
+    validateUserBio
+} from "../misc/methods";
 import { ROOM_TEXT_ARR, USERNAME_MIN_LENGTH } from "../misc/constants";
 
 export const ProfilesDB = new Mongo.Collection("profiles");
@@ -317,6 +321,9 @@ Meteor.methods({
         }
 
         checkUserExist(this.userId);
+
+        validateUserDisplayName(newName);
+        validateUserBio(newBio);
         return ProfilesDB.update(
             { _id: this.userId },
             { $set: { bio: newBio, displayName: newName } }

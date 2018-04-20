@@ -18,7 +18,8 @@ if (Meteor.isServer) {
                 members: [],
                 ownedBy: "notYou"
             });
-            ProfilesDB.insert({ _id: userId, groups: [] });
+
+            ProfilesDB.insert({ _id: userId, groups: [], tags: [] });
             ProfilesDB.insert({ _id: userId2, groups: [], tags: [tag] });
         });
 
@@ -40,59 +41,31 @@ if (Meteor.isServer) {
         });
 
         describe("profilesTagAdd", function() {
-            const userId = "testId";
-            const tag = "#food";
-            beforeEach(function() {
-                ProfilesDB.remove({});
-                ProfilesDB.insert({ _id: userId, groups: [] });
-            });
-
             it("should add tags to the user profile", function() {
                 Meteor.server.method_handlers.profilesTagAdd.apply({ userId }, [
                     tag
                 ]);
 
                 expect(
-                    ProfilesDB.findOne({ _id: userId }).tags.includes("#food")
+                    ProfilesDB.findOne({ _id: userId }).tags.includes(tag)
                 ).toBeTruthy();
             });
         });
 
-        // describe("profilesTagRemove", function() {
-        //     it("should remove the tag from the user profile", function() {
-        //         Meteor.server.method_handlers.profilesTagRemove.apply(
-        //             { userId: userId2 },
-        //             [userId2, tag]
-        //         );
+        describe("profilesTagRemove", function() {
+            it("should remove the tag", function() {
+                Meteor.server.method_handlers.profilesTagRemove.apply(
+                    { userId: userId2 },
+                    [tag]
+                );
 
-        //         expect(
-        //             ProfilesDB.findOne({ _id: userId2 }).tags.includes(tag)
-        //         ).toBeFalsy();
-        //     });
-        // });
-
-        // describe("profilesUpdateDisplayName", function() {
-        //     const userId = "testId";
-        //     beforeEach(function() {
-        //         ProfilesDB.remove({});
-        //         ProfilesDB.insert({ _id: userId, groups: [] });
-        //     });
-
-        //     it("should update user profile's display name", function() {
-        //         Meteor.server.method_handlers.profilesUpdateDisplayName.apply(
-        //             { userId },
-        //             []
-        //         );
-
-        //         expect(
-        //             ProfilesDB.findOne({ _id: userId }).tags.includes("#food")
-        //         ).toBeTruthy();
-        //     });
-        // });
+                expect(
+                    ProfilesDB.findOne({ _id: userId2 }).tags.includes(tag)
+                ).toBeFalsy();
+            });
+        });
 
         describe("profilesUpdate", function() {
-            const userId = "testId";
-
             it("should update the user profile", function() {
                 Meteor.server.method_handlers.profilesUpdate.apply({ userId }, [
                     "MyNewName",

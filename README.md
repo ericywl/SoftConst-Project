@@ -22,6 +22,6 @@ Note: The system is tested fully only on Google Chrome. Other browsers may exper
 
 1.  Add more features to Groups and DSBJs
 
-2.  Finish up the profile page
+2.  Tighter relationship between Groups/DSBJS and profiles
 
 3.  Implement more unit tests and some integration tests
