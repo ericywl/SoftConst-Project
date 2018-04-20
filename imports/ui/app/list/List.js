@@ -137,6 +137,7 @@ export default withTracker(() => {
     const dsbjsHandle = Meteor.subscribe("dsbjs");
 
     const userProfile = ProfilesDB.findOne({ _id: Meteor.userId() });
+    const userTags = userProfile ? userProfile.tags : [];
     const userGroups = userProfile ? userProfile.groups : [];
     const userDsbjs = userProfile ? userProfile.dsbjs : [];
 
@@ -144,14 +145,16 @@ export default withTracker(() => {
         "groups",
         selectedGroupId,
         searchQuery,
-        userGroups
+        userGroups,
+        userTags
     );
 
     const fetchedDsbjs = fetchItemsFromDB(
         "dsbjs",
         selectedDsbjId,
         searchQuery,
-        userDsbjs
+        userDsbjs,
+        userTags
     );
 
     return {
@@ -167,31 +170,57 @@ export default withTracker(() => {
 })(List);
 
 /* HELPER METHODS */
-const fetchItemsFromDB = (item, selectedItemId, query, userItems) => {
+const fetchItemsFromDB = (item, selectedItemId, query, userItems, userTags) => {
     let items = [];
     const filteredQuery = searchChatFilterBeforeFetch(query);
     if (filteredQuery[0] === "#") {
         const regex = new RegExp("^" + filteredQuery.substring(1), "i");
         if (item === "groups") {
-            items = GroupsDB.find(
-                { "tags.0": { $exists: true }, tags: regex },
-                {
-                    sort: { lastMessageAt: -1 },
-                    $limit: SHOWN_ITEMS_LIMIT
-                }
-            ).fetch();
+            if (filteredQuery.length === 1) {
+                items = GroupsDB.find(
+                    {
+                        _id: { $nin: userItems },
+                        "tags.0": { $exists: true },
+                        tags: { $in: userTags }
+                    },
+                    {
+                        sort: { lastMessageAt: -1 },
+                        $limit: SHOWN_ITEMS_LIMIT
+                    }
+                ).fetch();
+            } else {
+                items = GroupsDB.find(
+                    { "tags.0": { $exists: true }, tags: regex },
+                    {
+                        sort: { lastMessageAt: -1 },
+                        $limit: SHOWN_ITEMS_LIMIT
+                    }
+                ).fetch();
+            }
         } else {
-            items = DsbjsDB.find(
-                {
-                    "tags.0": { $exists: true },
-                    tags: regex,
-                    timeoutAt: { $exists: true, $gt: moment().valueOf() }
-                },
-                {
-                    sort: { createdAt: -1 },
-                    $limit: SHOWN_ITEMS_LIMIT
-                }
-            ).fetch();
+            if (filteredQuery.length === 1) {
+                items = DsbjsDB.find(
+                    {
+                        _id: { $nin: userItems },
+                        "tags.0": { $exists: true },
+                        tags: { $in: userTags },
+                        timeoutAt: { $exists: true, $gt: moment().valueOf() }
+                    },
+                    { sort: { createdAt: -1 }, $limit: SHOWN_ITEMS_LIMIT }
+                ).fetch();
+            } else {
+                items = DsbjsDB.find(
+                    {
+                        "tags.0": { $exists: true },
+                        tags: regex,
+                        timeoutAt: { $exists: true, $gt: moment().valueOf() }
+                    },
+                    {
+                        sort: { createdAt: -1 },
+                        $limit: SHOWN_ITEMS_LIMIT
+                    }
+                ).fetch();
+            }
         }
     } else {
         const regex = new RegExp(filteredQuery, "i");

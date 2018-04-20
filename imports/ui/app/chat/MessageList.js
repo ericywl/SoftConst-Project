@@ -295,7 +295,7 @@ export default withTracker(() => {
         ).fetch();
     } else {
         handle = Meteor.subscribe("messagesByDsbj", selectedDsbjId);
-        messages = DsbjsMessagesDB.find({ sort: { sentAt: 1 } }).fetch();
+        messages = DsbjsMessagesDB.find({}, { sort: { sentAt: 1 } }).fetch();
     }
 
     messages = messages.map(message => {
