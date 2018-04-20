@@ -90,20 +90,24 @@ if (Meteor.isServer) {
         //     });
         // });
 
-        describe("profilesUpdateBio", function() {
+        describe("profilesUpdate", function() {
             const userId = "testId";
 
-            it("should update the user profile's biography", function() {
-                Meteor.server.method_handlers.profilesUpdateBio.apply(
-                    { userId },
-                    ["User's biography"]
-                );
+            it("should update the user profile", function() {
+                Meteor.server.method_handlers.profilesUpdate.apply({ userId }, [
+                    "MyNewName",
+                    "User's biography"
+                ]);
 
                 expect(
                     ProfilesDB.findOne({ _id: userId }).bio.includes(
                         "User's biography"
                     )
                 ).toBeTruthy();
+
+                expect(ProfilesDB.findOne({ _id: userId }).displayName).toBe(
+                    "MyNewName"
+                );
             });
         });
 
